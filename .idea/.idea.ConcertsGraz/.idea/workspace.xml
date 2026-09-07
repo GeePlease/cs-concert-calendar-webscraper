@@ -15,13 +15,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="571ddcf3-29cf-459b-a0bc-2233db17c540" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/CafeWolfScraper.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Controllers/ConcertController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Controllers/ConcertController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Controllers/HomeController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Models/User.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,6 +112,7 @@
       <workItem from="1788679513710" duration="7845000" />
       <workItem from="1788763784610" duration="3946000" />
       <workItem from="1788767764967" duration="2753000" />
+      <workItem from="1788772057063" duration="218000" />
     </task>
     <servers />
   </component>
