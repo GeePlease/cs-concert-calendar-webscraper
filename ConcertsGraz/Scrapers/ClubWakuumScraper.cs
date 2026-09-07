@@ -17,6 +17,7 @@ public class ClubWakuumScraper : IScraper
         List<Concert> concertsClubWakuum = new List<Concert>();
         string url = "https://wakmusic.at/events-konzerte/"; 
         
+        // xpaths relative to main node element
         string titleXPath = ".//h3[@class='mec-event-title']/a"; 
         string dateXPath = ".//span[@class='mec-start-date-label']";
         string timeXPath = ".//span[@class='mec-start-time']";
