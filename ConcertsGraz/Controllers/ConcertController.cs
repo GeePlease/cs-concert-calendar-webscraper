@@ -1,13 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ConcertsGraz.Models;
+using ConcertsGraz.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ConcertsGraz.Controllers;
 
+// ==================================================================================
+// CLASS: ConcertController - routing + calling CRUD methods from ConcertService
+// ==================================================================================
 public class ConcertController : Controller
 {
     // ATTRIBUTES
-    // CONSTRUCTOR
+    private readonly ConcertService _concertService;
+    
+    // CONSTRUCTOR + dependency injection
+    public ConcertController(ConcertService concertService)
+    {
+        _concertService = concertService; 
+    }
+    
     // METHODS
     
+ 
     
     
     

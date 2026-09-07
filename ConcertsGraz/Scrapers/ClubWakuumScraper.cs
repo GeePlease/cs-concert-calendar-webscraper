@@ -73,20 +73,19 @@ public class ClubWakuumScraper : IScraper
             description = Regex.Replace(description, @"\s+", " ").Trim(); // remove empty space
          
             // 2.3 create new ConcertEvent from scraped element data
-            var concertToAdd = new Concert() 
+            var concertToAdd = new Concert()
             {
                 Title = title,
-                Genre = "-", 
+                Genre = "-",
                 Date = date,
                 Time = time,
                 Venue = venue,
                 Link = link,
                 Description = description,
                 Url = url,
-                Price = price,
-                IsBookmarked = false,
-                HasAttended = false };
-            
+                Price = price
+            };
+                
             // 2.4 add new concert element to venue list
             concertsClubWakuum.Add(concertToAdd);
             

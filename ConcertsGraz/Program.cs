@@ -36,9 +36,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 
-
 // Mapped alle Controller über ihre Attribute (z.B. [Route("api/[controller]")])
 app.MapControllers();
-
 
 app.Run();

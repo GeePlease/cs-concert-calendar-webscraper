@@ -1,4 +1,9 @@
-﻿using MongoDB.Bson;
+﻿// ==================================================================================
+// CLASS: CONCERT - concert object 
+// --> MongoDB collection
+// ==================================================================================
+
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 namespace ConcertsGraz.Models;
 
@@ -17,7 +22,4 @@ public class Concert
     public string Description { get; set; } = "";
     public string Url { get; set; } = "";
     public string Price { get; set; } = ""; 
-    
-    public bool IsBookmarked { get; set; } = false;
-    public bool HasAttended { get; set; } = false;
 }

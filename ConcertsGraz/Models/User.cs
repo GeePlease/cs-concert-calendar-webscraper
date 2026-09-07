@@ -1,4 +1,9 @@
-﻿using MongoDB.Bson;
+﻿// ==================================================================================
+// CLASS: USER - user object incl. lists for bookmarks + statistics
+// --> MongoDB collection
+// ==================================================================================
+
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ConcertsGraz.Models;

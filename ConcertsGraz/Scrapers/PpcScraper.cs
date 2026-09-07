@@ -22,7 +22,6 @@ public class PpcScraper : IScraper
         string descriptionXPath = ".//div[contains(@class, 'tribe-events-calendar-list__event-description')]";
         string detailsXPath = "//div[contains(@class, 'totalSum')]"; // CONTAINS PRICE INFO!
 
-        
         // 1 Load HTML from target url
         var web = new HtmlWeb();
         var doc = web.Load(url);
@@ -100,8 +99,6 @@ public class PpcScraper : IScraper
                 Description = description,
                 Url = url,
                 Price = price, 
-                IsBookmarked = false,
-                HasAttended = false 
             };
             
             // 2.4 add new concert element to venue list

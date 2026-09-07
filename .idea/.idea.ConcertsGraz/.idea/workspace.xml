@@ -15,8 +15,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="571ddcf3-29cf-459b-a0bc-2233db17c540" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ConcertsGraz/Controllers/ScraperController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ConcertsGraz/Services/ScraperService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Controllers/ConcertController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Controllers/ConcertController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Models/Concert.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Models/Concert.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ConcertsGraz/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Services/ConcertService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Services/ConcertService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,13 +36,14 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Controllers/ConcertController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ConcertsGraz/Controllers/ScraperController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Interfaces/IScraper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Models/ConcertsGrazDatabaseSettings.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ConcertsGraz/Models/ErrorViewModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Models/User.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Scrapers/CafeWolfScraper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ConcertsGraz/Services/ScraperService.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8,
@@ -113,6 +122,7 @@
       <workItem from="1788763784610" duration="3946000" />
       <workItem from="1788767764967" duration="2753000" />
       <workItem from="1788772057063" duration="218000" />
+      <workItem from="1788772546210" duration="11853000" />
     </task>
     <servers />
   </component>

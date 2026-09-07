@@ -4,8 +4,10 @@ using MongoDB.Driver;
 namespace ConcertsGraz.Services;
 
 // ==================================================================================
-// CLASS: ConcertServices + SHORT DESCRIPTION
+// CLASS: ConcertService - responsible for managing concert data and handling
+// database persistence (CRUD operations) via the MongoDB client.
 // ==================================================================================
+
 public class ConcertService
 {
     // ATTRIBUTES
@@ -24,25 +26,40 @@ public class ConcertService
     }
 
     // METHODS (CRUD FOR DB)
-    // 1. CREATE: insert new concert
+    
+    // CREATE: insert new concert
     public async Task CreateAsync(Concert newConcert) =>
         await _concertsCollection.InsertOneAsync(newConcert);
 
-    // 2. READ (all): read all concert data
+    // READ (all): read all concert data
     public async Task<List<Concert>> GetAsync() =>
         await _concertsCollection.Find(_ => true).ToListAsync();
 
-    // 2.1 READ (single): get single concert
+    // READ (single): get single concert
     public async Task<Concert?> GetAsync(string id) =>
         await _concertsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    // 3. UPDATE: update (single) concert 
+    // UPDATE: update (single) concert 
     public async Task UpdateAsync(string id, Concert updatedConcert) =>
         await _concertsCollection.ReplaceOneAsync(x => x.Id == id, updatedConcert);
 
-    // 4. DELETE: delete (single) concert
+    // DELETE: delete (single) concert
     public async Task RemoveAsync(string id) =>
         await _concertsCollection.DeleteOneAsync(x => x.Id == id);
+    
+    
+    
+    // SAVE: create new concert for each scraped concert
+    public async Task SaveScrapedConcertsAsync(List<Concert> scrapedConcerts)
+    {
+        foreach (var concert in scrapedConcerts)
+        {
+            // create for every scraped concert
+            await CreateAsync(concert);
+        }
+    }
+    
+    
     
 // END CLASS
 }
