@@ -21,6 +21,7 @@ public class PpcScraper : IScraper
         string venueXPath = ".//span[contains(@class, 'tribe-events-c-small-cta__price')]";
         string descriptionXPath = ".//div[contains(@class, 'tribe-events-calendar-list__event-description')]";
         string detailsXPath = "//div[contains(@class, 'totalSum')]"; // CONTAINS PRICE INFO!
+
         
         // 1 Load HTML from target url
         var web = new HtmlWeb();
@@ -30,7 +31,7 @@ public class PpcScraper : IScraper
         // 2 Filter relevant event (concert) elements via Loop through concerts
         foreach (var concert in eventElementNodes)
         {
-            // 2.1.1 all info except price
+            // 2.1.1 all info except price (accessible after extra click)
             string title = concert.SelectSingleNode(titleXPath)?.InnerText.Trim().ToUpper() ?? "";
             if (string.IsNullOrWhiteSpace(title)) {continue;} // skip empty nodes
             
@@ -48,7 +49,6 @@ public class PpcScraper : IScraper
                 var detailDoc = detailWeb.Load(link); // load details page url, contains price info
   
                 var priceNode = detailDoc.DocumentNode.SelectSingleNode(detailsXPath);
-    
                 if (priceNode != null)
                 {
                     price = priceNode.InnerText.Trim();
@@ -64,6 +64,7 @@ public class PpcScraper : IScraper
             venue = Regex.Replace(venue, @"\s+", " ").Trim();
             venue = HtmlEntity.DeEntitize(venue);
 
+            date = Regex.Replace(date, @"\s*@.*$", "").Trim(); // remove "@ 19:00" from date
             date = Regex.Replace(date, @"\s+", " ").Trim();
             date = HtmlEntity.DeEntitize(date);
 
@@ -73,13 +74,19 @@ public class PpcScraper : IScraper
             price = Regex.Replace(price, @"\s+", " ").Trim();
             price = HtmlEntity.DeEntitize(price);
 
-            description = Regex.Replace(description, @"</p>|<br\s*/?>", " ", RegexOptions.IgnoreCase);
-            var tempNode = HtmlNode.CreateNode(description); // TODO: genau verstehen
-            if (tempNode != null) { description = tempNode.InnerText; }
+            description = Regex.Replace(description, @"</p>|<br\s*/?>", " ", RegexOptions.IgnoreCase); // remove HTML tag chars
+            description = Regex.Replace(description, @"<script\b[^<]*(?:(?!<\/script>)<script\b[^<]*)*<\/script>", "", RegexOptions.IgnoreCase); // remove JavaScript-Code
+            description = Regex.Replace(description, @"window\.\w+[^}]+\}\)", "", RegexOptions.IgnoreCase); // Falls Skript-Tags fehlen
+
+            var tempNode = HtmlNode.CreateNode(description);
+            if (tempNode != null) { description = tempNode.InnerText; } 
             else { description = ""; }
 
-            description = Regex.Replace(description, @"\s+", " ").Trim();
-            description = HtmlEntity.DeEntitize(description);
+            description = HtmlEntity.DeEntitize(description); //html sonderzeichen zurückübersetzen
+            description = Regex.Replace(description, @"[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]", " "); // Emojis weg
+            description = Regex.Replace(description, @"https?://[^\s]+", "").Trim(); // URLs weg
+            description = Regex.Replace(description, @"\s*\[\s*\.{1,3}\s*\]\s*$", "..").Trim(); // replace WordPress-Brackets  [...] or [.] with "..";
+            description = Regex.Replace(description, @"\s+", " ").Trim(); //remove empty space
 
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert() 
@@ -92,7 +99,7 @@ public class PpcScraper : IScraper
                 Link = link,
                 Description = description,
                 Url = url,
-                Price = price, // Jetzt wird price hier verwendet!
+                Price = price, 
                 IsBookmarked = false,
                 HasAttended = false 
             };
@@ -101,7 +108,7 @@ public class PpcScraper : IScraper
             concertsPpc.Add(concertToAdd);
             
             // print elements in console TODO: REMOVE LATER
-            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {date}, Time: {time}, Price: {price}, Link: {link}\n");
+            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {date}, Time: {time}, Description: {description}, Price: {price}, Link: {link}\n");
         }
         
         // 3 return concerts list

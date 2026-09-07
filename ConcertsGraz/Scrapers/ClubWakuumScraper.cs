@@ -23,7 +23,7 @@ public class ClubWakuumScraper : IScraper
         string venueXPath = ".//div[@class='mec-venue-details']";
         string linkXPath = ".//h3[@class='mec-event-title']/a";
         string descriptionXPath = ".//div[contains(@class, 'mec-event-description')]";
-        string priceXPath = ".//div[1]/div[2]/div/h3/span";
+        string priceXPath = ".//span[contains(@class, 'mec-label-normal')]";
         
         // 1 Load HTML from target url
         var web = new HtmlWeb();
@@ -65,11 +65,12 @@ public class ClubWakuumScraper : IScraper
             var tempNode = HtmlNode.CreateNode(description);
             if (tempNode != null) { description = tempNode.InnerText; } // if node exists, text only
             else { description = ""; } //if empty, empty string
-
-            description = Regex.Replace(description, @"\s+", " ").Trim(); // remove empty space
+            
             description = HtmlEntity.DeEntitize(description); // deentizize (translate HTML characters back to normal like &amp)
+            description = Regex.Replace(description, @"[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]", " "); //remove emojis and weird chars
             description = Regex.Replace(description, @"https?://[^\s]+", "").Trim(); // remove urls in descriptoin text
             description = Regex.Replace(description, @"\s*\[([^\]]+)\]\s*$", "..").Trim(); //remove [] at end
+            description = Regex.Replace(description, @"\s+", " ").Trim(); // remove empty space
          
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert() 
