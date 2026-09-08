@@ -4,7 +4,7 @@
 // (Dependency Injection) einer modernen .NET-Anwendung steuert.
 // ==================================================================================
 using MongoDB.Driver;
-using ConcertsGraz.Models;
+using ConcertsGraz.Data;
 using ConcertsGraz.Services;
 using ConcertsGraz.Scrapers;   
 

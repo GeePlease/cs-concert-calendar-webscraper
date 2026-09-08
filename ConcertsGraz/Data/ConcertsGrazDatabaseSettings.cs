@@ -1,4 +1,4 @@
-﻿namespace ConcertsGraz.Models;
+﻿namespace ConcertsGraz.Data;
 
 
 // ==================================================================================
