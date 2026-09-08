@@ -13,7 +13,7 @@ public class PasswordHasher
     
     // METHODS
     // pw hashing
-    public static string HashPassword(string password)
+    public string HashPassword(string password)
     {
         // user hasher
         return _passwordHasher.HashPassword(null, password);
