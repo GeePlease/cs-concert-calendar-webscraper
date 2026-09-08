@@ -1,5 +1,31 @@
+# Build & Output
 bin/
 obj/
 /packages/
+*.user
+*.userosv
+*.suo
+*.userprefs
+
+# JetBrains Rider & ReSharper
+.idea/
 riderModule.iml
 /_ReSharper.Caches/
+*.sln.iml
+
+# Visual Studio & VS Code
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Environment / Local Configs (optional)
+appsettings.Local.json
+*.env
