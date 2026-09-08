@@ -16,7 +16,6 @@
   <component name="ChangeListManager">
     <list default="true" id="571ddcf3-29cf-459b-a0bc-2233db17c540" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Utilities/DateTimeParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Utilities/DateTimeParser.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,7 +117,7 @@
       <workItem from="1788772057063" duration="218000" />
       <workItem from="1788772546210" duration="12475000" />
       <workItem from="1788798477298" duration="8400000" />
-      <workItem from="1788850446573" duration="14924000" />
+      <workItem from="1788850446573" duration="16453000" />
     </task>
     <servers />
   </component>
