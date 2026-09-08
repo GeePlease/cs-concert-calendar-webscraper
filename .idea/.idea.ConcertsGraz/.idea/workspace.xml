@@ -16,9 +16,7 @@
   <component name="ChangeListManager">
     <list default="true" id="571ddcf3-29cf-459b-a0bc-2233db17c540" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConcertsGraz/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/CafeWolfScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/CafeWolfScraper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/ClubWakuumScraper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Scrapers/PpcScraper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConcertsGraz/Utilities/DateTimeParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConcertsGraz/Utilities/DateTimeParser.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +49,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    ".NET Launch Settings Profile.ConcertsGraz: http.executor": "Debug",
+    ".NET Launch Settings Profile.ConcertsGraz: http.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -120,7 +118,7 @@
       <workItem from="1788772057063" duration="218000" />
       <workItem from="1788772546210" duration="12475000" />
       <workItem from="1788798477298" duration="8400000" />
-      <workItem from="1788850446573" duration="12989000" />
+      <workItem from="1788850446573" duration="14924000" />
     </task>
     <servers />
   </component>

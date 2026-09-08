@@ -23,7 +23,9 @@ public class DateTimeParser
          // try to parse into valid DateTime Object
          if (DateTime.TryParse(cleanDate, CultureAt, DateTimeStyles.None, out DateTime parsedDate))
          {
-             return parsedDate.Date;
+             // parsedDate.Date --> time to 00:00 , no time mistakes
+             // SpecifyKind --> defines time zone, avoids wrong time/date in mongodb
+             return DateTime.SpecifyKind(parsedDate.Date, DateTimeKind.Utc);
          }
 
          return null;
