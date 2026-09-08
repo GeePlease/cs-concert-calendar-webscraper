@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions; // to remove whitespace
 using ConcertsGraz.Models;
 using ConcertsGraz.Interfaces;
+using ConcertsGraz.Utilities;
 
 namespace ConcertsGraz.Scrapers;
 
@@ -39,7 +40,7 @@ public class ClubWakuumScraper : IScraper
             if (string.IsNullOrWhiteSpace(title)) {continue;} // skip empty nodes
             string link = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
             string venue = concert.SelectSingleNode(venueXPath)?.InnerText.Trim() ?? "";
-            string date = concert.SelectSingleNode(dateXPath)?.InnerText.Trim() ?? "";
+            string rawDate = concert.SelectSingleNode(dateXPath)?.InnerText.Trim() ?? "";
             string time = concert.SelectSingleNode(timeXPath)?.InnerText.Trim() ?? "";
             string description = concert.SelectSingleNode(descriptionXPath)?.InnerHtml.Trim() ?? "";
             string price = concert.SelectSingleNode(priceXPath)?.InnerText.Trim() ?? "";
@@ -53,8 +54,9 @@ public class ClubWakuumScraper : IScraper
             venue = Regex.Replace(venue, @"\s+", " ").Trim();
             venue = HtmlEntity.DeEntitize(venue);
 
-            date = Regex.Replace(date, @"\s+", " ").Trim();
-            date = HtmlEntity.DeEntitize(date);
+            rawDate = Regex.Replace(rawDate, @"\s+", " ").Trim();
+            rawDate = HtmlEntity.DeEntitize(rawDate);
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(rawDate);
 
             time = Regex.Replace(time, @"\s+", " ").Trim();
             time = HtmlEntity.DeEntitize(time);
@@ -78,7 +80,7 @@ public class ClubWakuumScraper : IScraper
             {
                 Title = title,
                 Genre = "-",
-                Date = date,
+                Date = parsedDate,
                 Time = time,
                 Venue = venue,
                 InfoLink = link,
@@ -91,7 +93,7 @@ public class ClubWakuumScraper : IScraper
             concertsClubWakuum.Add(concertToAdd);
             
             // print elements in console TODO: REMOVE LATER
-            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {date}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
+            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
 
         }
         // 3 return concert list

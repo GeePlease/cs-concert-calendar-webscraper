@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using ConcertsGraz.Interfaces; // to remove whitespace
 using ConcertsGraz.Models;
+using ConcertsGraz.Utilities;
 namespace ConcertsGraz.Scrapers;
 
 public class CafeWolfScraper : IScraper
@@ -41,6 +42,7 @@ public class CafeWolfScraper : IScraper
 
             // 2.2 clean variables (No Whitespace, Deentizie = HTML sonderzeichen zurückübersetzen, extract detailed data)
             string date = Regex.Match(rawDateTime, @"\d{2}\.\d{2}\.\d{4}").Value; // extract date with regex
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse to DateTime Object 
             string time = Regex.Match(rawDateTime, @"\d{2}:\d{2}").Value; // extract time with regex
             
             string title = HtmlEntity.DeEntitize(rawTitle); // decodee HTML entities (like &AMP)
@@ -67,7 +69,7 @@ public class CafeWolfScraper : IScraper
             {
                 Title = title,
                 Genre = "-",
-                Date = date,
+                Date = parsedDate,
                 Time = time,
                 Venue = venue,
                 InfoLink = link,
@@ -80,7 +82,7 @@ public class CafeWolfScraper : IScraper
             concertsCafeWolf.Add(concertToAdd);
             
             // print elements in console TODO: REMOVE LATER
-            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {date}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
+            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
         }
 
         return concertsCafeWolf;
