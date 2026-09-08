@@ -6,7 +6,10 @@
 using MongoDB.Driver;
 using ConcertsGraz.Data;
 using ConcertsGraz.Services;
-using ConcertsGraz.Scrapers;   
+using ConcertsGraz.Scrapers;  
+using ConcertsGraz.Utilities;
+using Microsoft.Extensions.Options;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +21,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<ConcertsGrazDatabaseSettings>(
     builder.Configuration.GetSection("ConcertsGrazDatabase"));
 
-// 1 Mongo Client per app only
+// Single Mongo Client per app only
 var mongoConnection = builder.Configuration.GetConnectionString("MongoDB") ?? "mongodb://localhost:27017";
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnection));
+
+// IMongoDatabase für den DI-Container bereitstellen (wird vom Seeder benötigt)
+builder.Services.AddScoped<IMongoDatabase>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<ConcertsGrazDatabaseSettings>>().Value;
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(settings.DatabaseName);
+});
 
 // ----------------------------------------------------------------------------------
 // 2 DEPENDENCY INJECTION (DI) CONTAINER - SERVICE-REGISTRIERUNG
@@ -34,8 +45,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Database Services
+// Database Services & Utilities
 builder.Services.AddScoped<ConcertService>();
+builder.Services.AddSingleton<PasswordHasher>();
+builder.Services.AddScoped<TestDataSeeder>();
 
 // Konkrete Scraper-Registrierung
 builder.Services.AddScoped<ClubWakuumScraper>();   
@@ -64,6 +77,13 @@ builder.Services.AddScoped<ScraperService>();
 // ----------------------------------------------------------------------------------
 
 var app = builder.Build();
+
+// TESTDATA AT START:
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<TestDataSeeder>();
+    await seeder.SeedAllAsync();
+}
 
 // SWAGGER PIPELINE ACTIVATION :
 if (app.Environment.IsDevelopment())
