@@ -15,11 +15,11 @@ public class Concert
     
     public string Title { get; set; } = "";
     public string Genre { get; set; } = "-"; // TODO: extraction method in venue scrapers
-    public string Date { get; set; } = "";
+    public DateTime? Date { get; set; }
     public string Time { get; set; } = "";
     public string Venue { get; set; } = "";
-    public string Link { get; set; } = "";
+    public string InfoLink { get; set; } = "";
     public string Description { get; set; } = "";
-    public string Url { get; set; } = "";
+    public string SourceUrl { get; set; } = "";
     public string Price { get; set; } = ""; 
 }

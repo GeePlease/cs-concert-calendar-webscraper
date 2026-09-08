@@ -81,9 +81,9 @@ public class ClubWakuumScraper : IScraper
                 Date = date,
                 Time = time,
                 Venue = venue,
-                Link = link,
+                InfoLink = link,
                 Description = description,
-                Url = url,
+                SourceUrl = url,
                 Price = price
             };
                 
