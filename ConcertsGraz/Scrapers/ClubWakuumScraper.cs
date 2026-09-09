@@ -50,7 +50,7 @@ public class ClubWakuumScraper : IScraper
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
             string venue = TextCleaner.CleanText(rawVenue);
             string date = TextCleaner.CleanText(rawDate);
-            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date);
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse date to DateTime Object
             string time = TextCleaner.CleanText(rawTime);
             string price = TextCleaner.CleanText(rawPrice);
             

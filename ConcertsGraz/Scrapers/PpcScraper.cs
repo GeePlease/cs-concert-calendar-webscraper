@@ -31,63 +31,53 @@ public class PpcScraper : IScraper
         // 2 Filter relevant event (concert) elements via Loop through concerts
         foreach (var concert in eventElementNodes)
         {
-            // 2.1.1 all info except price (accessible after extra click)
-            string title = concert.SelectSingleNode(titleXPath)?.InnerText.Trim().ToUpper() ?? "";
-            if (string.IsNullOrWhiteSpace(title)) {continue;} // skip empty nodes
-            
-            string link = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
-            string venue = "PPC Graz";
-            string rawDate = concert.SelectSingleNode(dateXPath)?.InnerText.Trim() ?? "";
-            string time = concert.SelectSingleNode(timeXPath)?.InnerText.Trim() ?? "";
-            string description = concert.SelectSingleNode(descriptionXPath)?.InnerHtml.Trim() ?? "";
-            string price = "-";
+            // 2.1.1 Get raw data (except price - on other site)
+            string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
+            string rawLink = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
+            string rawVenue = "PPC Graz";
+            string? rawDate = concert.SelectSingleNode(dateXPath)?.InnerText;
+            string? rawTime = concert.SelectSingleNode(timeXPath)?.InnerText;
+            string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml;
+            string? rawPrice = "-";
             
             // 2.1.2 load details page to fetch price 
-            if (!string.IsNullOrEmpty(link))
+            if (!string.IsNullOrEmpty(rawLink))
             {
                 var detailWeb = new HtmlWeb();
-                var detailDoc = detailWeb.Load(link); // load details page url, contains price info
-  
+                var detailDoc = detailWeb.Load(rawLink);
                 var priceNode = detailDoc.DocumentNode.SelectSingleNode(detailsXPath);
                 if (priceNode != null)
                 {
-                    price = priceNode.InnerText.Trim();
+                    rawPrice = priceNode.InnerText;
                 }
             }
 
-            // 2.2 clean variables (No Whitespace, Deentizie = HTML sonderzeichen zurückübersetzen)
-            title = Regex.Replace(title, @"\s+", " ").Trim();
-            title = HtmlEntity.DeEntitize(title);
+            // 2.2 clean variables with TextCleaner
+            // 2.2.1 all variables except description
+            string title = TextCleaner.CleanText(rawTitle).ToUpper();
+            if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
+            string venue = TextCleaner.CleanText(rawVenue);
 
-            link = Regex.Replace(link, @"\s+", "").Trim();
+            // PPC special case: remove "@ 19:00" from date
+            string date = TextCleaner.CleanText(rawDate);
+            date = Regex.Replace(date, @"\s*@.*$", "").Trim();
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date);
 
-            venue = Regex.Replace(venue, @"\s+", " ").Trim();
-            venue = HtmlEntity.DeEntitize(venue);
-
-            rawDate = Regex.Replace(rawDate, @"\s*@.*$", "").Trim(); // remove "@ 19:00" from date
-            rawDate = Regex.Replace(rawDate, @"\s+", " ").Trim();
-            rawDate = HtmlEntity.DeEntitize(rawDate);
-            DateTime? parsedDate = DateTimeParser.ParseToDateTime(rawDate);
-
-            time = Regex.Replace(time, @"\s+", " ").Trim();
-            time = HtmlEntity.DeEntitize(time);
-
-            price = Regex.Replace(price, @"\s+", " ").Trim();
-            price = HtmlEntity.DeEntitize(price);
-
-            description = Regex.Replace(description, @"</p>|<br\s*/?>", " ", RegexOptions.IgnoreCase); // remove HTML tag chars
-            description = Regex.Replace(description, @"<script\b[^<]*(?:(?!<\/script>)<script\b[^<]*)*<\/script>", "", RegexOptions.IgnoreCase); // remove JavaScript-Code
-            description = Regex.Replace(description, @"window\.\w+[^}]+\}\)", "", RegexOptions.IgnoreCase); // Falls Skript-Tags fehlen
-
-            var tempNode = HtmlNode.CreateNode(description);
-            if (tempNode != null) { description = tempNode.InnerText; } 
-            else { description = ""; }
-
-            description = HtmlEntity.DeEntitize(description); //html sonderzeichen zurückübersetzen
-            description = Regex.Replace(description, @"[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]", " "); // Emojis weg
-            description = Regex.Replace(description, @"https?://[^\s]+", "").Trim(); // URLs weg
-            description = Regex.Replace(description, @"\s*\[\s*\.{1,3}\s*\]\s*$", "..").Trim(); // replace WordPress-Brackets  [...] or [.] with "..";
-            description = Regex.Replace(description, @"\s+", " ").Trim(); //remove empty space
+            string time = TextCleaner.CleanText(rawTime);
+            string price = TextCleaner.CleanText(rawPrice);
+            
+            // PPC special additional logic: remove whitespace in link urls
+            string link = Regex.Replace(rawLink, @"\s+", "").Trim();
+            
+            // 2.2.2 clean description
+            // PPC special additional logic: remove JavaScript lefto overs before, remote whitespace in urls
+            if (!string.IsNullOrWhiteSpace(rawDescription))
+            {
+                rawDescription = Regex.Replace(rawDescription, @"<script\b[^<]*(?:(?!<\/script>)<script\b[^<]*)*<\/script>", "", RegexOptions.IgnoreCase);
+                rawDescription = Regex.Replace(rawDescription, @"window\.\w+[^}]+\}\)", "", RegexOptions.IgnoreCase);
+            }
+            // clean description with description cleaner
+            string description = TextCleaner.CleanDescription(rawDescription);
 
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert() 
