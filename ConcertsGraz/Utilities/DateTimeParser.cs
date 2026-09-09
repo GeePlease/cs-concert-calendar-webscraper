@@ -25,7 +25,11 @@ public class DateTimeParser
         cleanDate = Regex.Replace(cleanDate, @"\bMaerz\b", "März", RegexOptions.IgnoreCase);
         
         // 2 weekdays and seperation chars (z. B. "Samstag, ", "Fr, ", "Fri | ")
-        cleanDate = Regex.Replace(cleanDate, @"^[A-Za-z]{2,9}[\.,\s\|]+", "", RegexOptions.IgnoreCase).Trim();
+        // 2.1 remove weekday chars in german and englisch
+        cleanDate = Regex.Replace(cleanDate, @"^(?:[A-Za-z]{2,9}[\.,\s\|-]+)+", "", RegexOptions.IgnoreCase).Trim();
+
+        // 2.2 Extract first date from ranges (z. B. "03. - 04.Okt." -> "03.Okt.")
+        cleanDate = Regex.Replace(cleanDate, @"(\d{1,2}\.)\s*-\s*\d{1,2}\.", "$1");
 
         // 3 remove unwanted words ("Uhr", "|")
         cleanDate = Regex.Replace(cleanDate, @"\bUhr\b|\|", " ", RegexOptions.IgnoreCase);
