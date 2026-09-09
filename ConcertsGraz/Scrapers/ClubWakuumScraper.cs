@@ -30,7 +30,7 @@ public class ClubWakuumScraper : IScraper
         // 1 Load HTML from target url
         var web = new HtmlWeb();
         var doc = web.Load(url);
-        var eventElementNodes = doc.DocumentNode.SelectNodes("//article[contains(@class, 'mec-event-article')]");
+        var eventElementNodes = doc.DocumentNode.SelectNodes("//article[contains(@class, 'mec-event-article')]"); // main node element
         
         // 2 Filter relevant event (concert) elements via Loop through concert elements and create concert objects
         foreach (var concert in eventElementNodes)
