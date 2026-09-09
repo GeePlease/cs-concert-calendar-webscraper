@@ -90,7 +90,4 @@ public class CafeWolfScraper : IScraper
     }
     
 
-
-
-
 }
