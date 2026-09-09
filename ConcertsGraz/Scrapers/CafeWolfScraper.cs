@@ -29,40 +29,35 @@ public class CafeWolfScraper : IScraper
         foreach (var concert in eventElementNodes)
         {
             // 2.1 get raw data (and trim or "cut")
-            string rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText.Trim()?? "";
-            if (string.IsNullOrWhiteSpace(rawTitle)) {continue;} // skip empty nodes
+            string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
+            string rawLink = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
+            string? rawDateTime = concert.SelectSingleNode(dateTimeXPath)?.InnerText; //contains both: date and time :/
+            string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml; // InnerHtml für HTML-Cleaning
+            string rawVenue = "Café Wolf";
+            string rawPrice = "-";
             
-            string link = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? ""; //get link in hidden div (behind "mehr lesen")
-            if (string.IsNullOrWhiteSpace(link)) { link = "-"; } // if no link in element on page, -
+            // 2.2 Clean variables with TextCleaner
+            // 2.2.1 Title, Venue & Link
+            string title = TextCleaner.CleanText(rawTitle);
+            title = Regex.Replace(title, @"&AMP;", "&", RegexOptions.IgnoreCase); // Cafe Wolf special: Fix uppercase &AMP;
+            title = title.ToUpper();
             
-            string description = concert.SelectSingleNode(descriptionXPath)?.InnerText.Trim() ?? "";
-            string rawDateTime = concert.SelectSingleNode(dateTimeXPath)?.InnerText.Trim().ToUpper() ?? ""; // get full date + time info
-            string venue = "Café Wolf";
-            string price = "-";
+            if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
+            
+            string venue = TextCleaner.CleanText(rawVenue);
+            string link = Regex.Replace(rawLink, @"\s+", "").Trim();
+            if (string.IsNullOrWhiteSpace(link)) { link = "-"; }
+            
+            // 2.2.2 Cafe Wolf special logic case: Extract date and time from single datetime string
+            string cleanedDateTime = TextCleaner.CleanText(rawDateTime);
+            string date = Regex.Match(cleanedDateTime, @"\d{2}\.\d{2}\.\d{4}").Value;
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date);
 
-            // 2.2 clean variables (No Whitespace, Deentizie = HTML sonderzeichen zurückübersetzen, extract detailed data)
-            string date = Regex.Match(rawDateTime, @"\d{2}\.\d{2}\.\d{4}").Value; // extract date with regex
-            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse to DateTime Object 
-            string time = Regex.Match(rawDateTime, @"\d{2}:\d{2}").Value; // extract time with regex
-            
-            string title = HtmlEntity.DeEntitize(rawTitle); // decodee HTML entities (like &AMP)
-            title = Regex.Replace(title, @"&AMP;", "&", RegexOptions.IgnoreCase); // Fallback, falls Großbuchstaben
-            
-            title = title.ToUpper(); // Title = uppercasea
-            title = Regex.Replace(title, @"\s+", " ").Trim(); // clean whitespace
-            
-            link = Regex.Replace(link, @"\s+", "").Trim(); // URL without whitespace
-            
-            description = Regex.Replace(description, @"</p>|<br\s*/?>", " ", RegexOptions.IgnoreCase);
-            var tempNode = HtmlNode.CreateNode(description);
-            if (tempNode != null) { description = tempNode.InnerText; } // if node exists, text only
-            else { description = ""; } //if empty, empty string
-            
-            description = HtmlEntity.DeEntitize(description); // deentizize (translate HTML characters back to normal like &amp)
-            description = Regex.Replace(description, @"[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]", " "); //remove emojis and weird chars
-            description = Regex.Replace(description, @"https?://[^\s]+", "").Trim(); // remove urls in descriptoin text
-            description = Regex.Replace(description, @"\s*\[([^\]]+)\]\s*$", "..").Trim(); //remove [] at end
-            description = Regex.Replace(description, @"\s+", " ").Trim(); // remove empty space
+            string time = Regex.Match(cleanedDateTime, @"\d{2}:\d{2}").Value;
+            string price = TextCleaner.CleanText(rawPrice);
+
+            // 2.2.3 Clean description with TextCleaner (description
+            string description = TextCleaner.CleanDescription(rawDescription);
             
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert()
