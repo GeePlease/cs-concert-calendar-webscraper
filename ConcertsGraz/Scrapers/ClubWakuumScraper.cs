@@ -35,45 +35,30 @@ public class ClubWakuumScraper : IScraper
         // 2 Filter relevant event (concert) elements via Loop through concert elements and create concert objects
         foreach (var concert in eventElementNodes)
         {
-            // 2.1 get raw data (and trim)
-            string title = concert.SelectSingleNode(titleXPath)?.InnerText.Trim().ToUpper() ?? "";
-            if (string.IsNullOrWhiteSpace(title)) {continue;} // skip empty nodes
-            string link = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
-            string venue = concert.SelectSingleNode(venueXPath)?.InnerText.Trim() ?? "";
-            string rawDate = concert.SelectSingleNode(dateXPath)?.InnerText.Trim() ?? "";
-            string time = concert.SelectSingleNode(timeXPath)?.InnerText.Trim() ?? "";
-            string description = concert.SelectSingleNode(descriptionXPath)?.InnerHtml.Trim() ?? "";
-            string price = concert.SelectSingleNode(priceXPath)?.InnerText.Trim() ?? "";
+            // 2.1 get raw data (and clean)
+            string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
+            string rawLink = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
+            string? rawVenue = concert.SelectSingleNode(venueXPath)?.InnerText;
+            string? rawDate = concert.SelectSingleNode(dateXPath)?.InnerText;
+            string? rawTime = concert.SelectSingleNode(timeXPath)?.InnerText;
+            string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml;
+            string? rawPrice = concert.SelectSingleNode(priceXPath)?.InnerText;
             
-            // 2.2 clean variables (No Whitespace, Deentizie = html sonderzeichen zurückübersetzen)
-            title = Regex.Replace(title, @"\s+", " ").Trim();
-            title = HtmlEntity.DeEntitize(title).ToUpper(); // Erst deentitizen, dann uppercase
+            // 2.2 clean variables with TextCleaner
+            // 2.2.1 all variables except description
+            string title = TextCleaner.CleanText(rawTitle).ToUpper();
+            if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
+            string venue = TextCleaner.CleanText(rawVenue);
+            string date = TextCleaner.CleanText(rawDate);
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date);
+            string time = TextCleaner.CleanText(rawTime);
+            string price = TextCleaner.CleanText(rawPrice);
             
-            link = Regex.Replace(link, @"\s+", "").Trim(); // URL without whitespace
-
-            venue = Regex.Replace(venue, @"\s+", " ").Trim();
-            venue = HtmlEntity.DeEntitize(venue);
-
-            rawDate = Regex.Replace(rawDate, @"\s+", " ").Trim();
-            rawDate = HtmlEntity.DeEntitize(rawDate);
-            DateTime? parsedDate = DateTimeParser.ParseToDateTime(rawDate);
-
-            time = Regex.Replace(time, @"\s+", " ").Trim();
-            time = HtmlEntity.DeEntitize(time);
-            
-            price = Regex.Replace(price, @"\s+", " ").Trim(); // Neu!
-            price = HtmlEntity.DeEntitize(price);
-            
-            description = Regex.Replace(description, @"</p>|<br\s*/?>", " ", RegexOptions.IgnoreCase);
-            var tempNode = HtmlNode.CreateNode(description);
-            if (tempNode != null) { description = tempNode.InnerText; } // if node exists, text only
-            else { description = ""; } //if empty, empty string
-            
-            description = HtmlEntity.DeEntitize(description); // deentizize (translate HTML characters back to normal like &amp)
-            description = Regex.Replace(description, @"[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]", " "); //remove emojis and weird chars
-            description = Regex.Replace(description, @"https?://[^\s]+", "").Trim(); // remove urls in descriptoin text
-            description = Regex.Replace(description, @"\s*\[([^\]]+)\]\s*$", "..").Trim(); //remove [] at end
-            description = Regex.Replace(description, @"\s+", " ").Trim(); // remove empty space
+            // 2.2.2 description
+            string description = TextCleaner.CleanDescription(rawDescription);
+    
+            // 2.2.3 special local step: clean URLs (remove whitespace
+            string link = Regex.Replace(rawLink, @"\s+", "").Trim();
          
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert()
