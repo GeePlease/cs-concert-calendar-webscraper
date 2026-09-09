@@ -60,6 +60,13 @@ public class DateTimeParser
             DateTime.TryParse(cleanDate, CultureEn, DateTimeStyles.None, out parsedDate) ||
             DateTime.TryParse(cleanDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
         {
+            // if no year in string + date in past - add next year as year in date
+            bool containsExplicitYear = Regex.IsMatch(cleanDate, @"\b20\d{2}\b");
+            if (!containsExplicitYear && parsedDate.Date < DateTime.Now.Date)
+            {
+                parsedDate = parsedDate.AddYears(1);
+            }
+            
             // insert Time in DateTime Object if possible
             if (extractedTime.HasValue)
             {
