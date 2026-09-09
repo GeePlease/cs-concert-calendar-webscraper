@@ -43,6 +43,7 @@ public class CafeWolfScraper : IScraper
             title = title.ToUpper();
             
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
+            if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
             
             string venue = TextCleaner.CleanText(rawVenue);
             string link = Regex.Replace(rawLink, @"\s+", "").Trim();

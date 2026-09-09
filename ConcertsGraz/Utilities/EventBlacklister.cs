@@ -1,9 +1,8 @@
 ﻿namespace ConcertsGraz.Utilities;
-
 public class EventBlacklister
 {
     // ATTRIBUTES
-    private readonly string[] _ignoredKeywords =
+    private static readonly string[] _ignoredKeywords =
     {
         "ausstellung",
         "basar",
@@ -39,7 +38,7 @@ public class EventBlacklister
     // CONSTRUCTOR
     
     // METHODS
-    public bool isBlacklisted(string eventTitle)
+    public static bool isBlacklisted(string eventTitle)
     {
         if (string.IsNullOrWhiteSpace(eventTitle)) { return true; } //ignore if no title
 

@@ -56,6 +56,7 @@ public class PpcScraper : IScraper
             // 2.2.1 all variables except description
             string title = TextCleaner.CleanText(rawTitle).ToUpper();
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
+            if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
             string venue = TextCleaner.CleanText(rawVenue);
 
             // PPC special case: remove "@ 19:00" from date

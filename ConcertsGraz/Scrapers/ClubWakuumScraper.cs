@@ -44,10 +44,11 @@ public class ClubWakuumScraper : IScraper
             string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml;
             string? rawPrice = concert.SelectSingleNode(priceXPath)?.InnerText;
             
-            // 2.2 clean variables with TextCleaner
+            // 2.2 clean variables with TextCleaner + EventBlacklister
             // 2.2.1 all variables except description
             string title = TextCleaner.CleanText(rawTitle).ToUpper();
-            if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
+            if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes (title is empty)
+            if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
             string venue = TextCleaner.CleanText(rawVenue);
             string date = TextCleaner.CleanText(rawDate);
             DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse date to DateTime Object
