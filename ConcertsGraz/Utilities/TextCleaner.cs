@@ -64,8 +64,8 @@ public static class TextCleaner
         return cleanedString;
     }
     
-    // TITLE CLEANER //TODO: write!
-    public static string CleanTitle(string? rawMultiString)
+    // VENUE CLEANER //TODO: write!
+    public static string CleanVenue(string? rawMultiString)
     {
         if (string.IsNullOrWhiteSpace(rawMultiString)) {return"";}
         string cleanedString = "";
