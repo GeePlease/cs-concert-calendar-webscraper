@@ -14,7 +14,7 @@ public static class TextCleaner
     // CONSTRUCTOR
     // METHODS
     
-    // 1 global cleaner (title, venue, date, time, price) - nullable string
+    // 1 GLOBAL CLEANER (title, venue, date, time, price) - nullable string
     public static string CleanText(string? rawSingleString)
     {
         // 1.1 null/whitespace check
@@ -32,7 +32,7 @@ public static class TextCleaner
 
     
     
-    // 2 description cleaner (description variable) - nullable string
+    // 2 DESCRIPTION CLEANER (description variable) - nullable string
     public static string CleanDescription(string? rawMultiString)
     { 
         // 2.0 null/whitespace check
@@ -64,8 +64,16 @@ public static class TextCleaner
         return cleanedString;
     }
     
+    // TITLE CLEANER //TODO: write!
+    public static string CleanTitle(string? rawMultiString)
+    {
+        if (string.IsNullOrWhiteSpace(rawMultiString)) {return"";}
+        string cleanedString = "";
+        return cleanedString;
+    }
     
-    /*// 3 - scraper-specialized logic IN SCRAPERS not in TextCleaner!:
+    
+    /*// 4 - scraper-specialized logic IN SCRAPERS not in TextCleaner!:
      Cafe Wolf	Regex-Extraktion von Datum/Zeit aus rawDateTime, fixes &AMP;-Workaround
      PPC	Entfernen von @ 19:00 aus Datumsstring, Strippen von <script>-Blocken
      Alle	.ToUpper() für Titel, URL-spezifisches Whitespace-Löschen (\s+ -> "")

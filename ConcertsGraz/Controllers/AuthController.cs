@@ -8,7 +8,8 @@ namespace ConcertsGraz.Controllers;
 // CLASS: AuthController - API endpoints for the frontend to handle user
 // authentication, login, registration, and session management.
 // ======================================================================
-
+[ApiController]
+[Route("api/auth")]
 public class AuthController
 {
     
