@@ -23,6 +23,7 @@ public class AuthService
     }
     
     // METHODS
+    // authentification
     public async Task<User?> AuthenticateAsync(string username, string password)
     {
         // check if user exists in db (by username)
@@ -31,12 +32,14 @@ public class AuthService
             .FirstOrDefaultAsync();
         
         // null check
-        if (user != null) { return user; }
+        if (user == null) { return null; }
         
-        //pw verification
-     
+        //pw verification (pw == pw hash in db?)
+        bool passwordIsValid = _pwHasher.VerifyPassword(user.PasswordHash, password);
+        if (!passwordIsValid) { return null; } //wrong pw
+
+        return user; //correct pw
         
-        return null;
     }
 
     // END CLASS
