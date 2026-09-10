@@ -1,13 +1,16 @@
 ﻿using ConcertsGraz.Models;
 using ConcertsGraz.Services;
 using Microsoft.AspNetCore.Mvc;
-
 namespace ConcertsGraz.Controllers;
 
 // ==================================================================================
-// CLASS: ConcertController - routing + calling CRUD methods from ConcertService
+// CLASS: ConcertController -API endpoint for the frontend to fetch
+// and filter concert listings from MongoDB.
 // ==================================================================================
-public class ConcertController : Controller
+
+[ApiController]
+[Route("api/[controller]")]
+public class ConcertController : ControllerBase
 {
     // ATTRIBUTES
     private readonly ConcertService _concertService;
@@ -19,6 +22,13 @@ public class ConcertController : Controller
     }
     
     // METHODS
+    // GET: api/concerts
+    [HttpGet]
+    public async Task<ActionResult<List<Concert>>> GetAll()
+    {
+        var concerts = await _concertService.GetAllConcertsAsync();
+        return Ok(concerts);
+    }
     
  
     

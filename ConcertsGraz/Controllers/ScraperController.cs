@@ -2,7 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 namespace ConcertsGraz.Controllers;
 
-public class ScraperController : Controller
+// ==================================================================================
+// CLASS: ScraperController - API endpoint for scraping processes
+// and save new concert data to MongoDB.
+// ==================================================================================
+
+public class ScraperController : ControllerBase
 {
     // ATTRIBUTES
     private readonly ScraperService _scraperService;

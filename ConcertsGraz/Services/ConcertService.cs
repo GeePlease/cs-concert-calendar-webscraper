@@ -34,24 +34,24 @@ public class ConcertService
         await _concertsCollection.InsertOneAsync(newConcert);
 
     // READ (all): read all concert data
-    public async Task<List<Concert>> GetAsync() =>
+    public async Task<List<Concert>> GetAllAsync() =>
         await _concertsCollection.Find(_ => true).ToListAsync();
 
     // READ (single): get single concert
-    public async Task<Concert?> GetAsync(string id) =>
+    public async Task<Concert?> GetOneAsync(string id) =>
         await _concertsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
     // UPDATE: update (single) concert 
-    public async Task UpdateAsync(string id, Concert updatedConcert) =>
+    public async Task UpdateOneAsync(string id, Concert updatedConcert) =>
         await _concertsCollection.ReplaceOneAsync(x => x.Id == id, updatedConcert);
 
     // DELETE: delete (single) concert
-    public async Task RemoveAsync(string id) =>
+    public async Task RemoveOneAsync(string id) =>
         await _concertsCollection.DeleteOneAsync(x => x.Id == id);
     
     
     
-    // SAVE: create new concert for each scraped concert // TODO: write save logic to avoid double entries, update rules, edelete rules
+    // SAVE: create new concert for each scraped concert 
     public async Task SaveScrapedConcertsAsync(List<Concert> scrapedConcerts)
     {
         // check if scrape results not null or 0
