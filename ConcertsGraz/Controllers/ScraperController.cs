@@ -7,6 +7,8 @@ namespace ConcertsGraz.Controllers;
 // and save new concert data to MongoDB.
 // ==================================================================================
 
+[ApiController]
+[Route("api/scraper")]
 public class ScraperController : ControllerBase
 {
     // ATTRIBUTES

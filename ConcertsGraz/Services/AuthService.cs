@@ -24,7 +24,7 @@ public class AuthService
     
     // METHODS
     
-    // AUTHENTIFICATIN + login logic
+    // AUTHENTIFICATION + login logic
     public async Task<User?> AuthenticateAsync(string username, string password)
     {
         // check if user exists in db (by username)
@@ -50,7 +50,7 @@ public class AuthService
         bool userAlreadyExists = await UserAlreadyExists(username);
         if (userAlreadyExists) { return null; }
         
-        //validate //TODO: write
+        //validate //TODO: write Validator
         
         //if valid create new user
         User newUser = new User
@@ -60,7 +60,7 @@ public class AuthService
             PasswordHash = _pwHasher.HashPassword(password)
         };
         
-        // return new lister for storing in db
+        // return new user for storing in db
         return newUser;
 
     }
