@@ -91,6 +91,47 @@ body {
   color: var(--text-main);
 }
 
+/* User-Menü im Header */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-menu.hidden {
+  display: none !important;
+}
+
+.btn-profile, .btn-logout {
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-profile {
+  background: #2a2a3c;
+  color: #fff;
+}
+
+.btn-profile:hover {
+  background: #3b3b54;
+}
+
+.btn-logout {
+  background: transparent;
+  color: var(--text-muted, #8e8e93);
+  border: 1px solid #3a3a4c;
+}
+
+.btn-logout:hover {
+  color: #ff4d88;
+  border-color: #ff4d88;
+}
+
+
 /* Sticky Filter Bar */
 .filter-bar {
   position: sticky;
@@ -240,4 +281,129 @@ body {
   border-color: var(--primary);
   color: var(--primary);
   background-color: rgba(251, 37, 118, 0.1);
+}
+
+/* Dark/Mobile-Optimiertes Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-overlay.hidden,
+.auth-form.hidden {
+  display: none !important;
+}
+
+.modal-card {
+  background: #1e1e24;
+  color: #fff;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 1px solid #333;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.auth-tab {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.1rem;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.auth-tab.active {
+  color: #fff;
+  border-bottom: 2px solid #ff0055;
+  font-weight: bold;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #121212;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 0.8rem;
+  background: #ff0055;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+/* Feedback-Meldungen im Auth-Modal */
+.auth-message {
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.auth-message.error {
+  background: rgba(255, 0, 85, 0.15);
+  border: 1px solid #ff0055;
+  color: #ff4d88;
+}
+
+.auth-message.success {
+  background: rgba(0, 200, 83, 0.15);
+  border: 1px solid #00c853;
+  color: #69f0ae;
+}
+
+.auth-message.hidden {
+  display: none !important;
 }

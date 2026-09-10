@@ -64,7 +64,7 @@ public class ConcertService
             var exists = await _concertsCollection.Find(c =>
                 c.Title == concert.Title &&
                 c.Venue == concert.Venue &&
-                c.Description == concert.Description).AnyAsync();
+                c.Date == concert.Date).AnyAsync(); //TODO: Change to Date
             
             if (exists) {continue;} // skip scraped concert if already exists
             

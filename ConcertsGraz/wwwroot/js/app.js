@@ -4,7 +4,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     // 1. DOM-Elemente greifen
     const grid = document.getElementById("concert-grid");
-    const filterLocation = document.getElementById("filter-location");
+    const filterLocation = document.getElementById("filter-venue");
     const filterGenre = document.getElementById("filter-genre");
     const filterDate = document.getElementById("filter-date");
     const filterPrice = document.getElementById("filter-price");
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="card-content">
                     <span class="card-genre">${escapeHtml(c.genre || 'Sonstiges')}</span>
                     <h3 class="card-title">${escapeHtml(c.title || c.artist)}</h3>
-                    <p class="card-location">📍 ${escapeHtml(c.location)}</p>
+                    <p class="card-location">📍 ${escapeHtml(c.venue)}</p>
                     <p class="card-price">🎟️ ${formatPrice(c.price)}</p>
                 </div>
                 <div class="card-footer">
@@ -67,6 +67,133 @@ document.addEventListener("DOMContentLoaded", () => {
 
         renderConcerts(filtered);
     }
+
+    // 5. Modal & Tab Steuerung
+    const modal = document.getElementById("auth-modal");
+    const btnOpenLogin = document.querySelector(".btn-login");
+    const btnCloseModal = document.getElementById("btn-close-modal");
+    const tabLogin = document.getElementById("tab-login");
+    const tabRegister = document.getElementById("tab-register");
+    const formLogin = document.getElementById("form-login");
+    const formRegister = document.getElementById("form-register");
+    const authMessage = document.getElementById("auth-message");
+
+    // Hilfsfunktionen für Feedback-Meldungen im Modal
+    function showAuthMessage(text, type = "error") {
+        if (!authMessage) return;
+        authMessage.textContent = text;
+        authMessage.className = `auth-message ${type}`;
+    }
+
+    function clearAuthMessage() {
+        if (!authMessage) return;
+        authMessage.textContent = "";
+        authMessage.className = "auth-message hidden";
+    }
+
+    // Modal öffnen & schließen
+    btnOpenLogin?.addEventListener("click", () => {
+        clearAuthMessage();
+        modal?.classList.remove("hidden");
+    });
+
+    btnCloseModal?.addEventListener("click", () => {
+        clearAuthMessage();
+        modal?.classList.add("hidden");
+    });
+
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            clearAuthMessage();
+            modal.classList.add("hidden");
+        }
+    });
+
+    // Tab-Umschaltung
+    tabLogin?.addEventListener("click", () => {
+        clearAuthMessage();
+        tabLogin.classList.add("active");
+        tabRegister.classList.remove("active");
+        formLogin.classList.remove("hidden");
+        formRegister.classList.add("hidden");
+    });
+
+    tabRegister?.addEventListener("click", () => {
+        clearAuthMessage();
+        tabRegister.classList.add("active");
+        tabLogin.classList.remove("active");
+        formRegister.classList.remove("hidden");
+        formLogin.classList.add("hidden");
+    });
+
+    // 6. Authentifizierung: API Absenden
+
+    // Registrierung absenden
+    formRegister?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearAuthMessage();
+
+        const password = document.getElementById("reg-pass").value;
+        const passwordConfirm = document.getElementById("reg-pass-confirm").value;
+
+        // Frontend-Check: Passwörter vergleichen
+        if (password !== passwordConfirm) {
+            showAuthMessage("Die eingegebenen Passwörter stimmen nicht überein!", "error");
+            return;
+        }
+
+        const body = {
+            username: document.getElementById("reg-user").value,
+            email: document.getElementById("reg-email").value,
+            password: password
+        };
+
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Fehler bei Registrierung");
+
+            showAuthMessage("Registrierung erfolgreich! Bitte melde dich an.", "success");
+            setTimeout(() => {
+                tabLogin.click();
+            }, 1200);
+        } catch (err) {
+            showAuthMessage(err.message, "error");
+        }
+    });
+
+    // Login absenden
+    formLogin?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearAuthMessage();
+
+        const body = {
+            username: document.getElementById("login-user").value,
+            password: document.getElementById("login-pass").value
+        };
+
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Login fehlgeschlagen");
+
+            // User im Speicher ablegen & Button im Header anpassen
+            localStorage.setItem("user", JSON.stringify(data));
+            btnOpenLogin.textContent = `👤 ${data.username}`;
+            clearAuthMessage();
+            modal.classList.add("hidden");
+        } catch (err) {
+            showAuthMessage(err.message, "error");
+        }
+    });
 
     // Hilfsfunktionen
     function formatDate(dateStr) {

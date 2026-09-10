@@ -12,15 +12,24 @@
 </head>
 <body>
 
-<!-- Header (scrollt  mit) -->
+<!-- Header (scrollt mit) -->
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
             <a href="#">Concerts Graz</a>
         </div>
         <nav class="header-nav">
+            <a href="#concerts" class="nav-link" id="nav-concerts">Konzerte</a>
             <a href="#calendar" class="nav-link" id="nav-calendar">Kalender</a>
-            <button class="btn-login" type="button">Login</button>
+
+            <!-- Zustand 1: Nicht angemeldet -->
+            <button id="btn-open-login" class="btn-login" type="button">Anmelden</button>
+
+            <!-- Zustand 2: Angemeldet (wird per JS eingeblendet) -->
+            <div id="user-menu" class="user-menu hidden">
+                <button id="btn-open-profile" class="btn-profile" type="button">👤 Mein Profil</button>
+                <button id="btn-logout" class="btn-logout" type="button">Abmelden</button>
+            </div>
         </nav>
     </div>
 </header>
@@ -29,8 +38,8 @@
 <section class="filter-bar">
     <div class="filter-container">
         <div class="filter-group">
-            <label for="filter-location">Location</label>
-            <select id="filter-location">
+            <label for="filter-venue">Location</label>
+            <select id="filter-venue">
                 <option value="all">Alle Locations ▾</option>
                 <option value="ppc">PPC Graz</option>
                 <option value="wakuum">club wakuum Graz</option>
@@ -42,11 +51,11 @@
             <label for="filter-genre">Genre</label>
             <select id="filter-genre">
                 <option value="all">Alle Genres ▾</option>
-                <option value="metal">Metal & Hardcore</option>
-                <option value="rock">Rock, Punk & Indie</option>
-                <option value="electronic">Elektronisch & Synth</option>
-                <option value="jazz">Jazz, Funk & Akustisch</option>
+                <option value="metal">Metal</option>
+                <option value="rock">Rock</option>
+                <option value="electronic">Elektronisch</option>
                 <option value="hiphop">Hip-Hop & Rap</option>
+                <option value="pop">Pop</option>
                 <option value="other">Sonstiges</option>
             </select>
         </div>
@@ -93,6 +102,59 @@
     </div>
 </main>
 
+
+
+<!-- Authentifizierung: Login/ Registrieren Overlay -->
+<div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <button id="btn-close-modal" class="modal-close" type="button" aria-label="Schließen">&times;</button>
+
+        <!-- Platzhalter für Fehler- und Erfolgsmeldungen -->
+        <div id="auth-message" class="auth-message hidden"></div>
+
+        <div class="auth-tabs">
+            <button id="tab-login" class="auth-tab active" type="button">Anmelden</button>
+            <button id="tab-register" class="auth-tab" type="button">Registrieren</button>
+        </div>
+
+        <!-- Login-Formular -->
+        <form id="form-login" class="auth-form">
+            <div class="form-group">
+                <label for="login-user">E-Mail oder Benutzername</label>
+                <input type="text" id="login-user" required placeholder="deine@email.at">
+            </div>
+            <div class="form-group">
+                <label for="login-pass">Passwort</label>
+                <input type="password" id="login-pass" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-submit">Anmelden</button>
+        </form>
+
+        <!-- Registrierungs-Formular -->
+        <form id="form-register" class="auth-form hidden">
+            <div class="form-group">
+                <label for="reg-user">Benutzername</label>
+                <input type="text" id="reg-user" required placeholder="KonzertFan99">
+            </div>
+            <div class="form-group">
+                <label for="reg-email">E-Mail</label>
+                <input type="email" id="reg-email" required placeholder="deine@email.at">
+            </div>
+            <div class="form-group">
+                <label for="reg-pass">Passwort</label>
+                <input type="password" id="reg-pass" required placeholder="••••••••">
+            </div>
+            <!-- Passwort wiederholen -->
+            <div class="form-group">
+                <label for="reg-pass-confirm">Passwort bestätigen</label>
+                <input type="password" id="reg-pass-confirm" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-submit">Konto erstellen</button>
+        </form>
+    </div>
+</div>
+
 <script src="js/app.js"></script>
+
 </body>
 </html>
