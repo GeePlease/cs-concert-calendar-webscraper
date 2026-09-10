@@ -1,10 +1,98 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concerts Graz</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- 1. CSS-Datei einbinden -->
+    <link rel="stylesheet" href="css/style.css">
+    
 </head>
 <body>
 
+<!-- Header (scrollt  mit) -->
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="#">Concerts Graz</a>
+        </div>
+        <nav class="header-nav">
+            <a href="#calendar" class="nav-link" id="nav-calendar">Kalender</a>
+            <button class="btn-login" type="button">Login</button>
+        </nav>
+    </div>
+</header>
+
+<!-- Filterleiste (Fixiert / Sticky beim Scrollen) -->
+<section class="filter-bar">
+    <div class="filter-container">
+        <div class="filter-group">
+            <label for="filter-location">Location</label>
+            <select id="filter-location">
+                <option value="all">Alle Locations ▾</option>
+                <option value="ppc">PPC Graz</option>
+                <option value="wakuum">club wakuum Graz</option>
+                <option value="cafewolf">Café Wolf</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-genre">Genre</label>
+            <select id="filter-genre">
+                <option value="all">Alle Genres ▾</option>
+                <option value="metal">Metal & Hardcore</option>
+                <option value="rock">Rock, Punk & Indie</option>
+                <option value="electronic">Elektronisch & Synth</option>
+                <option value="jazz">Jazz, Funk & Akustisch</option>
+                <option value="hiphop">Hip-Hop & Rap</option>
+                <option value="other">Sonstiges</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-date">Datum</label>
+            <select id="filter-date">
+                <option value="all">Alle Termine ▾</option>
+                <option value="today">Heute</option>
+                <option value="weekend">Dieses Wochenende</option>
+                <option value="month">Diesen Monat</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-price">Preis</label>
+            <select id="filter-price">
+                <option value="all">Alle Preise ▾</option>
+                <option value="free">Gratis / Pay As You Wish</option>
+                <option value="under15">Unter 15 €</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<!-- Hauptbereich: Konzert-Grid -->
+<main class="content-wrapper">
+    <div id="concert-grid" class="concert-grid">
+
+        <!-- Beispiel-Karte (wird später per app.js dynamisch aus der API geladen) -->
+        <article class="concert-card">
+            <div class="card-badge">12. SEP</div>
+            <div class="card-content">
+                <span class="card-genre">Rock, Punk & Indie</span>
+                <h3 class="card-title">The Burning Flags - Fast Love</h3>
+                <p class="card-location">📍 club wakuum Graz</p>
+                <p class="card-price">🎟️ Pay As You Wish</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn-bookmark" type="button">♡ Merken</button>
+            </div>
+        </article>
+
+    </div>
+</main>
+
+<script src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,241 @@
+:root {
+  /* Theme Palette */
+  --bg-main: #0B0914;
+  --bg-surface: #161226;
+  --bg-surface-hover: #241D3D;
+
+  --primary: #FB2576;
+  --primary-hover: #FF4D94;
+  --accent-purple: #3F0071;
+
+  --text-main: #F4F3F8;
+  --text-muted: #A39DB5;
+
+  --border-subtle: #2D254B;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --transition: all 0.2s ease-in-out;
+}
+
+/* Reset & Base Layout */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* Header (scrollt normal mit) */
+.main-header {
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 1.25rem 2rem;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo a {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+.btn-login {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-login:hover {
+  background-color: var(--primary);
+  color: var(--text-main);
+}
+
+/* Sticky Filter Bar */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(11, 9, 20, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 1rem 2rem;
+}
+
+.filter-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 180px;
+}
+
+.filter-group label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.filter-group select {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filter-group select:hover,
+.filter-group select:focus {
+  border-color: var(--primary);
+  background-color: var(--bg-surface-hover);
+}
+
+/* Main Grid Layout */
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.concert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Konzert-Karten */
+.concert-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--transition);
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.concert-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  background-color: var(--bg-surface-hover);
+}
+
+.card-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: var(--primary);
+  color: var(--text-main);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-genre {
+  font-size: 0.75rem;
+  color: var(--primary-hover);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  padding-right: 4.5rem; /* Platz für das Datum-Badge */
+}
+
+.card-location,
+.card-price {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.card-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.8rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-bookmark {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-bookmark:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: rgba(251, 37, 118, 0.1);
+}
