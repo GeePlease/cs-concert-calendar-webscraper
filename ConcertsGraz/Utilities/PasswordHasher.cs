@@ -18,7 +18,17 @@ public class PasswordHasher
         // user hasher
         return _passwordHasher.HashPassword(null, password);
     }
-    
-    
+     
+    // pw verification // 
+    public bool VerifyPassword(string hashedPassword, string providedPassword)
+    {
+        //Verify pw hash, return = PasswordVerificationResult Enum (0 = failed, 1 = success, 2 = success but old hash)
+        var result = _passwordHasher.VerifyHashedPassword(null, hashedPassword, providedPassword);
+
+        if (result != 0) return true; 
+        return false;
+    }
+
+
 // END CLASS
 }

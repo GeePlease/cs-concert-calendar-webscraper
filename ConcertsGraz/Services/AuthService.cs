@@ -30,8 +30,12 @@ public class AuthService
             .Find(u => u.Username == username)
             .FirstOrDefaultAsync();
         
-        // return exsiting user or null
+        // null check
         if (user != null) { return user; }
+        
+        //pw verification
+     
+        
         return null;
     }
 
