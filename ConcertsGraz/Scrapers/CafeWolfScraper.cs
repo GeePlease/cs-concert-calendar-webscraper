@@ -40,7 +40,6 @@ public class CafeWolfScraper : IScraper
             // 2.2.1 Title, Venue & Link
             string title = TextCleaner.CleanText(rawTitle);
             title = Regex.Replace(title, @"&AMP;", "&", RegexOptions.IgnoreCase); // Cafe Wolf special: Fix uppercase &AMP;
-            title = title.ToUpper();
             
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards

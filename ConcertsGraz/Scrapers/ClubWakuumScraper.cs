@@ -46,7 +46,7 @@ public class ClubWakuumScraper : IScraper
             
             // 2.2 clean variables with TextCleaner + EventBlacklister
             // 2.2.1 all variables except description
-            string title = TextCleaner.CleanText(rawTitle).ToUpper();
+            string title = TextCleaner.CleanText(rawTitle);
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes (title is empty)
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
             string venue = TextCleaner.CleanText(rawVenue);
