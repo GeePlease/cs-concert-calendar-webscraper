@@ -2,11 +2,12 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using ConcertsGraz.Data;
+
 namespace ConcertsGraz.Services;
 
 // ==================================================================================
 // CLASS: ConcertService - responsible for managing concert data and handling
-// database persistence (CRUD operations) via the MongoDB client.
+// database persistence (CRUD operations, UPSERT) via the MongoDB client.
 // ==================================================================================
 
 public class ConcertService
@@ -50,12 +51,24 @@ public class ConcertService
     
     
     
-    // SAVE: create new concert for each scraped concert
+    // SAVE: create new concert for each scraped concert // TODO: write save logic to avoid double entries, update rules, edelete rules
     public async Task SaveScrapedConcertsAsync(List<Concert> scrapedConcerts)
     {
+        // check if scrape results not null or 0
+        if (scrapedConcerts == null || scrapedConcerts.Count == 0) { return;} 
+        
+        // logic for scraped concerts
         foreach (var concert in scrapedConcerts)
         {
-            // create for every scraped concert
+            // does concert already exist in db? - no double entries
+            var exists = await _concertsCollection.Find(c =>
+                c.Title == concert.Title &&
+                c.Venue == concert.Venue &&
+                c.Description == concert.Description).AnyAsync();
+            
+            if (exists) {continue;} // skip scraped concert if already exists
+            
+            // create new for every scraped concert (no doubles)
             await CreateAsync(concert);
         }
     }

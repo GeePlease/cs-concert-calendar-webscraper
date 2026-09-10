@@ -50,14 +50,6 @@ builder.Services.AddScoped<ConcertService>();
 builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<TestDataSeeder>();
 
-// Konkrete Scraper-Registrierung
-builder.Services.AddScoped<ClubWakuumScraper>();   
-builder.Services.AddScoped<PpcScraper>(); 
-builder.Services.AddScoped<CafeWolfScraper>();
-
-// Haupt-ScraperService
-builder.Services.AddScoped<ScraperService>();
-
 // ----------------------------------------------------------------------------------
 // SCRAPER-REGISTRIERUNG :
 // Wir registrieren jede Scraper-Klasse direkt. Dadurch weiß der DI-Container,
@@ -69,6 +61,10 @@ builder.Services.AddScoped<CafeWolfScraper>();
 
 // Der Haupt-ScraperService (verlangt im Konstruktor genau die 3 Scraper oben)
 builder.Services.AddScoped<ScraperService>();
+
+// register CORS (Cross Origin Resource Sharing) to allow browser access to c# api even if ports are different
+builder.Services.AddCors(o => o.AddDefaultPolicy(p => 
+    p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 // ----------------------------------------------------------------------------------
 // 3. PIPELINE SETUP & START
@@ -99,6 +95,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors();
 app.UseAuthorization();
 app.MapStaticAssets();
 

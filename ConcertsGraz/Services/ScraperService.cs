@@ -1,10 +1,11 @@
-﻿// ==================================================================================
+﻿using ConcertsGraz.Models;
+using ConcertsGraz.Scrapers;
+
+namespace ConcertsGraz.Services;
+
+// ==================================================================================
 // CLASS: ScraperService - runs all scrapers, collects and returns result 
 // ==================================================================================
-
-using ConcertsGraz.Models;
-using ConcertsGraz.Scrapers;
-namespace ConcertsGraz.Services;
 
 public class ScraperService
 {
