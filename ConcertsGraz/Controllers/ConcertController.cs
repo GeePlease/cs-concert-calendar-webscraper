@@ -22,12 +22,22 @@ public class ConcertController : ControllerBase
     }
     
     // METHODS
-    // GET: api/concerts
+    // GET: api/all concerts
     [HttpGet]
     public async Task<ActionResult<List<Concert>>> GetAll()
     {
-        var concerts = await _concertService.GetAllConcertsAsync();
+        var concerts = await _concertService.GetAllAsync();
         return Ok(concerts);
+    }
+    
+    //GET: api/ single concert
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Concert>> GetOneById(string id)
+    {
+        var concert = await _concertService.GetOneAsync(id);
+        if (concert == null) { return NotFound(); }
+        
+        return Ok(concert);
     }
     
  
