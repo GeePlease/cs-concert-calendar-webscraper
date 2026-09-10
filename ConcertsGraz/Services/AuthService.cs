@@ -19,7 +19,7 @@ public class AuthService
     {
         // 1. Einmalig beim Erstellen des Services die "Users"-Tabelle greifen
         _users = database.GetCollection<User>("Users");
-        _pwHasher = passwordHasher;
+        _pwHasher = passwordHasher; 
     }
     
     // METHODS
