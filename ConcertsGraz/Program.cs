@@ -1,7 +1,5 @@
 // ==================================================================================
 // CLASS: Program.cs
-// Zentrale Einstiegsdatei, die den Start, die Konfiguration und die Abhängigkeiten 
-// (Dependency Injection) einer modernen .NET-Anwendung steuert.
 // ==================================================================================
 using MongoDB.Driver;
 using ConcertsGraz.Data;
@@ -10,22 +8,17 @@ using ConcertsGraz.Scrapers;
 using ConcertsGraz.Utilities;
 using Microsoft.Extensions.Options;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // ----------------------------------------------------------------------------------
-// 1 Configuration + DB (MongoDB)
-// load config settings from appsettings.json, register MongoDB-Client.
+// 1. CONFIGURATION + DB (MongoDB)
 // ----------------------------------------------------------------------------------
-
 builder.Services.Configure<ConcertsGrazDatabaseSettings>(
     builder.Configuration.GetSection("ConcertsGrazDatabase"));
 
-// Single Mongo Client per app only
 var mongoConnection = builder.Configuration.GetConnectionString("MongoDB") ?? "mongodb://localhost:27017";
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnection));
 
-// IMongoDatabase für den DI-Container bereitstellen (wird vom Seeder benötigt)
 builder.Services.AddScoped<IMongoDatabase>(sp =>
 {
     var settings = sp.GetRequiredService<IOptions<ConcertsGrazDatabaseSettings>>().Value;
@@ -34,54 +27,49 @@ builder.Services.AddScoped<IMongoDatabase>(sp =>
 });
 
 // ----------------------------------------------------------------------------------
-// 2 DEPENDENCY INJECTION (DI) CONTAINER - SERVICE-REGISTRIERUNG
+// 2. DEPENDENCY INJECTION (DI) CONTAINER
 // ----------------------------------------------------------------------------------
-
-// Controllers: Registriert alle Controller (z.B. ScraperController, ConcertController),
-// damit sie auf HTTP-Anfragen reagieren können.
 builder.Services.AddControllers();
 
-// SWAGGER SERVICEREGISTRIERUNG (Hier hinzufügen):
+// HTTPS-Port explizit festlegen (löst die Redirection-Warnung)
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 7170; // Passe die Zahl an deinen HTTPS-Port an
+});
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 // Database Services & Utilities
 builder.Services.AddScoped<ConcertService>();
 builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<TestDataSeeder>();
 
-// ----------------------------------------------------------------------------------
-// SCRAPER-REGISTRIERUNG :
-// Wir registrieren jede Scraper-Klasse direkt. Dadurch weiß der DI-Container,
-// wie er diese beim Erstellen des 'ScraperService' erzeugen und übergeben muss
-// ----------------------------------------------------------------------------------
+// Scraper-Registrierung
 builder.Services.AddScoped<ClubWakuumScraper>();   
 builder.Services.AddScoped<PpcScraper>(); 
 builder.Services.AddScoped<CafeWolfScraper>();
-
-// Der Haupt-ScraperService (verlangt im Konstruktor genau die 3 Scraper oben)
 builder.Services.AddScoped<ScraperService>();
 
-// register CORS (Cross Origin Resource Sharing) to allow browser access to c# api even if ports are different
+// CORS Registrierung
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => 
     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 // ----------------------------------------------------------------------------------
 // 3. PIPELINE SETUP & START
-// Baut die Anwendung mit allen registrierten Services zusammen und definiert,
-// wie eingehende HTTP-Requests verarbeitet werden (Middleware Pipeline).
 // ----------------------------------------------------------------------------------
-
 var app = builder.Build();
 
-// TESTDATA AT START:
+// Testdaten beim Start
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<TestDataSeeder>();
     await seeder.SeedAllAsync();
 }
 
-// SWAGGER PIPELINE ACTIVATION :
+// Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -89,19 +77,21 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Concert/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+// Statische Dateien aus wwwroot bereitstellen (index.html, style.css, app.js)
+// WICHTIG: UseDefaultFiles MUSS vor UseStaticFiles stehen!
+app.UseDefaultFiles(); 
+app.UseStaticFiles();
+
 app.UseRouting();
 app.UseCors();
 app.UseAuthorization();
-app.MapStaticAssets();
 
-// Aktiviert das Mapping: Verknüpft eingehende URLs (z.B. POST /api/scraper/run) 
-// mit den passenden Controller-Methoden ([HttpPost("run")]).
+// REST-API Controller Endpunkte mappen
 app.MapControllers();
 
-// Startet die App und lauscht auf eingehende Requests.
 app.Run();

@@ -9,7 +9,7 @@ namespace ConcertsGraz.Controllers;
 // ==================================================================================
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/concerts")]
 public class ConcertController : ControllerBase
 {
     // ATTRIBUTES
