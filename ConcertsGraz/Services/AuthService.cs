@@ -14,18 +14,26 @@ public class AuthService
     private readonly IMongoCollection<User> _usersCollection;
     private readonly PasswordHasher _pwHasher;
     
-    // CONSTRUCTOR
+    // CONSTRUCTOR - DI
     public AuthService(IMongoDatabase database, PasswordHasher passwordHasher)
     {
-        // 1. Einmalig beim Erstellen des Services die "Users"-Tabelle greifen
-        _users = database.GetCollection<User>("Users");
+        // directly load collectection from db
+        _usersCollection = database.GetCollection<User>("Users");
         _pwHasher = passwordHasher; 
     }
     
     // METHODS
     public async Task<User?> AuthenticateAsync(string username, string password)
     {
+        // check if user exists in db (by username)
+        var user = await _usersCollection
+            .Find(u => u.Username == username)
+            .FirstOrDefaultAsync();
         
+        // return exsiting user or null
+        if (user != null) { return user; }
+        return null;
     }
 
+    // END CLASS
 }
