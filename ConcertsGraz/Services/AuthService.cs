@@ -23,7 +23,8 @@ public class AuthService
     }
     
     // METHODS
-    // authentification
+    
+    // AUTHENTIFICATIN + login logic
     public async Task<User?> AuthenticateAsync(string username, string password)
     {
         // check if user exists in db (by username)
@@ -40,6 +41,38 @@ public class AuthService
 
         return user; //correct pw
         
+    }
+    
+    // REGISTRATION logic
+    public async Task<User?> RegisterAsync(string username, string email, string password)
+    {
+        // check if user already exists
+        bool userAlreadyExists = await UserAlreadyExists(username);
+        if (userAlreadyExists) { return null; }
+        
+        //validate //TODO: write
+        
+        //if valid create new user
+        User newUser = new User
+        {
+            Username = username,
+            Email = email,
+            PasswordHash = _pwHasher.HashPassword(password)
+        };
+        
+        // return new lister for storing in db
+        return newUser;
+
+    }
+    
+    // HELPER METHOD: check if user already exists in database
+    public async Task<bool> UserAlreadyExists(string username)
+    {
+        var user = await _usersCollection
+            .Find(u => u.Username == username)
+            .FirstOrDefaultAsync();
+        
+        return user != null;
     }
 
     // END CLASS

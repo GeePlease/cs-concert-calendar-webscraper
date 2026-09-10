@@ -43,7 +43,6 @@ builder.Services.AddHttpsRedirection(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 // Database Services & Utilities
 builder.Services.AddScoped<ConcertService>();
 builder.Services.AddSingleton<PasswordHasher>();
