@@ -1,12 +1,14 @@
-// ==================================================================================
-// CLASS: Program.cs
-// ==================================================================================
+
 using MongoDB.Driver;
 using ConcertsGraz.Data;
 using ConcertsGraz.Services;
 using ConcertsGraz.Scrapers;  
 using ConcertsGraz.Utilities;
 using Microsoft.Extensions.Options;
+
+// ==================================================================================
+// CLASS: Program.cs
+// ==================================================================================
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,7 @@ builder.Services.AddSwaggerGen();
 // Database Services & Utilities
 builder.Services.AddScoped<ConcertService>();
 builder.Services.AddSingleton<PasswordHasher>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TestDataSeeder>();
 
 // Scraper-Registrierung
