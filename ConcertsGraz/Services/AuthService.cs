@@ -51,6 +51,8 @@ public class AuthService
         if (userAlreadyExists) { return null; }
         
         //validate //TODO: write Validator
+        //hash password
+        string passwordHash = _pwHasher.HashPassword(password);
         
         //if valid create new user
         User newUser = new User
@@ -60,7 +62,10 @@ public class AuthService
             PasswordHash = _pwHasher.HashPassword(password)
         };
         
-        // return new user for storing in db
+        // register new user in db
+        await _usersCollection.InsertOneAsync(newUser);
+        
+        // return new user object
         return newUser;
 
     }
