@@ -74,7 +74,7 @@ public static class ConcertDataSanitizer
         string cleanedString = CleanText(rawMultiString);
 
         // 3.3 cut of anything after ","
-        int commaIndex = rawMultiString.IndexOf(',');
+        int commaIndex = cleanedString.IndexOf(',');
         cleanedString = commaIndex >= 0 ? cleanedString[..commaIndex] : cleanedString;
 
         // 3.4 remote word "Graz"
