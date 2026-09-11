@@ -70,20 +70,30 @@ public static class ConcertDataSanitizer
         //  3.1 null/ empty check
         if (string.IsNullOrWhiteSpace(rawMultiString)) return "";
         
-        // 3.2 use basic global cleaner to remote HTML special chars
+        // 3.2 use basic global cleaner, deentizize HTML special chars
         string cleanedString = CleanText(rawMultiString);
 
-        // 3.3 cut of anything after ","
+        // 3.3 cut of anything after "," or "-"
         int commaIndex = cleanedString.IndexOf(',');
-        cleanedString = commaIndex >= 0 ? cleanedString[..commaIndex] : cleanedString;
+        if (commaIndex >= 0)
+        {
+            cleanedString = cleanedString[..commaIndex];
+        }
 
-        // 3.4 remote word "Graz"
+        // 3.4 remove austrian postal codes (z.B. 8010, 8020)
+        cleanedString = Regex.Replace(cleanedString, @"\b\d{4}\b", "", RegexOptions.IgnoreCase);
+
+        // 3.5 remove word "Graz" (\b = word boundary)
         cleanedString = Regex.Replace(cleanedString, @"\bGraz\b", "", RegexOptions.IgnoreCase);
 
-        // 3.5 remove multiwhitespace and trim
-        cleanedString=  Regex.Replace(cleanedString, @"\s+", " ").Trim();
+        // 3.6 remove "-" and special chars
+        cleanedString = Regex.Replace(cleanedString, @"\s*-\s*", " ").Trim();
+        cleanedString = Regex.Replace(cleanedString, @"^[^\w]+|[^\w]+$", "").Trim();
+
+        // 3.7 remove multi white space
+        cleanedString = Regex.Replace(cleanedString, @"\s+", " ").Trim();
         
-        // 3.6 return clean string
+        // 3.8 return clean string
         return cleanedString;
     }
     
