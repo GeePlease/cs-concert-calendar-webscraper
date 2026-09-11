@@ -52,12 +52,12 @@ public class PpcScraper : IScraper
                 }
             }
 
-            // 2.2 clean variables with TextCleaner
+            // 2.2 clean variables with ConcertDataSanitizer
             // 2.2.1 all variables except description
             string title = ConcertDataSanitizer.CleanText(rawTitle);
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
-            string venue = ConcertDataSanitizer.CleanText(rawVenue);
+            string venue = ConcertDataSanitizer.CleanVenue(rawVenue);
 
             // PPC special case: remove "@ 19:00" from date
             string date = ConcertDataSanitizer.CleanText(rawDate);

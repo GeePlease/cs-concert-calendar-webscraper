@@ -14,7 +14,7 @@ public static class ConcertDataSanitizer
     // CONSTRUCTOR
     // METHODS
     
-    // 1 GLOBAL CLEANER (title, venue, date, time, price) - nullable string
+    // 1 GLOBAL SANITIZER (title, venue, date, time, price) - nullable string
     public static string CleanText(string? rawSingleString)
     {
         // 1.1 null/whitespace check
@@ -32,7 +32,7 @@ public static class ConcertDataSanitizer
 
     
     
-    // 2 DESCRIPTION CLEANER (description variable) - nullable string
+    // 2 DESCRIPTION SANITIZER (description variable) - nullable string
     public static string CleanDescription(string? rawMultiString)
     { 
         // 2.0 null/whitespace check
@@ -42,9 +42,9 @@ public static class ConcertDataSanitizer
         string cleanedString = Regex.Replace(rawMultiString, @"</p>|<br\s*/?>", " ", RegexOptions.IgnoreCase);
         
         // 2.2 HTML-Tags via HtmlAgilityPack strippen (InnerText)
-        var tempNode = HtmlNode.CreateNode(cleanedString);
-        if (tempNode != null) { cleanedString = tempNode.InnerText; } // if node exists, text only
-        else { cleanedString = ""; } //if empty, empty string
+        var tempDoc = new HtmlDocument();
+        tempDoc.LoadHtml(cleanedString);
+        cleanedString = tempDoc.DocumentNode.InnerText;
         
         // 2.3 DeEntitize
         cleanedString= HtmlEntity.DeEntitize(cleanedString); // deentizize (translate HTML characters back to normal like &amp)
@@ -64,22 +64,26 @@ public static class ConcertDataSanitizer
         return cleanedString;
     }
     
-    // 3 VENUE CLEANER
+    // 3 VENUE SANITIZER
     public static string CleanVenue(string? rawMultiString)
     {
         //  3.1 null/ empty check
         if (string.IsNullOrWhiteSpace(rawMultiString)) return "";
+        
+        // 3.2 use basic global cleaner to remote HTML special chars
+        string cleanedString = CleanText(rawMultiString);
 
-        // 3.2 cut of anything after ","
+        // 3.3 cut of anything after ","
         int commaIndex = rawMultiString.IndexOf(',');
-        string cleanedString = commaIndex >= 0 ? rawMultiString[..commaIndex] : rawMultiString;
+        cleanedString = commaIndex >= 0 ? cleanedString[..commaIndex] : cleanedString;
 
-        // 3.3 remote word "Graz"
+        // 3.4 remote word "Graz"
         cleanedString = Regex.Replace(cleanedString, @"\bGraz\b", "", RegexOptions.IgnoreCase);
 
-        // 3.4 remove empty space and trim
+        // 3.5 remove multiwhitespace and trim
         cleanedString=  Regex.Replace(cleanedString, @"\s+", " ").Trim();
-
+        
+        // 3.6 return clean string
         return cleanedString;
     }
     

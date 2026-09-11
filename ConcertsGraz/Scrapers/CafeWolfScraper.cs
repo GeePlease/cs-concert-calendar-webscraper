@@ -36,7 +36,7 @@ public class CafeWolfScraper : IScraper
             string rawVenue = "Café Wolf";
             string rawPrice = "-";
             
-            // 2.2 Clean variables with TextCleaner
+            // 2.2 Clean variables with ConcertDataSanitizer
             // 2.2.1 Title, Venue & Link
             string title = ConcertDataSanitizer.CleanText(rawTitle);
             title = Regex.Replace(title, @"&AMP;", "&", RegexOptions.IgnoreCase); // Cafe Wolf special: Fix uppercase &AMP;
@@ -44,7 +44,7 @@ public class CafeWolfScraper : IScraper
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
             
-            string venue = ConcertDataSanitizer.CleanText(rawVenue);
+            string venue = ConcertDataSanitizer.CleanVenue(rawVenue);
             string link = Regex.Replace(rawLink, @"\s+", "").Trim();
             if (string.IsNullOrWhiteSpace(link)) { link = "-"; }
             
