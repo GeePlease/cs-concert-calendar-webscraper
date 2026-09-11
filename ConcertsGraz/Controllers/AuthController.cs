@@ -8,6 +8,7 @@ namespace ConcertsGraz.Controllers;
 // CLASS: AuthController - API endpoints for the frontend to handle user
 // authentication, login, registration, and session management.
 // ======================================================================
+
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
@@ -46,10 +47,33 @@ public class AuthController : ControllerBase
         });
     }
     
-    // HELPERCLASS
+    // API POST - Register
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterData request)
+    {
+        var newUser = await _authService.RegisterAsync(request.Username, request.Email, request.Password);
+        if (newUser == null)
+        {
+            return BadRequest(new{message = "Registrierung fehlgeschlagen. Benutzername bereits vergeben"});
+        }
+
+        return Ok(new { message = "Registrierung erfolgreich!", username = newUser.Username });
+    }
+    
+    
+    
+    // HELPER CLASS
     public class LoginData
     {
         public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+    
+    // HELPER CLASS
+    public class RegisterData
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
     
