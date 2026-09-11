@@ -22,7 +22,7 @@ public class ClubWakuumScraper : IScraper
         string titleXPath = ".//h3[@class='mec-event-title']/a"; 
         string dateXPath = ".//span[@class='mec-start-date-label']";
         string timeXPath = ".//span[@class='mec-start-time']";
-        string venueXPath = ".//div[@class='mec-venue-details']";
+        string venueXPath = ".//div[@class='mec-venue-details']//span";
         string linkXPath = ".//h3[@class='mec-event-title']/a";
         string descriptionXPath = ".//div[contains(@class, 'mec-event-description')]";
         string priceXPath = ".//span[contains(@class, 'mec-label-normal')]";
