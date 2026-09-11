@@ -46,17 +46,17 @@ public class ClubWakuumScraper : IScraper
             
             // 2.2 clean variables with TextCleaner + EventBlacklister
             // 2.2.1 all variables except description
-            string title = TextCleaner.CleanText(rawTitle);
+            string title = ConcertDataSanitizer.CleanText(rawTitle);
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes (title is empty)
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
-            string venue = TextCleaner.CleanText(rawVenue);
-            string date = TextCleaner.CleanText(rawDate);
+            string venue = ConcertDataSanitizer.CleanText(rawVenue);
+            string date = ConcertDataSanitizer.CleanText(rawDate);
             DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse date to DateTime Object
-            string time = TextCleaner.CleanText(rawTime);
-            string price = TextCleaner.CleanText(rawPrice);
+            string time = ConcertDataSanitizer.CleanText(rawTime);
+            string price = ConcertDataSanitizer.CleanText(rawPrice);
             
             // 2.2.2 description
-            string description = TextCleaner.CleanDescription(rawDescription);
+            string description = ConcertDataSanitizer.CleanDescription(rawDescription);
     
             // 2.2.3 special local step: clean URLs (remove whitespace
             string link = Regex.Replace(rawLink, @"\s+", "").Trim();

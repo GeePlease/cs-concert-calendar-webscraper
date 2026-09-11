@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 namespace ConcertsGraz.Utilities;
 
-public static class TextCleaner
+public static class ConcertDataSanitizer
 {
     
     // ATTRIBUTES
@@ -64,11 +64,22 @@ public static class TextCleaner
         return cleanedString;
     }
     
-    // VENUE CLEANER //TODO: write!
+    // 3 VENUE CLEANER
     public static string CleanVenue(string? rawMultiString)
     {
-        if (string.IsNullOrWhiteSpace(rawMultiString)) {return"";}
-        string cleanedString = "";
+        //  3.1 null/ empty check
+        if (string.IsNullOrWhiteSpace(rawMultiString)) return "";
+
+        // 3.2 cut of anything after ","
+        int commaIndex = rawMultiString.IndexOf(',');
+        string cleanedString = commaIndex >= 0 ? rawMultiString[..commaIndex] : rawMultiString;
+
+        // 3.3 remote word "Graz"
+        cleanedString = Regex.Replace(cleanedString, @"\bGraz\b", "", RegexOptions.IgnoreCase);
+
+        // 3.4 remove empty space and trim
+        cleanedString=  Regex.Replace(cleanedString, @"\s+", " ").Trim();
+
         return cleanedString;
     }
     

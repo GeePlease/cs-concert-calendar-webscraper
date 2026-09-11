@@ -38,26 +38,26 @@ public class CafeWolfScraper : IScraper
             
             // 2.2 Clean variables with TextCleaner
             // 2.2.1 Title, Venue & Link
-            string title = TextCleaner.CleanText(rawTitle);
+            string title = ConcertDataSanitizer.CleanText(rawTitle);
             title = Regex.Replace(title, @"&AMP;", "&", RegexOptions.IgnoreCase); // Cafe Wolf special: Fix uppercase &AMP;
             
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
             
-            string venue = TextCleaner.CleanText(rawVenue);
+            string venue = ConcertDataSanitizer.CleanText(rawVenue);
             string link = Regex.Replace(rawLink, @"\s+", "").Trim();
             if (string.IsNullOrWhiteSpace(link)) { link = "-"; }
             
             // 2.2.2 Cafe Wolf special logic case: Extract date and time from single datetime string
-            string cleanedDateTime = TextCleaner.CleanText(rawDateTime);
+            string cleanedDateTime = ConcertDataSanitizer.CleanText(rawDateTime);
             string date = Regex.Match(cleanedDateTime, @"\d{2}\.\d{2}\.\d{4}").Value;
             DateTime? parsedDate = DateTimeParser.ParseToDateTime(date);
 
             string time = Regex.Match(cleanedDateTime, @"\d{2}:\d{2}").Value;
-            string price = TextCleaner.CleanText(rawPrice);
+            string price = ConcertDataSanitizer.CleanText(rawPrice);
 
             // 2.2.3 Clean description with TextCleaner (description
-            string description = TextCleaner.CleanDescription(rawDescription);
+            string description = ConcertDataSanitizer.CleanDescription(rawDescription);
             
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert()

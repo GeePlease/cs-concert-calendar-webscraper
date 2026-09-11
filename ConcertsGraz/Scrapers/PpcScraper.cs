@@ -54,18 +54,18 @@ public class PpcScraper : IScraper
 
             // 2.2 clean variables with TextCleaner
             // 2.2.1 all variables except description
-            string title = TextCleaner.CleanText(rawTitle);
+            string title = ConcertDataSanitizer.CleanText(rawTitle);
             if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes
             if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
-            string venue = TextCleaner.CleanText(rawVenue);
+            string venue = ConcertDataSanitizer.CleanText(rawVenue);
 
             // PPC special case: remove "@ 19:00" from date
-            string date = TextCleaner.CleanText(rawDate);
+            string date = ConcertDataSanitizer.CleanText(rawDate);
             date = Regex.Replace(date, @"\s*@.*$", "").Trim();
             DateTime? parsedDate = DateTimeParser.ParseToDateTime(date);
 
-            string time = TextCleaner.CleanText(rawTime);
-            string price = TextCleaner.CleanText(rawPrice);
+            string time = ConcertDataSanitizer.CleanText(rawTime);
+            string price = ConcertDataSanitizer.CleanText(rawPrice);
             
             // PPC special additional logic: remove whitespace in link urls
             string link = Regex.Replace(rawLink, @"\s+", "").Trim();
@@ -78,7 +78,7 @@ public class PpcScraper : IScraper
                 rawDescription = Regex.Replace(rawDescription, @"window\.\w+[^}]+\}\)", "", RegexOptions.IgnoreCase);
             }
             // clean description with description cleaner
-            string description = TextCleaner.CleanDescription(rawDescription);
+            string description = ConcertDataSanitizer.CleanDescription(rawDescription);
 
             // 2.3 create new ConcertEvent from scraped element data
             var concertToAdd = new Concert() 
