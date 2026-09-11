@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 5. Modal & Tab Steuerung & Auth-UI Elemente
     const modal = document.getElementById("auth-modal");
-    const btnOpenLogin = document.getElementById("btn-open-login");
+    const btnOpenLogin = document.querySelector(".btn-login") || document.getElementById("btn-open-login");
     const btnCloseModal = document.getElementById("btn-close-modal");
     const userMenu = document.getElementById("user-menu");
     const btnLogout = document.getElementById("btn-logout");

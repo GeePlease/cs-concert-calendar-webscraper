@@ -407,3 +407,8 @@ body {
 .auth-message.hidden {
   display: none !important;
 }
+
+/* Universelles Ausblenden für ALLE Elemente */
+.hidden {
+  display: none !important;
+}
