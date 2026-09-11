@@ -68,15 +68,36 @@ document.addEventListener("DOMContentLoaded", () => {
         renderConcerts(filtered);
     }
 
-    // 5. Modal & Tab Steuerung
+    // 5. Modal & Tab Steuerung & Auth-UI Elemente
     const modal = document.getElementById("auth-modal");
-    const btnOpenLogin = document.querySelector(".btn-login");
+    const btnOpenLogin = document.getElementById("btn-open-login");
     const btnCloseModal = document.getElementById("btn-close-modal");
+    const userMenu = document.getElementById("user-menu");
+    const btnLogout = document.getElementById("btn-logout");
+    const btnProfile = document.getElementById("btn-open-profile");
+
     const tabLogin = document.getElementById("tab-login");
     const tabRegister = document.getElementById("tab-register");
     const formLogin = document.getElementById("form-login");
     const formRegister = document.getElementById("form-register");
     const authMessage = document.getElementById("auth-message");
+
+    // Steuerung der Header-Buttons (Login vs. User-Menü)
+    function updateAuthUI() {
+        const token = localStorage.getItem("token");
+        const isLoggedIn = !!token;
+
+        if (isLoggedIn) {
+            btnOpenLogin?.classList.add("hidden");
+            userMenu?.classList.remove("hidden");
+        } else {
+            btnOpenLogin?.classList.remove("hidden");
+            userMenu?.classList.add("hidden");
+        }
+    }
+
+    // Beim Laden der Seite direkt ausführen
+    updateAuthUI();
 
     // Hilfsfunktionen für Feedback-Meldungen im Modal
     function showAuthMessage(text, type = "error") {
@@ -124,6 +145,13 @@ document.addEventListener("DOMContentLoaded", () => {
         tabLogin.classList.remove("active");
         formRegister.classList.remove("hidden");
         formLogin.classList.add("hidden");
+    });
+
+    // Logout durchführen
+    btnLogout?.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        updateAuthUI();
     });
 
     // 6. Authentifizierung: API Absenden
@@ -185,9 +213,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Login fehlgeschlagen");
 
-            // User im Speicher ablegen & Button im Header anpassen
+            // Token & User im Speichern ablegen
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+            }
             localStorage.setItem("user", JSON.stringify(data));
-            btnOpenLogin.textContent = `👤 ${data.username}`;
+
+            // Header umschalten, Meldung löschen, Modal schließen
+            updateAuthUI();
             clearAuthMessage();
             modal.classList.add("hidden");
         } catch (err) {
