@@ -210,10 +210,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Login fehlgeschlagen");
 
-            // Token & User im Speichern ablegen
+            // 1. Text lesen und sicher prüfen, ob Inhalt da ist
+            const text = await res.text();
+            const data = text ? JSON.parse(text) : {};
+
+            // 2. HTTP-Status prüfen
+            if (!res.ok) {
+                throw new Error(data.message || `Server-Fehler ${res.status}: ${res.statusText}`);
+            }
+
+            // 3. Token & User im Speicher ablegen
             if (data.token) {
                 localStorage.setItem("token", data.token);
             }
