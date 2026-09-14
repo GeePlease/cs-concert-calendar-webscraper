@@ -41,7 +41,7 @@ public class UserService
     }
     
     
-    // UPDATE USER PROFILE - Username (userId, newUsername, newEmail)
+    // UPDATE USER PROFILE - Username or Email (userId, newUsername, newEmail)
     public async Task<User> UpdateNameOrMail(string userId, string? newUsername, string? newEmail)
     {
         // TODO: email validator!
@@ -75,9 +75,20 @@ public class UserService
     }
     
     // DELETE USER 
-    // search by id? (best? ) search? nullcheck necessary when loggind in
-    // access db and delete user object
-    // mange error/ success
+    public async Task<bool> DeleteUserAsync(string userId)
+    {
+        // search by id (no extra db anfrage!! less db anfragen = better)
+        if (string.IsNullOrWhiteSpace(userId)) { return false; }
+        
+        // access db and delete user object
+        var success = await _usersCollection.DeleteOneAsync(u => u.Id == userId);
+        
+        // mange error/ success
+        if (success.DeletedCount == 0) { return false; } // delete unsuccessfull
+        return true; // delete sucessfull
+
+    }
+  
 
 
     
