@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const userMenu = document.getElementById("user-menu");
     const btnLogout = document.getElementById("btn-logout");
     const btnProfile = document.getElementById("btn-open-profile");
+    const navConcerts = document.getElementById("nav-concerts");
 
     const tabLogin = document.getElementById("tab-login");
     const tabRegister = document.getElementById("tab-register");
@@ -151,6 +152,21 @@ document.addEventListener("DOMContentLoaded", () => {
     btnLogout?.addEventListener("click", () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+
+        const concertSection = document.getElementById("concert-section");
+        const profileSection = document.getElementById("profile-section");
+
+        concertSection?.classList.remove("hidden");
+        profileSection?.classList.add("hidden");
+
+        // Filter zurücksetzen
+        filterLocation.value = "all";
+        filterGenre.value = "all";
+        filterDate.value = "all";
+        filterPrice.value = "all";
+
+        renderConcerts(allConcerts);
+
         updateAuthUI();
     });
 
@@ -160,6 +176,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         concertSection?.classList.add("hidden");
         profileSection?.classList.remove("hidden");
+    });
+
+    navConcerts?.addEventListener("click", () => {
+        const concertSection = document.getElementById("concert-section");
+        const profileSection = document.getElementById("profile-section");
+
+        concertSection?.classList.remove("hidden");
+        profileSection?.classList.add("hidden");
     });
     
     
