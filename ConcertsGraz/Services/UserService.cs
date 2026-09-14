@@ -89,16 +89,41 @@ public class UserService
 
     }
   
-
-
     
     // UPDATE USER - Password (string input)
-    // search user by...id? (best?) search or nullcheck 
-    // update found user.password with input string --> USER HASHER! // TODO: validator
-    // manage error/success
-    
+    public async Task<bool> UpdateUserPassword(string userId, string? currentPassword, string? newPassword)
+    {
+        // basic input check
+        if (string.IsNullOrWhiteSpace(userId) || 
+            string.IsNullOrWhiteSpace(currentPassword) || 
+            string.IsNullOrWhiteSpace(newPassword))
+        { return false; }
+        
+        // TODO: validator
+        //  get user from db
+        var wantedUser = await GetSingleUserByIdAsync(userId);
+       if (wantedUser == null) { return false; }
+       
+       
+        // verify current password
+        var result = _pwHasher.VerifyPassword(wantedUser.PasswordHash, currentPassword);
+        if(!result) { return false; }
+        
+        // check if new and old are the same
+        if (currentPassword == newPassword) { return false;}
+        
+        // hash (and validate) new password
+        string newPasswordHash = _pwHasher.HashPassword(newPassword);
+        
+        // update user object
+        wantedUser.PasswordHash = newPasswordHash;
+        
+        // update user object in mongo db
+        await _usersCollection.ReplaceOneAsync(u => u.Id == wantedUser.Id, wantedUser);
+        
+        // manage error/success
+        return true;
+    }
 
-    
-    
 //END CLASS
 }
