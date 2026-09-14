@@ -83,7 +83,11 @@ using (var scope = app.Services.CreateScope())
     
     // run scrapers
     var scraperService = scope.ServiceProvider.GetRequiredService<ScraperService>();
-    await scraperService.RunAllAsync();
+    var concertService = scope.ServiceProvider.GetRequiredService<ConcertService>();
+    
+    var scrapedConcerts = await scraperService.RunAllAsync();
+    await concertService.SaveScrapedConcertsAsync(scrapedConcerts);
+    
 }
 
 // Swagger

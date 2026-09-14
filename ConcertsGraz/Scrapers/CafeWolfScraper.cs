@@ -77,7 +77,7 @@ public class CafeWolfScraper : IScraper
             concertsCafeWolf.Add(concertToAdd);
             
             // print elements in console TODO: REMOVE LATER
-            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
+            //Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
         }
 
         return concertsCafeWolf;

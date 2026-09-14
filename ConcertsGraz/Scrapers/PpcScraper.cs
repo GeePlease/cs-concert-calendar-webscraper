@@ -98,7 +98,7 @@ public class PpcScraper : IScraper
             concertsPpc.Add(concertToAdd);
             
             // print elements in console TODO: REMOVE LATER
-            Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Description: {description}, Price: {price}, Link: {link}\n");
+            //Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Description: {description}, Price: {price}, Link: {link}\n");
         }
         
         // 3 return concerts list

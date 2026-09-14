@@ -55,7 +55,13 @@ public class ConcertService
     public async Task SaveScrapedConcertsAsync(List<Concert> scrapedConcerts)
     {
         // check if scrape results not null or 0
-        if (scrapedConcerts == null || scrapedConcerts.Count == 0) { return;} 
+        if (scrapedConcerts == null || scrapedConcerts.Count == 0)
+        {
+            Console.WriteLine("[DEBUG] Keine gescrapten Konzerte empfangen.");
+            return;
+        } 
+        
+        Console.WriteLine($"[DEBUG] Verarbeite {scrapedConcerts.Count} gescrapte Konzerte...");
         
         // logic for scraped concerts
         foreach (var concert in scrapedConcerts)
@@ -64,11 +70,17 @@ public class ConcertService
             var exists = await _concertsCollection.Find(c =>
                 c.Title == concert.Title &&
                 c.Venue == concert.Venue &&
-                c.Date == concert.Date).AnyAsync(); //TODO: Change to Date
-            
-            if (exists) {continue;} // skip scraped concert if already exists
+                c.Date == concert.Date).AnyAsync();
+
+            // skip scraped concert if already exists
+            if (exists)
+            {
+                Console.WriteLine($"[DEBUG] Übersprungen (existiert bereits): {concert.Title} im {concert.Venue}");
+                continue;
+            } 
             
             // create new for every scraped concert (no doubles)
+            Console.WriteLine($"[DEBUG] Füge neues Konzert hinzu: {concert.Title}");
             await CreateAsync(concert);
         }
     }
