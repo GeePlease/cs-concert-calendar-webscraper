@@ -36,7 +36,7 @@ builder.Services.AddControllers();
 // HTTPS-Port explizit festlegen (löst die Redirection-Warnung)
 builder.Services.AddHttpsRedirection(options =>
 {
-    options.HttpsPort = 7170; // Passe die Zahl an deinen HTTPS-Port an
+    options.HttpsPort = 7170; // anpassen wennn notwendig
 });
 
 // Swagger
@@ -45,6 +45,7 @@ builder.Services.AddSwaggerGen();
 
 // Database Services & Utilities
 builder.Services.AddScoped<ConcertService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TestDataSeeder>();
