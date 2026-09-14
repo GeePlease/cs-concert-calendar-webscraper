@@ -59,6 +59,15 @@ builder.Services.AddScoped<ScraperService>();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => 
     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+// Session Configuration
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(2); // Session-Dauer
+    options.Cookie.HttpOnly = true;               // Schutz gegen XSS
+    options.Cookie.IsEssential = true;            // DSGVO-Notwendigkeit
+});
+
 // ----------------------------------------------------------------------------------
 // 3. PIPELINE SETUP & START
 // ----------------------------------------------------------------------------------
@@ -88,12 +97,13 @@ app.UseHttpsRedirection();
 // WICHTIG: UseDefaultFiles MUSS vor UseStaticFiles stehen!
 app.UseDefaultFiles(); 
 app.UseStaticFiles();
-
 app.UseRouting();
+app.UseSession();
 app.UseCors();
 app.UseAuthorization();
 
 // REST-API Controller Endpunkte mappen
 app.MapControllers();
 
+// run APP
 app.Run();
