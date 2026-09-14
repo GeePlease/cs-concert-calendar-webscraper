@@ -74,11 +74,16 @@ builder.Services.AddSession(options =>
 // ----------------------------------------------------------------------------------
 var app = builder.Build();
 
-// Testdaten beim Start
+// TestDataSeeder & Scraper - run at start
 using (var scope = app.Services.CreateScope())
 {
+    // seed test data
     var seeder = scope.ServiceProvider.GetRequiredService<TestDataSeeder>();
     await seeder.SeedAllAsync();
+    
+    // run scrapers
+    var scraperService = scope.ServiceProvider.GetRequiredService<ScraperService>();
+    await scraperService.RunAllAsync();
 }
 
 // Swagger

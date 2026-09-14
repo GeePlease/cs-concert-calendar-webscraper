@@ -29,7 +29,7 @@ public class ScraperController : ControllerBase
     public async Task<IActionResult> ScrapeAndStoreAsync()
     {
         // scrape and get all individual concert result lists from scraper service
-        var scrapedConcerts = await _scraperService.RunAll();
+        var scrapedConcerts = await _scraperService.RunAllAsync();
         // create combined results list, from concert service
         await _concertService.SaveScrapedConcertsAsync(scrapedConcerts);
         // feedback

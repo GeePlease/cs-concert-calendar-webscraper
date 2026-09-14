@@ -28,7 +28,7 @@ public class ScraperService
     
     // METHODS
     // RUN ALL SCRAPERS and collect in 1 list
-    public async Task<List<Concert>> RunAll()
+    public async Task<List<Concert>> RunAllAsync()
     {
         // List for all concerts (results from scraping)
         var allScrapedConcerts = new List<Concert>();
