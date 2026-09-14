@@ -1,15 +1,30 @@
 :root {
-  /* Theme Palette */
+  /* ============================================================
+     Theme Palette
+     ============================================================ */
+
+  /* Background */
   --bg-main: #0B0914;
   --bg-surface: #161226;
   --bg-surface-hover: #241D3D;
 
+  /* Primary */
   --primary: #FB2576;
   --primary-hover: #FF4D94;
   --accent-purple: #3F0071;
 
+  /* Text */
   --text-main: #F4F3F8;
   --text-muted: #A39DB5;
+
+  /* Borders & Shadows */
+  --border-subtle: #2D254B;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+
+  /* Transparent Theme Colors */
+  --bg-overlay: rgba(0, 0, 0, 0.75);
+  --bg-main-transparent: rgba(11, 9, 20, 0.92);
+  --primary-transparent: rgba(251, 37, 118, 0.1);
 
   /* Status Colors */
   --color-error: #FF4D88;
@@ -18,11 +33,23 @@
   --color-danger: #D32F2F;
   --color-danger-hover: #B71C1C;
 
+  /* Status Backgrounds */
+  --color-error-bg: rgba(255, 77, 136, 0.15);
+  --color-success-bg: rgba(105, 240, 174, 0.15);
+  --color-warning-bg: rgba(255, 204, 128, 0.08);
+  --color-warning-border: rgba(255, 204, 128, 0.35);
+
+  /* Layout */
   --radius-md: 10px;
   --radius-sm: 6px;
   --transition: all 0.2s ease-in-out;
 }
-/* Reset & Base Layout */
+
+
+/* ============================================================
+   Reset & Base Layout
+   ============================================================ */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -37,7 +64,18 @@ body {
   min-height: 100vh;
 }
 
-/* Header (scrollt normal mit) */
+/* Einheitliche Schrift für Formularelemente und Buttons */
+button,
+select,
+input {
+  font-family: inherit;
+}
+
+
+/* ============================================================
+   Header
+   ============================================================ */
+
 .main-header {
   background-color: var(--bg-main);
   border-bottom: 1px solid var(--border-subtle);
@@ -78,12 +116,18 @@ body {
   color: var(--primary);
 }
 
+
+/* ============================================================
+   Header Buttons
+   ============================================================ */
+
 .btn-login {
   background: transparent;
   border: 1px solid var(--primary);
   color: var(--primary);
   padding: 0.4rem 1rem;
   border-radius: var(--radius-sm);
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -94,7 +138,9 @@ body {
   color: var(--text-main);
 }
 
-/* User-Menü im Header */
+
+/* User-Menü */
+
 .user-menu {
   display: flex;
   align-items: center;
@@ -105,11 +151,12 @@ body {
   display: none !important;
 }
 
-.btn-profile, .btn-logout {
+.btn-profile,
+.btn-logout {
   padding: 0.5rem 0.9rem;
   border-radius: var(--radius-sm);
-  border: none;
   font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -117,10 +164,12 @@ body {
 .btn-profile {
   background: var(--bg-surface);
   color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
 
 .btn-profile:hover {
   background: var(--bg-surface-hover);
+  border-color: var(--primary);
 }
 
 .btn-logout {
@@ -135,12 +184,15 @@ body {
 }
 
 
-/* Sticky Filter Bar */
+/* ============================================================
+   Sticky Filter Bar
+   ============================================================ */
+
 .filter-bar {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(11, 9, 20, 0.92);
+  background-color: var(--bg-main-transparent);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
   padding: 1rem 0;
@@ -177,6 +229,7 @@ body {
   padding: 0.6rem 0.8rem;
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
+  font-weight: 400;
   outline: none;
   cursor: pointer;
   transition: var(--transition);
@@ -188,11 +241,15 @@ body {
   background-color: var(--bg-surface-hover);
 }
 
-/* Main Grid Layout */
+
+/* ============================================================
+   Main Grid Layout
+   ============================================================ */
+
 .content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 2rem;
+  padding: 2rem;
 }
 
 .concert-grid {
@@ -201,7 +258,11 @@ body {
   gap: 1.5rem;
 }
 
-/* Konzert-Karten */
+
+/* ============================================================
+   Konzert-Karten
+   ============================================================ */
+
 .concert-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -253,7 +314,7 @@ body {
   font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.3;
-  padding-right: 4.5rem; /* Platz für das Datum-Badge */
+  padding-right: 4.5rem;
 }
 
 .card-location,
@@ -276,6 +337,7 @@ body {
   padding: 0.4rem 0.8rem;
   border-radius: var(--radius-sm);
   font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -283,17 +345,20 @@ body {
 .btn-bookmark:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background-color: rgba(251, 37, 118, 0.1);
+  background-color: var(--primary-transparent);
 }
 
-/* Dark/Mobile-Optimiertes Modal */
+
+/* ============================================================
+   Authentication Modal
+   ============================================================ */
+
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--bg-overlay);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -328,7 +393,17 @@ body {
   color: var(--text-muted);
   font-size: 1.8rem;
   cursor: pointer;
+  transition: var(--transition);
 }
+
+.modal-close:hover {
+  color: var(--text-main);
+}
+
+
+/* ============================================================
+   Authentication Tabs
+   ============================================================ */
 
 .auth-tabs {
   display: flex;
@@ -342,15 +417,26 @@ body {
   border: none;
   color: var(--text-muted);
   font-size: 1.1rem;
+  font-weight: 500;
   padding-bottom: 0.5rem;
   cursor: pointer;
+  transition: var(--transition);
+}
+
+.auth-tab:hover {
+  color: var(--text-main);
 }
 
 .auth-tab.active {
   color: var(--text-main);
   border-bottom: 2px solid var(--primary);
-  font-weight: bold;
+  font-weight: 700;
 }
+
+
+/* ============================================================
+   Forms
+   ============================================================ */
 
 .form-group {
   display: flex;
@@ -371,6 +457,13 @@ body {
   background: var(--bg-main);
   color: var(--text-main);
   font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--bg-surface);
 }
 
 .btn-submit {
@@ -381,50 +474,64 @@ body {
   border: none;
   border-radius: var(--radius-sm);
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
   margin-top: 0.5rem;
+  transition: var(--transition);
 }
 
-/* Feedback-Meldungen im Auth-Modal */
+.btn-submit:hover {
+  background-color: var(--primary-hover);
+}
+
+
+/* ============================================================
+   Feedback-Meldungen
+   ============================================================ */
+
 .auth-message {
   padding: 0.6rem 0.8rem;
-  border-radius: var(--radius-sm);;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   margin-bottom: 1rem;
   text-align: center;
 }
 
 .auth-message.error {
-  background: rgba(255, 0, 85, 0.15);
-  border: 1px solid #ff0055;
-  color: #ff4d88;
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
 }
 
 .auth-message.success {
-  background: rgba(0, 200, 83, 0.15);
-  border: 1px solid #00c853;
-  color: #69f0ae;
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
 }
 
 .auth-message.hidden {
   display: none !important;
 }
 
-/* Universelles Ausblenden für ALLE Elemente */
+
+/* ============================================================
+   Universelles Ausblenden
+   ============================================================ */
+
 .hidden {
   display: none !important;
 }
 
 
 /* ============================================================
-Profil
-============================================================ */
+   Profil
+   ============================================================ */
 
 .profile-container {
   max-width: 800px;
   margin: 0 auto;
 }
+
 
 /* Profil-Header */
 
@@ -433,8 +540,9 @@ Profil
 }
 
 .profile-header h2 {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  line-height: 1.3;
   margin-bottom: 0.25rem;
 }
 
@@ -476,7 +584,7 @@ Profil
 }
 
 
-/* Feld innerhalb einer Profil-Card */
+/* Profilfelder */
 
 .profile-field {
   display: flex;
@@ -511,6 +619,7 @@ Profil
   padding: 0.45rem 0.85rem;
   border-radius: var(--radius-sm);
   font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -518,11 +627,13 @@ Profil
 .btn-edit:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background-color: rgba(251, 37, 118, 0.1);
+  background-color: var(--primary-transparent);
 }
 
 
-/* Bearbeitungsbereich */
+/* ============================================================
+   Profil-Bearbeitung
+   ============================================================ */
 
 .profile-edit-area {
   margin-top: 1.5rem;
@@ -595,6 +706,7 @@ Profil
   padding: 0.8rem 1rem;
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -605,11 +717,13 @@ Profil
 }
 
 
-/* Lösch-Warnung */
+/* ============================================================
+   Lösch-Warnung
+   ============================================================ */
 
 .delete-warning {
-  background: rgba(255, 152, 0, 0.08);
-  border: 1px solid rgba(255, 152, 0, 0.35);
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
   border-radius: var(--radius-sm);
   padding: 0.8rem 1rem;
   margin-bottom: 1rem;
@@ -622,7 +736,9 @@ Profil
 }
 
 
-/* Checkbox */
+/* ============================================================
+   Checkbox
+   ============================================================ */
 
 .form-checkbox {
   margin-bottom: 1rem;
@@ -644,7 +760,9 @@ Profil
 }
 
 
-/* Löschen */
+/* ============================================================
+   Löschen
+   ============================================================ */
 
 .btn-danger {
   background: var(--color-danger) !important;
@@ -655,7 +773,9 @@ Profil
 }
 
 
-/* Responsive */
+/* ============================================================
+   Responsive
+   ============================================================ */
 
 @media (max-width: 600px) {
 
@@ -672,4 +792,3 @@ Profil
   }
 
 }
-
