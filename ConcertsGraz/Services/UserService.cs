@@ -45,11 +45,9 @@ public class UserService
     public async Task<User> UpdateNameOrMail(string userId, string? newUsername, string? newEmail)
     {
         // TODO: email validator!
-        // null check before search
-        if (userId == null) { return null; } 
         
         // get user from db
-        var wantedUser = await _usersCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
+        var wantedUser = await GetSingleUserByIdAsync(userId);
         
         // user null check after search
         if (wantedUser == null) { return null; } 
@@ -75,6 +73,11 @@ public class UserService
         return wantedUser; 
         
     }
+    
+    // DELETE USER 
+    // search by id? (best? ) search? nullcheck necessary when loggind in
+    // access db and delete user object
+    // mange error/ success
 
 
     
@@ -83,10 +86,7 @@ public class UserService
     // update found user.password with input string --> USER HASHER! // TODO: validator
     // manage error/success
     
-    // DELETE USER 
-    // search by id? (best? ) search? nullcheck necessary when loggind in
-    // access db and delete user object
-    // mange error/ success
+
     
     
 //END CLASS
