@@ -1,8 +1,13 @@
 ﻿using ConcertsGraz.Services;
 using Microsoft.AspNetCore.Mvc;
-
 namespace ConcertsGraz.Controllers;
 
+// ==================================================================================
+// CLASS: UserController - API endpoints for managing user profile details,
+// updating account credentials, and handling user account deletion.
+// ==================================================================================
+
+[ApiController]
 [Route("api/users")]
 public class UserController : ControllerBase
 {
@@ -35,7 +40,7 @@ public class UserController : ControllerBase
         // handle error
         if (userToLoad == null)
         {
-            return BadRequest("Profil konnte nicht geladen werden");
+            return NotFound("Profil konnte nicht geladen werden");
         }
 
         // handle success,  use "Projection" not real UserObject that includes PasswordHash, Safety!
@@ -56,7 +61,7 @@ public class UserController : ControllerBase
         var userId = HttpContext.Session.GetString("UserId");
         
         // null check
-        if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloogt.");}
+        if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloggt.");}
         
         
         // update with update method from UserService.cs and HelperClass
@@ -88,7 +93,7 @@ public class UserController : ControllerBase
             userId, 
             updatePasswordData.CurrentPassword, 
             updatePasswordData.NewPassword
-        );;
+        );
         
         // handle error/ success
         if (!success)
@@ -101,14 +106,14 @@ public class UserController : ControllerBase
     
     
     // API DELETE (delete user by id)
-    [HttpPut("delete")]
+    [HttpDelete("delete")]
     public async Task<IActionResult> DeleteUserAsync() 
     {
         // user Id from Session
         var userId = HttpContext.Session.GetString("UserId");
         
         // null check
-        if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloogt.");}
+        if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloggt.");}
         
         // delete user from db
         var success = await _userService.DeleteUserAsync(userId);
