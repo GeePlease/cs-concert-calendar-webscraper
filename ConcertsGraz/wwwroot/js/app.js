@@ -4,10 +4,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     // 1. DOM-Elemente greifen
     const grid = document.getElementById("concert-grid");
-    const filterLocation = document.getElementById("filter-venue");
+        const filterLocation = document.getElementById("filter-venue");
     const filterGenre = document.getElementById("filter-genre");
     const filterDate = document.getElementById("filter-date");
     const filterPrice = document.getElementById("filter-price");
+    const filterBar = document.querySelector(".filter-bar");
 
     let allConcerts = []; // Hält die Daten im Speicher
 
@@ -158,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         concertSection?.classList.remove("hidden");
         profileSection?.classList.add("hidden");
+        filterBar?.classList.remove("hidden");
 
         // Filter zurücksetzen
         filterLocation.value = "all";
@@ -176,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         concertSection?.classList.add("hidden");
         profileSection?.classList.remove("hidden");
+        filterBar?.classList.add("hidden");
     });
 
     navConcerts?.addEventListener("click", () => {
@@ -184,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         concertSection?.classList.remove("hidden");
         profileSection?.classList.add("hidden");
+        filterBar?.classList.remove("hidden");
     });
     
     
