@@ -154,118 +154,230 @@
     </div>
 </div>
 
-<!-- Profil-Sektion (Inline, ersetzt Konzert-Grid bei Klick) -->
+
+<!-- Profil-Section -->
 <section id="profile-section" class="content-wrapper hidden">
 
     <div class="profile-container">
-        <h2>Mein Profil</h2>
-        <p class="profile-subtitle">Angemeldet als: <span id="profile-current-user">—</span></p>
 
-        <div id="profile-message" class="auth-message hidden"></div>
-
-        <!-- Benutzerdaten untereinander -->
-        <div class="profile-data">
-            <div class="profile-data-row">
-                <span class="profile-label">Benutzername</span>
-                <span class="profile-value" id="display-username">—</span>
-                <button class="btn-edit" data-target="username">Bearbeiten</button>
-            </div>
-            <div class="profile-data-row">
-                <span class="profile-label">E-Mail</span>
-                <span class="profile-value" id="display-email">—</span>
-                <button class="btn-edit" data-target="email">Bearbeiten</button>
-            </div>
-            <div class="profile-data-row">
-                <span class="profile-label">Passwort</span>
-                <span class="profile-value">••••••••</span>
-                <button class="btn-edit" data-target="password">Bearbeiten</button>
-            </div>
+        <!-- Profil-Header -->
+        <div class="profile-header">
+            <h2>Mein Profil</h2>
+            <p class="profile-subtitle">
+                Angemeldet als <span id="profile-current-user">—</span>
+            </p>
         </div>
 
-        <!-- Bearbeitungs-Formulare (werden per JS eingeblendet) -->
+        <!-- Feedback-Meldungen -->
+        <div id="profile-message" class="auth-message hidden"></div>
+
+        <!-- Benutzerdaten -->
+        <div class="profile-data">
+
+            <div class="profile-data-row">
+                <div class="profile-field">
+                    <span class="profile-label">Benutzername</span>
+                    <span class="profile-value" id="display-username">—</span>
+                </div>
+
+                <button class="btn-edit" type="button" data-target="username">
+                    Bearbeiten
+                </button>
+            </div>
+
+            <div class="profile-data-row">
+                <div class="profile-field">
+                    <span class="profile-label">E-Mail</span>
+                    <span class="profile-value" id="display-email">—</span>
+                </div>
+
+                <button class="btn-edit" type="button" data-target="email">
+                    Bearbeiten
+                </button>
+            </div>
+
+            <div class="profile-data-row">
+                <div class="profile-field">
+                    <span class="profile-label">Passwort</span>
+                    <span class="profile-value">••••••••</span>
+                </div>
+
+                <button class="btn-edit" type="button" data-target="password">
+                    Bearbeiten
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Bearbeitungsbereich -->
         <div id="profile-edit-area" class="profile-edit-area hidden">
-            <!-- Form 1: Username -->
+
+            <!-- Benutzername ändern -->
             <form id="form-change-username" class="profile-form hidden">
-                <h3>Benutzername ändern</h3>
+
+                <div class="profile-form-header">
+                    <h3>Benutzername ändern</h3>
+                    <p>Wähle einen neuen Benutzernamen.</p>
+                </div>
+
                 <div class="form-group">
                     <label for="new-username">Neuer Benutzername</label>
-                    <input type="text" id="new-username" required placeholder="NeuerName123"
-                           minlength="3" maxlength="30">
+                    <input
+                            type="text"
+                            id="new-username"
+                            required
+                            minlength="3"
+                            maxlength="30"
+                            placeholder="NeuerName123"
+                    >
                 </div>
+
                 <div class="form-group">
                     <label for="confirm-user-pass">Passwort bestätigen</label>
-                    <input type="password" id="confirm-user-pass" required placeholder="••••••••">
+                    <input
+                            type="password"
+                            id="confirm-user-pass"
+                            required
+                            placeholder="••••••••"
+                    >
                 </div>
+
                 <div class="profile-form-actions">
                     <button type="button" class="btn-cancel">Abbrechen</button>
                     <button type="submit" class="btn-submit">Speichern</button>
                 </div>
+
             </form>
 
-            <!-- Form 2: E-Mail -->
+
+            <!-- E-Mail ändern -->
             <form id="form-change-email" class="profile-form hidden">
-                <h3>E-Mail ändern</h3>
+
+                <div class="profile-form-header">
+                    <h3>E-Mail ändern</h3>
+                    <p>Aktualisiere deine E-Mail-Adresse.</p>
+                </div>
+
                 <div class="form-group">
                     <label for="new-email">Neue E-Mail-Adresse</label>
-                    <input type="email" id="new-email" required placeholder="neue@email.at">
+                    <input
+                            type="email"
+                            id="new-email"
+                            required
+                            placeholder="neue@email.at"
+                    >
                 </div>
+
                 <div class="form-group">
                     <label for="confirm-email-pass">Passwort bestätigen</label>
-                    <input type="password" id="confirm-email-pass" required placeholder="••••••••">
+                    <input
+                            type="password"
+                            id="confirm-email-pass"
+                            required
+                            placeholder="••••••••"
+                    >
                 </div>
+
                 <div class="profile-form-actions">
                     <button type="button" class="btn-cancel">Abbrechen</button>
                     <button type="submit" class="btn-submit">Speichern</button>
                 </div>
+
             </form>
 
-            <!-- Form 3: Passwort -->
+
+            <!-- Passwort ändern -->
             <form id="form-change-password" class="profile-form hidden">
-                <h3>Passwort ändern</h3>
+
+                <div class="profile-form-header">
+                    <h3>Passwort ändern</h3>
+                    <p>Verwende ein sicheres Passwort mit mindestens 8 Zeichen.</p>
+                </div>
+
                 <div class="form-group">
                     <label for="current-pass">Aktuelles Passwort</label>
-                    <input type="password" id="current-pass" required placeholder="••••••••">
+                    <input
+                            type="password"
+                            id="current-pass"
+                            required
+                            placeholder="••••••••"
+                    >
                 </div>
+
                 <div class="form-group">
                     <label for="new-pass">Neues Passwort</label>
-                    <input type="password" id="new-pass" required placeholder="••••••••"
-                           minlength="8">
+                    <input
+                            type="password"
+                            id="new-pass"
+                            required
+                            minlength="8"
+                            placeholder="••••••••"
+                    >
                 </div>
+
                 <div class="form-group">
                     <label for="new-pass-confirm">Neues Passwort bestätigen</label>
-                    <input type="password" id="new-pass-confirm" required placeholder="••••••••">
+                    <input
+                            type="password"
+                            id="new-pass-confirm"
+                            required
+                            placeholder="••••••••"
+                    >
                 </div>
+
                 <div class="profile-form-actions">
                     <button type="button" class="btn-cancel">Abbrechen</button>
                     <button type="submit" class="btn-submit">Speichern</button>
                 </div>
+
             </form>
 
-            <!-- Form 4: Konto löschen -->
+
+            <!-- Konto löschen -->
             <form id="form-delete-account" class="profile-form hidden">
-                <h3>Konto löschen</h3>
-                <div class="delete-warning">
-                    <p><strong>Achtung:</strong> Diese Aktion kann nicht rückgängig gemacht werden.
-                        Alle deine gespeicherten Konzerte gehen verloren.</p>
+
+                <div class="profile-form-header">
+                    <h3>Konto löschen</h3>
+                    <p>Diese Aktion kann nicht rückgängig gemacht werden.</p>
                 </div>
+
+                <div class="delete-warning">
+                    <p>
+                        <strong>Achtung:</strong>
+                        Dein Konto und alle gespeicherten Konzerte werden dauerhaft gelöscht.
+                    </p>
+                </div>
+
                 <div class="form-group">
                     <label for="delete-confirm-pass">Passwort zur Bestätigung</label>
-                    <input type="password" id="delete-confirm-pass" required placeholder="••••••••">
+                    <input
+                            type="password"
+                            id="delete-confirm-pass"
+                            required
+                            placeholder="••••••••"
+                    >
                 </div>
-                <div class="form-group form-checkbox">
+
+                <div class="form-checkbox">
                     <label for="delete-confirm-check">
                         <input type="checkbox" id="delete-confirm-check" required>
                         Ich verstehe, dass mein Konto dauerhaft gelöscht wird.
                     </label>
                 </div>
+
                 <div class="profile-form-actions">
                     <button type="button" class="btn-cancel">Abbrechen</button>
                     <button type="submit" class="btn-submit btn-danger">Löschen</button>
                 </div>
+
             </form>
+
         </div>
+
     </div>
 </section>
+```
+
 
 
 <!-- FE -->
