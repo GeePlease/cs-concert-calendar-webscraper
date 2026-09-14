@@ -44,9 +44,9 @@ public class TestDataSeeder
             },
             new User
             {
-                Username = "tom_rockt",
-                Email = "tom.music@example.com",
-                PasswordHash = _passwordHasher.HashPassword("RockOnGraz!")
+                Username = "gee",
+                Email = "gee@example.com",
+                PasswordHash = _passwordHasher.HashPassword("gee!")
             }
         };
         

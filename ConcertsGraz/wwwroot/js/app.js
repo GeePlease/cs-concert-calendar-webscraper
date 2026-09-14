@@ -250,4 +250,220 @@ document.addEventListener("DOMContentLoaded", () => {
     function escapeHtml(str) {
         return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
+
+    // ============================================================
+    // Profil-Logik
+    // ============================================================
+
+    const profileModal       = document.getElementById('profile-modal');
+    const btnOpenProfile     = document.getElementById('btn-open-profile');
+    const btnCloseProfile    = document.getElementById('btn-close-profile');
+    const profileMessage     = document.getElementById('profile-message');
+    const profileCurrentUser = document.getElementById('profile-current-user');
+
+    // User-Daten aus localStorage lesen (so wie dein Login es speichert)
+    function getLoggedInUser() {
+        const stored = localStorage.getItem("user");
+        return stored ? JSON.parse(stored) : null;
+    }
+
+    // Auth-Token für API-Aufrufe
+    function getAuthToken() {
+        return localStorage.getItem("token") || "";
+    }
+
+    // Tabs
+    const tabProfileUser   = document.getElementById('tab-profile-user');
+    const tabProfileEmail  = document.getElementById('tab-profile-email');
+    const tabProfilePass   = document.getElementById('tab-profile-pass');
+    const tabProfileDelete = document.getElementById('tab-profile-delete');
+
+    // Formulare
+    const formChangeUsername = document.getElementById('form-change-username');
+    const formChangeEmail    = document.getElementById('form-change-email');
+    const formChangePassword = document.getElementById('form-change-password');
+    const formDeleteAccount  = document.getElementById('form-delete-account');
+
+    const profileTabs  = [tabProfileUser, tabProfileEmail, tabProfilePass, tabProfileDelete];
+    const profileForms = [formChangeUsername, formChangeEmail, formChangePassword, formDeleteAccount];
+
+    // --- Tab wechseln ---
+    function switchProfileTab(index) {
+        profileTabs.forEach((tab, i) => tab.classList.toggle('active', i === index));
+        profileForms.forEach((form, i) => form.classList.toggle('hidden', i !== index));
+        profileMessage.classList.add('hidden');
+        profileMessage.textContent = '';
+    }
+
+    tabProfileUser.addEventListener('click',   () => switchProfileTab(0));
+    tabProfileEmail.addEventListener('click',  () => switchProfileTab(1));
+    tabProfilePass.addEventListener('click',   () => switchProfileTab(2));
+    tabProfileDelete.addEventListener('click', () => switchProfileTab(3));
+
+    // --- Modal öffnen / schließen ---
+    btnOpenProfile?.addEventListener('click', () => {
+        const user = getLoggedInUser();
+        profileCurrentUser.textContent = user?.username || user?.email || 'Unbekannt';
+        profileModal.classList.remove('hidden');
+    });
+
+    btnCloseProfile?.addEventListener('click', () => {
+        profileModal.classList.add('hidden');
+        profileForms.forEach(f => f.reset());
+        switchProfileTab(0);
+    });
+
+    // Klick außerhalb der Card schließt das Modal
+    profileModal?.addEventListener('click', (e) => {
+        if (e.target === profileModal) btnCloseProfile.click();
+    });
+
+    // --- Feedback anzeigen ---
+    function showProfileMessage(text, isSuccess) {
+        profileMessage.textContent = text;
+        profileMessage.className = 'auth-message ' + (isSuccess ? 'success' : 'error');
+        profileMessage.classList.remove('hidden');
+    }
+
+    // --- 1: Benutzername ändern ---
+    formChangeUsername?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            newUsername: document.getElementById('new-username').value,
+            currentPassword: document.getElementById('confirm-user-pass').value
+        };
+        try {
+            const res = await fetch('/api/user/username', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAuthToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                // localStorage aktualisieren
+                const user = getLoggedInUser();
+                if (user) {
+                    user.username = payload.newUsername;
+                    localStorage.setItem("user", JSON.stringify(user));
+                }
+                showProfileMessage('Benutzername erfolgreich geändert.', true);
+                formChangeUsername.reset();
+                profileCurrentUser.textContent = payload.newUsername;
+            } else {
+                const err = await res.text();
+                showProfileMessage('Fehler: ' + err, false);
+            }
+        } catch (err) {
+            showProfileMessage('Netzwerkfehler: ' + err.message, false);
+        }
+    });
+
+    // --- 2: E-Mail ändern ---
+    formChangeEmail?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            newEmail: document.getElementById('new-email').value,
+            currentPassword: document.getElementById('confirm-email-pass').value
+        };
+        try {
+            const res = await fetch('/api/user/email', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAuthToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const user = getLoggedInUser();
+                if (user) {
+                    user.email = payload.newEmail;
+                    localStorage.setItem("user", JSON.stringify(user));
+                }
+                showProfileMessage('E-Mail erfolgreich geändert.', true);
+                formChangeEmail.reset();
+            } else {
+                const err = await res.text();
+                showProfileMessage('Fehler: ' + err, false);
+            }
+        } catch (err) {
+            showProfileMessage('Netzwerkfehler: ' + err.message, false);
+        }
+    });
+
+    // --- 3: Passwort ändern ---
+    formChangePassword?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newPass = document.getElementById('new-pass').value;
+        const newPassConfirm = document.getElementById('new-pass-confirm').value;
+
+        if (newPass !== newPassConfirm) {
+            showProfileMessage('Die neuen Passwörter stimmen nicht überein.', false);
+            return;
+        }
+
+        const payload = {
+            currentPassword: document.getElementById('current-pass').value,
+            newPassword: newPass
+        };
+        try {
+            const res = await fetch('/api/user/password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAuthToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                showProfileMessage('Passwort erfolgreich geändert.', true);
+                formChangePassword.reset();
+            } else {
+                const err = await res.text();
+                showProfileMessage('Fehler: ' + err, false);
+            }
+        } catch (err) {
+            showProfileMessage('Netzwerkfehler: ' + err.message, false);
+        }
+    });
+
+    // --- 4: Konto löschen ---
+    formDeleteAccount?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const reallyDelete = confirm('Möchtest du dein Konto wirklich endgültig löschen? Diese Aktion kann NICHT rückgängig gemacht werden.');
+        if (!reallyDelete) return;
+
+        const payload = {
+            currentPassword: document.getElementById('delete-confirm-pass').value
+        };
+        try {
+            const res = await fetch('/api/user', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAuthToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                showProfileMessage('Konto erfolgreich gelöscht. Du wirst abgemeldet.', true);
+                setTimeout(() => {
+                    // Gleiche Keys wie dein Logout-Button
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    profileModal.classList.add('hidden');
+                    updateAuthUI();
+                }, 2000);
+            } else {
+                const err = await res.text();
+                showProfileMessage('Fehler: ' + err, false);
+            }
+        } catch (err) {
+            showProfileMessage('Netzwerkfehler: ' + err.message, false);
+        }
+    });
+    
 });

@@ -116,7 +116,8 @@
             <button id="tab-login" class="auth-tab active" type="button">Login</button>
             <button id="tab-register" class="auth-tab" type="button">Registrieren</button>
         </div>
-
+        
+                
         <!-- Login-Formular -->
         <form id="form-login" class="auth-form">
             <div class="form-group">
@@ -152,6 +153,97 @@
             <button type="submit" class="btn-submit">Konto erstellen</button>
         </form>
     </div>
+</div>
+
+<!-- Profil-Modal: User bearbeiten -->
+<div id="profile-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+
+        <button id="btn-close-profile" class="modal-close" type="button" aria-label="Schließen">&times;</button>
+
+        <!-- Profil-Header -->
+        <div class="profile-header">
+            <h2>Mein Profil</h2>
+            <p class="profile-subtitle">Angemeldet als: <span id="profile-current-user">—</span></p>
+        </div>
+
+        <!-- Feedback-Bereich -->
+        <div id="profile-message" class="auth-message hidden"></div>
+
+        <!-- Tab-Navigation -->
+        <div class="auth-tabs">
+            <button id="tab-profile-user"   class="auth-tab active" type="button">Benutzername</button>
+            <button id="tab-profile-email"  class="auth-tab"        type="button">E-Mail</button>
+            <button id="tab-profile-pass"   class="auth-tab"        type="button">Passwort</button>
+            <button id="tab-profile-delete" class="auth-tab"        type="button">Konto löschen</button>
+        </div>
+
+        <!-- Sektion 1: Benutzername ändern -->
+        <form id="form-change-username" class="auth-form">
+            <div class="form-group">
+                <label for="new-username">Neuer Benutzername</label>
+                <input type="text" id="new-username" required placeholder="NeuerName123"
+                       minlength="3" maxlength="30">
+            </div>
+            <div class="form-group">
+                <label for="confirm-user-pass">Passwort bestätigen</label>
+                <input type="password" id="confirm-user-pass" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-submit">Benutzername speichern</button>
+        </form>
+
+        <!-- Sektion 2: E-Mail ändern -->
+        <form id="form-change-email" class="auth-form hidden">
+            <div class="form-group">
+                <label for="new-email">Neue E-Mail-Adresse</label>
+                <input type="email" id="new-email" required placeholder="neue@email.at">
+            </div>
+            <div class="form-group">
+                <label for="confirm-email-pass">Passwort bestätigen</label>
+                <input type="password" id="confirm-email-pass" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-submit">E-Mail speichern</button>
+        </form>
+
+        <!-- Sektion 3: Passwort ändern -->
+        <form id="form-change-password" class="auth-form hidden">
+            <div class="form-group">
+                <label for="current-pass">Aktuelles Passwort</label>
+                <input type="password" id="current-pass" required placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label for="new-pass">Neues Passwort</label>
+                <input type="password" id="new-pass" required placeholder="••••••••"
+                       minlength="8">
+            </div>
+            <div class="form-group">
+                <label for="new-pass-confirm">Neues Passwort bestätigen</label>
+                <input type="password" id="new-pass-confirm" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-submit">Passwort ändern</button>
+        </form>
+
+        <!-- Sektion 4: Konto löschen -->
+        <form id="form-delete-account" class="auth-form hidden">
+            <div class="delete-warning">
+                <p><strong>Achtung:</strong> Diese Aktion kann nicht rückgängig gemacht werden.
+                    Alle deine gespeicherten Konzerte gehen verloren.</p>
+            </div>
+            <div class="form-group">
+                <label for="delete-confirm-pass">Passwort zur Bestätigung</label>
+                <input type="password" id="delete-confirm-pass" required placeholder="••••••••">
+            </div>
+            <div class="form-group form-checkbox">
+                <label for="delete-confirm-check">
+                    <input type="checkbox" id="delete-confirm-check" required>
+                    Ich verstehe, dass mein Konto dauerhaft gelöscht wird.
+                </label>
+            </div>
+            <button type="submit" class="btn-submit btn-danger">Konto endgültig löschen</button>
+        </form>
+
+    </div>
+    
 </div>
 
 

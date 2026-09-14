@@ -412,3 +412,87 @@ body {
 .hidden {
   display: none !important;
 }
+
+/* ============================================================
+   Profil-Modul Erweiterungen
+   ============================================================ */
+
+/* Profil-Header im Modal */
+.profile-header {
+  margin-bottom: 1.5rem;
+}
+
+.profile-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.profile-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.profile-subtitle span {
+  font-weight: 600;
+  color: var(--primary-hover);
+}
+
+/* Profil-Modal ist etwas breiter wegen 4 Tabs */
+#profile-modal .modal-card {
+  max-width: 460px;
+}
+
+/* 4 Tabs in einer Reihe — etwas kompakter */
+#profile-modal .auth-tabs {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+#profile-modal .auth-tab {
+  font-size: 0.9rem;
+  flex: 1 1 45%;
+  text-align: center;
+}
+
+/* Lösch-Warnhinweis */
+.delete-warning {
+  background: rgba(255, 152, 0, 0.12);
+  border: 1px solid rgba(255, 152, 0, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.delete-warning p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #ffcc80;
+  line-height: 1.4;
+}
+
+/* Checkbox-Gruppe */
+.form-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.form-checkbox input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+/* Danger-Button */
+.btn-danger {
+  background: #d32f2f !important;
+}
+
+.btn-danger:hover {
+  background: #b71c1c !important;
+}
