@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterBar = document.querySelector(".filter-bar");
 
     let allConcerts = []; // Hält die Daten im Speicher
+    let bookmarkedConcertIds = new Set();
+    const pendingBookmarks = new Set();
+    let bookmarksLoading = false;
+    let bookmarkGeneration = 0; // Ignoriert alte Antworten nach einem Benutzerwechsel
 
     // 2. Daten vom C# Backend holen
     fetchConcerts();
@@ -45,10 +49,52 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p class="card-price">🎟️ ${formatPrice(c.price)}</p>
                 </div>
                 <div class="card-footer">
-                    <button class="btn-bookmark" type="button" data-id="${c.id}">♡ Merken</button>
+                    <button class="btn-bookmark" type="button" data-id="${c.id}" data-bookmarked="${bookmarkedConcertIds.has(c.id)}" ${bookmarksLoading || pendingBookmarks.has(c.id) ? "disabled" : ""}>${bookmarkedConcertIds.has(c.id) ? "♥ Gemerkt" : "♡ Merken"}</button>
                 </div>
             </article>
         `).join("");
+    }
+
+    // Aktualisiert auch Buttons, die während einer Anfrage neu gerendert wurden.
+    function updateBookmarkButtons() {
+        grid?.querySelectorAll(".btn-bookmark").forEach(button => {
+            const isBookmarked = bookmarkedConcertIds.has(button.dataset.id);
+            button.dataset.bookmarked = String(isBookmarked);
+            button.textContent = isBookmarked ? "♥ Gemerkt" : "♡ Merken";
+            button.disabled = bookmarksLoading || pendingBookmarks.has(button.dataset.id);
+        });
+    }
+
+    async function loadBookmarks() {
+        if (!localStorage.getItem("token")) return;
+
+        const generation = ++bookmarkGeneration;
+        bookmarkedConcertIds.clear();
+        pendingBookmarks.clear();
+        bookmarksLoading = true;
+        updateBookmarkButtons();
+
+        try {
+            const response = await fetch("/api/users/bookmarks");
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Merkliste konnte nicht geladen werden.");
+            }
+
+            const ids = await response.json();
+            if (!Array.isArray(ids) || !ids.every(id => typeof id === "string")) {
+                throw new Error("Ungültige Merkliste erhalten.");
+            }
+            if (generation !== bookmarkGeneration) return;
+            bookmarkedConcertIds = new Set(ids);
+        } catch (error) {
+            console.error("Fehler beim Laden der Merkliste:", error);
+        } finally {
+            if (generation === bookmarkGeneration) {
+                bookmarksLoading = false;
+                updateBookmarkButtons();
+            }
+        }
     }
 
     // Bookmark-Buttons: Event Delegation für dynamisch gerenderte Karten
@@ -59,9 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!localStorage.getItem("token")) return;
 
         const concertId = button.dataset.id;
-        if (!concertId) return;
+        if (!concertId || bookmarksLoading || pendingBookmarks.has(concertId)) return;
 
-        const isBookmarked = button.dataset.bookmarked === "true";
+        const generation = bookmarkGeneration;
+        const isBookmarked = bookmarkedConcertIds.has(concertId);
+        pendingBookmarks.add(concertId);
         button.disabled = true;
 
         try {
@@ -74,12 +122,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(errorText || "Merkliste konnte nicht aktualisiert werden.");
             }
 
-            button.dataset.bookmarked = String(!isBookmarked);
-            button.textContent = isBookmarked ? "♡ Merken" : "♥ Gemerkt";
+            if (generation !== bookmarkGeneration) return;
+            if (isBookmarked) {
+                bookmarkedConcertIds.delete(concertId);
+            } else {
+                bookmarkedConcertIds.add(concertId);
+            }
         } catch (error) {
             console.error("Fehler beim Aktualisieren der Merkliste:", error);
         } finally {
-            button.disabled = false;
+            if (generation === bookmarkGeneration) {
+                pendingBookmarks.delete(concertId);
+                updateBookmarkButtons();
+            }
         }
     });
 
@@ -216,6 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Beim Laden der Seite direkt ausführen
     updateAuthUI();
+    loadBookmarks();
 
     // Hilfsfunktionen für Feedback-Meldungen im Modal
     function showAuthMessage(text, type = "error") {
@@ -276,6 +332,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function logout() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        bookmarkGeneration++;
+        bookmarkedConcertIds.clear();
+        pendingBookmarks.clear();
+        bookmarksLoading = false;
 
         showView("concert-section");
 
@@ -583,6 +643,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Header umschalten, Meldung löschen, Modal schließen
             updateAuthUI();
+            loadBookmarks();
             clearAuthMessage();
             modal.classList.add("hidden");
         } catch (err) {

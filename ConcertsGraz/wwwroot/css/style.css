@@ -342,7 +342,8 @@ input {
   transition: var(--transition);
 }
 
-.btn-bookmark:hover {
+.btn-bookmark:hover,
+.btn-bookmark[data-bookmarked="true"] {
   border-color: var(--primary);
   color: var(--primary);
   background-color: var(--primary-transparent);
