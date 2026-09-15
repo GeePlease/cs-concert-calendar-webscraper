@@ -565,6 +565,10 @@ input {
   gap: 1rem;
 }
 
+.profile-account-section {
+  margin-top: 1rem;
+}
+
 .profile-data-row {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);

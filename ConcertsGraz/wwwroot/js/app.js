@@ -87,12 +87,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const formChangeUsername = document.getElementById("form-change-username");
     const formChangeEmail = document.getElementById("form-change-email");
     const formChangePassword = document.getElementById("form-change-password");
+    const formDeleteAccount = document.getElementById("form-delete-account");
+    const btnOpenDeleteAccount = document.getElementById("btn-open-delete-account");
     const newUsername = document.getElementById("new-username");
     const newEmail = document.getElementById("new-email");
     const confirmEmailPass = document.getElementById("confirm-email-pass");
     const currentPass = document.getElementById("current-pass");
     const newPass = document.getElementById("new-pass");
     const newPassConfirm = document.getElementById("new-pass-confirm");
+    const deleteConfirmPass = document.getElementById("delete-confirm-pass");
     const profileMessage = document.getElementById("profile-message");
 
     // Steuerung der Header-Buttons (Login vs. User-Menü)
@@ -161,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Logout durchführen
-    btnLogout?.addEventListener("click", () => {
+    function logout() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
@@ -181,7 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
         renderConcerts(allConcerts);
 
         updateAuthUI();
-    });
+    }
+
+    btnLogout?.addEventListener("click", logout);
 
     btnProfile?.addEventListener("click", () => {
         const concertSection = document.getElementById("concert-section");
@@ -252,9 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
         formChangeUsername?.reset();
         formChangeEmail?.reset();
         formChangePassword?.reset();
+        formDeleteAccount?.reset();
         formChangeUsername?.classList.add("hidden");
         formChangeEmail?.classList.add("hidden");
         formChangePassword?.classList.add("hidden");
+        formDeleteAccount?.classList.add("hidden");
         profileEditArea?.classList.add("hidden");
     }
 
@@ -285,7 +292,15 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPass?.focus();
     });
 
-    [formChangeUsername, formChangeEmail, formChangePassword].forEach(form => {
+    btnOpenDeleteAccount?.addEventListener("click", () => {
+        hideProfileEditForms();
+        clearProfileMessage();
+        formDeleteAccount?.classList.remove("hidden");
+        profileEditArea?.classList.remove("hidden");
+        deleteConfirmPass?.focus();
+    });
+
+    [formChangeUsername, formChangeEmail, formChangePassword, formDeleteAccount].forEach(form => {
         form?.querySelector(".btn-cancel")?.addEventListener("click", () => {
             hideProfileEditForms();
             clearProfileMessage();
@@ -338,6 +353,26 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Fehler beim Aktualisieren des Passworts:", error);
             showProfileMessage(error.message || "Passwort konnte nicht aktualisiert werden.", "error");
+        }
+    });
+
+    formDeleteAccount?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch("/api/users/delete", {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Konto konnte nicht gelöscht werden.");
+            }
+
+            logout();
+        } catch (error) {
+            console.error("Fehler beim Löschen des Kontos:", error);
+            showProfileMessage(error.message || "Konto konnte nicht gelöscht werden.", "error");
         }
     });
 
