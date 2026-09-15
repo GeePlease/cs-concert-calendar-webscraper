@@ -83,6 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const formLogin = document.getElementById("form-login");
     const formRegister = document.getElementById("form-register");
     const authMessage = document.getElementById("auth-message");
+    const profileEditArea = document.getElementById("profile-edit-area");
+    const formChangeUsername = document.getElementById("form-change-username");
+    const formChangeEmail = document.getElementById("form-change-email");
+    const newUsername = document.getElementById("new-username");
+    const newEmail = document.getElementById("new-email");
+    const profileMessage = document.getElementById("profile-message");
 
     // Steuerung der Header-Buttons (Login vs. User-Menü)
     function updateAuthUI() {
@@ -222,6 +228,84 @@ document.addEventListener("DOMContentLoaded", () => {
                 profileMessage.textContent = error.message || "Profil konnte nicht geladen werden.";
                 profileMessage.className = "auth-message error";
             }
+        }
+    }
+
+    function showProfileMessage(text, type = "error") {
+        if (!profileMessage) return;
+        profileMessage.textContent = text;
+        profileMessage.className = `auth-message ${type}`;
+    }
+
+    function clearProfileMessage() {
+        if (!profileMessage) return;
+        profileMessage.textContent = "";
+        profileMessage.className = "auth-message hidden";
+    }
+
+    function hideProfileEditForms() {
+        formChangeUsername?.reset();
+        formChangeEmail?.reset();
+        formChangeUsername?.classList.add("hidden");
+        formChangeEmail?.classList.add("hidden");
+        profileEditArea?.classList.add("hidden");
+    }
+
+    document.querySelectorAll('.btn-edit[data-target="username"], .btn-edit[data-target="email"]').forEach(button => {
+        button.addEventListener("click", () => {
+            const target = button.dataset.target;
+            const form = target === "username" ? formChangeUsername : formChangeEmail;
+            const input = target === "username" ? newUsername : newEmail;
+            const display = document.getElementById(target === "username" ? "display-username" : "display-email");
+
+            hideProfileEditForms();
+            clearProfileMessage();
+            form?.classList.remove("hidden");
+            profileEditArea?.classList.remove("hidden");
+
+            if (input) {
+                input.value = display?.textContent.trim() || "";
+                input.focus();
+            }
+        });
+    });
+
+    [formChangeUsername, formChangeEmail].forEach(form => {
+        form?.querySelector(".btn-cancel")?.addEventListener("click", () => {
+            hideProfileEditForms();
+            clearProfileMessage();
+        });
+    });
+
+    formChangeUsername?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await updateProfile({ username: newUsername.value.trim() }, "Benutzername erfolgreich aktualisiert.");
+    });
+
+    formChangeEmail?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await updateProfile({ email: newEmail.value.trim() }, "E-Mail-Adresse erfolgreich aktualisiert.");
+    });
+
+    async function updateProfile(body, successMessage) {
+        try {
+            const response = await fetch("/api/users/update", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Profil konnte nicht aktualisiert werden.");
+            }
+
+            hideProfileEditForms();
+            await loadProfileData();
+            showProfileMessage(successMessage, "success");
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren des Profils:", error);
+            showProfileMessage(error.message || "Profil konnte nicht aktualisiert werden.", "error");
         }
     }
     
