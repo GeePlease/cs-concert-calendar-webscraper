@@ -60,13 +60,80 @@ document.addEventListener("DOMContentLoaded", () => {
         let filtered = [...allConcerts];
 
         if (filterLocation.value !== "all") {
-            filtered = filtered.filter(c => c.location?.toLowerCase().includes(filterLocation.value.toLowerCase()));
+            const selectedVenue = normalizeFilterText(filterLocation.value);
+            filtered = filtered.filter(c => normalizeFilterText(c.venue).includes(selectedVenue));
         }
         if (filterGenre.value !== "all") {
             filtered = filtered.filter(c => c.genre?.toLowerCase().includes(filterGenre.value.toLowerCase()));
         }
+        if (filterDate.value !== "all") {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (filterDate.value === "today") {
+                filtered = filtered.filter(c => isSameDay(new Date(c.date), today));
+            }
+
+            if (filterDate.value === "weekend") {
+                const weekendStart = new Date(today);
+                const daysUntilSaturday = today.getDay() === 0 ? -1 : 6 - today.getDay();
+                weekendStart.setDate(today.getDate() + daysUntilSaturday);
+                const weekendEnd = new Date(weekendStart);
+                weekendEnd.setDate(weekendStart.getDate() + 1);
+
+                filtered = filtered.filter(c => {
+                    const concertDate = new Date(c.date);
+                    concertDate.setHours(0, 0, 0, 0);
+                    return concertDate >= weekendStart && concertDate <= weekendEnd;
+                });
+            }
+
+            if (filterDate.value === "month") {
+                filtered = filtered.filter(c => {
+                    const concertDate = new Date(c.date);
+                    return concertDate.getMonth() === today.getMonth() &&
+                        concertDate.getFullYear() === today.getFullYear();
+                });
+            }
+        }
+        if (filterPrice.value !== "all") {
+            if (filterPrice.value === "free") {
+                filtered = filtered.filter(c => {
+                    const price = (c.price || "").toLowerCase();
+                    return price.includes("frei") || price.includes("gratis") || price.includes("pay as you wish");
+                });
+            }
+
+            if (filterPrice.value === "under15") {
+                filtered = filtered.filter(c => {
+                    const priceText = String(c.price || "").toLowerCase();
+                    if (priceText.includes("frei") || priceText.includes("pay as you wish")) {
+                        return true;
+                    }
+
+                    const priceMatch = priceText.match(/\d+(?:[.,]\d+)?/);
+                    const price = priceMatch ? Number(priceMatch[0].replace(",", ".")) : NaN;
+                    return price < 15;
+                });
+            }
+        }
 
         renderConcerts(filtered);
+    }
+
+    function normalizeFilterText(value) {
+        return (value || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/g, "");
+    }
+
+    function isSameDay(firstDate, secondDate) {
+        return !isNaN(firstDate.getTime()) &&
+            firstDate.getFullYear() === secondDate.getFullYear() &&
+            firstDate.getMonth() === secondDate.getMonth() &&
+            firstDate.getDate() === secondDate.getDate();
     }
 
     // 5. Modal & Tab Steuerung & Auth-UI Elemente
