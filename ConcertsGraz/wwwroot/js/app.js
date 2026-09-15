@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formChangeEmail = document.getElementById("form-change-email");
     const newUsername = document.getElementById("new-username");
     const newEmail = document.getElementById("new-email");
+    const confirmEmailPass = document.getElementById("confirm-email-pass");
     const profileMessage = document.getElementById("profile-message");
 
     // Steuerung der Header-Buttons (Login vs. User-Menü)
@@ -284,7 +285,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     formChangeEmail?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        await updateProfile({ email: newEmail.value.trim() }, "E-Mail-Adresse erfolgreich aktualisiert.");
+        await updateProfile({
+            email: newEmail.value.trim(),
+            currentPassword: confirmEmailPass.value
+        }, "E-Mail-Adresse erfolgreich aktualisiert.");
     });
 
     async function updateProfile(body, successMessage) {

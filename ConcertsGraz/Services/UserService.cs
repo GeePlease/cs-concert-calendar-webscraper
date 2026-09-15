@@ -20,13 +20,15 @@ public class UserService
     
     // CONSTRUCTOR
     // DI - db, pw hasher
-    public UserService(IMongoClient mongoClient, IOptions<ConcertsGrazDatabaseSettings> dbSettings)
+    public UserService(IMongoClient mongoClient, IOptions<ConcertsGrazDatabaseSettings> dbSettings, PasswordHasher passwordHasher)
     {
         // database + settings via mongoclient
         var database = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         
         // Collection: users "table" via db settings !
-        _usersCollection = database.GetCollection<User>(dbSettings.Value.UsersCollectionName); }
+        _usersCollection = database.GetCollection<User>(dbSettings.Value.UsersCollectionName);
+        _pwHasher = passwordHasher;
+    }
 
     
     // METHODS
@@ -41,7 +43,7 @@ public class UserService
     
     
     // UPDATE USER PROFILE - Username or Email (userId, newUsername, newEmail)
-    public async Task<User> UpdateNameOrMail(string userId, string? newUsername, string? newEmail)
+    public async Task<User> UpdateNameOrMail(string userId, string? newUsername, string? newEmail, string? currentPassword)
     {
         // TODO: email validator!
         
@@ -50,6 +52,13 @@ public class UserService
         
         // user null check after search
         if (wantedUser == null) { return null; } 
+
+        if (!string.IsNullOrEmpty(newEmail) &&
+            (string.IsNullOrWhiteSpace(currentPassword) ||
+             !_pwHasher.VerifyPassword(wantedUser.PasswordHash, currentPassword)))
+        {
+            return null;
+        }
         
         // TODO: DUPLICATE CHECK!! (decide how to handle double mail + double username)
         // TODO: IMPLEMENT VALIDATOR!!

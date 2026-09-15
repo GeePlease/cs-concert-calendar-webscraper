@@ -68,7 +68,8 @@ public class UserController : ControllerBase
         var userToUpdate = await _userService.UpdateNameOrMail(
             userId,
             updateProfileData.Username,
-            updateProfileData.Email);
+            updateProfileData.Email,
+            updateProfileData.CurrentPassword);
         
         // handle error/success
         if (userToUpdate == null)
@@ -140,6 +141,7 @@ public class UserController : ControllerBase
     {
         public string? Username { get; set; }
         public string? Email { get; set; }
+        public string? CurrentPassword { get; set; }
     }
     
     //  HELPER CLASS FOR UPDATING USER PASSWORD DATA
