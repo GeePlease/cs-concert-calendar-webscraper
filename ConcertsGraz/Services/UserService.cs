@@ -25,9 +25,8 @@ public class UserService
         // database + settings via mongoclient
         var database = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         
-        // Collection: users "table"
-        _usersCollection = database.GetCollection<User>(dbSettings.Value.ConcertsCollectionName);
-    }
+        // Collection: users "table" via db settings !
+        _usersCollection = database.GetCollection<User>(dbSettings.Value.UsersCollectionName); }
 
     
     // METHODS

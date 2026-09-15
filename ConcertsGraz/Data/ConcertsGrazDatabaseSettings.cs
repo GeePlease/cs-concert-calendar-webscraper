@@ -13,4 +13,6 @@ public class ConcertsGrazDatabaseSettings
     public string DatabaseName { get; set; } = null!;
 
     public string ConcertsCollectionName { get; set; } = null!;
+
+    public string UsersCollectionName { get; set; } = null!;
 }
