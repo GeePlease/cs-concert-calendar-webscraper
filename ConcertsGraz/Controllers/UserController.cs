@@ -52,6 +52,32 @@ public class UserController : ControllerBase
         });
     }
     
+    // API GET (get all bookmarked concert ids)
+    [HttpGet("bookmarks")]
+    public async Task<IActionResult> GetBookmarkedConcertsAsync()
+    {
+        // get user id from session
+        var userId = HttpContext.Session.GetString("UserId");
+
+        // null check
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Nicht eingeloggt.");
+        }
+
+        // get user from db
+        var userToLoad = await _userService.GetSingleUserByIdAsync(userId);
+
+        // handle error
+        if (userToLoad == null)
+        {
+            return NotFound("User konnte nicht gefunden werden.");
+        }
+
+        // return bookmarked concert ids
+        return Ok(userToLoad.BookmarkedConcertIds);
+    }
+    
     // API POST (bookmark concert)
     [HttpPost("bookmarks/{concertId}")]
     public async Task<IActionResult> BookmarkConcertAsync(string concertId)
