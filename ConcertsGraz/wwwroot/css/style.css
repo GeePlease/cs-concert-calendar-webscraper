@@ -242,6 +242,32 @@ input {
 }
 
 
+.calendar-control-bar .filter-container {
+  align-items: flex-end;
+}
+
+.calendar-heading {
+  flex: 1 1 auto;
+}
+
+.calendar-section-title {
+  margin: 0 0 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+#calendar-month-heading {
+  margin: 0;
+  color: var(--text-main);
+}
+
+.calendar-control-bar .filter-group {
+  flex: 0 1 180px;
+}
+
 /* ============================================================
    Main Grid Layout
    ============================================================ */
@@ -540,10 +566,14 @@ input {
   margin-bottom: 1.5rem;
 }
 
-.profile-header h2 {
+.profile-header h2,
+#calendar-month-heading {
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.3;
+}
+
+.profile-header h2 {
   margin-bottom: 0.25rem;
 }
 

@@ -369,9 +369,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function initializeCalendar() {
         if (calendar || !calendarElement) return;
 
+        const currentDate = new Date();
+        document.getElementById("calendar-month-heading").textContent =
+            currentDate.toLocaleDateString("de-AT", { month: "long", year: "numeric" });
+
         calendar = new FullCalendar.Calendar(calendarElement, {
             initialView: "dayGridMonth",
-            initialDate: new Date()
+            initialDate: currentDate,
+            headerToolbar: false
         });
         calendar.render();
     }
