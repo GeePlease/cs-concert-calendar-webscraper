@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         concertSection?.classList.add("hidden");
         profileSection?.classList.remove("hidden");
         filterBar?.classList.add("hidden");
+        loadProfileData();
     });
 
     navConcerts?.addEventListener("click", () => {
@@ -189,6 +190,40 @@ document.addEventListener("DOMContentLoaded", () => {
         profileSection?.classList.add("hidden");
         filterBar?.classList.remove("hidden");
     });
+
+    async function loadProfileData() {
+        const profileCurrentUser = document.getElementById("profile-current-user");
+        const displayUsername = document.getElementById("display-username");
+        const displayEmail = document.getElementById("display-email");
+        const profileMessage = document.getElementById("profile-message");
+
+        if (profileMessage) {
+            profileMessage.textContent = "";
+            profileMessage.className = "auth-message hidden";
+        }
+
+        try {
+            const response = await fetch("/api/users/profile");
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Profil konnte nicht geladen werden.");
+            }
+
+            const profile = await response.json();
+
+            if (profileCurrentUser) profileCurrentUser.textContent = profile.username;
+            if (displayUsername) displayUsername.textContent = profile.username;
+            if (displayEmail) displayEmail.textContent = profile.email;
+        } catch (error) {
+            console.error("Fehler beim Laden des Profils:", error);
+
+            if (profileMessage) {
+                profileMessage.textContent = error.message || "Profil konnte nicht geladen werden.";
+                profileMessage.className = "auth-message error";
+            }
+        }
+    }
     
     
 

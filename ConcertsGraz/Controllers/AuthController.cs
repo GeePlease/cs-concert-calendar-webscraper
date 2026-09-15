@@ -38,6 +38,8 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Benutzername oder Passwort ungültig." });
         }
 
+        HttpContext.Session.SetString("UserId", user.Id);
+
         // send response to frontend
         //TODO: implement token/ session management
         return Ok(new 
