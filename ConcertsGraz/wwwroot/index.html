@@ -109,8 +109,21 @@
 </main>
 
 <!-- Kalenderansicht -->
-<section id="calendar-view" class="content-wrapper hidden">
-    <div id="calendar"></div>
+<section id="calendar-view" class="hidden">
+    <div class="filter-bar calendar-control-bar">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="calendar-view-select">Ansicht</label>
+                <select id="calendar-view-select">
+                    <option value="month">Monat</option>
+                    <option value="week">Woche</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="content-wrapper">
+        <div id="calendar"></div>
+    </div>
 </section>
 
 
