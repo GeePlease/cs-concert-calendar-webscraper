@@ -1,10 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿﻿using System.Text.RegularExpressions;
 using ConcertsGraz.Interfaces;
 using ConcertsGraz.Models;
 using HtmlAgilityPack;
 using ConcertsGraz.Utilities;
-
 namespace ConcertsGraz.Scrapers;
+
+// TODO: API FETCH PRICE ON DETAIL SIDE
+
 
 public class PpcScraper : IScraper
 {
