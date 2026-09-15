@@ -2,6 +2,7 @@
 using ConcertsGraz.Models;
 using ConcertsGraz.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 namespace ConcertsGraz.Services;
@@ -130,6 +131,42 @@ public class UserService
         await _usersCollection.ReplaceOneAsync(u => u.Id == wantedUser.Id, wantedUser);
         
         // manage error/success
+        return true;
+    }
+    
+
+    // BOOKMARK Concerts (get concert id from Api UserController and add to bookmarked concert list in User DB Object)
+    public async Task<bool> BookmarkConcertId(string userId, string concertToBookmark) 
+    {
+        // null check
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(concertToBookmark))
+        {
+            return false;
+        }
+    
+        // get user from db
+        var wantedUser = await GetSingleUserByIdAsync(userId);
+        if (wantedUser == null) { return false; } // user not found null check
+    
+        // check if concert is already bookmarked
+        if (wantedUser.BookmarkedConcertIds.Contains(concertToBookmark))
+        {
+            return true;
+        }
+    
+        // add concertId to list of bookmarked concerts in user object
+        wantedUser.BookmarkedConcertIds.Add(concertToBookmark);
+    
+        // update user data in db
+        var result = await _usersCollection.ReplaceOneAsync(u => u.Id == wantedUser.Id, wantedUser);
+    
+        // manage error/ success
+        // user (bookmarked concerts) update not successful
+        if (!result.IsAcknowledged || result.ModifiedCount == 0)
+        {
+            return false;
+        }
+        // successful
         return true;
     }
 
