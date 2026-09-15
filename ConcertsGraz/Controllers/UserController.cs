@@ -51,6 +51,30 @@ public class UserController : ControllerBase
             userToLoad.Email
         });
     }
+    
+    // API POST (bookmark concert)
+    [HttpPost("bookmarks/{concertId}")]
+    public async Task<IActionResult> BookmarkConcertAsync(string concertId)
+    {
+        // get user id from session
+        var userId = HttpContext.Session.GetString("UserId");
+
+        // null check
+        if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloggt."); }
+
+        // bookmark concert
+        var success = await _userService.BookmarkConcertId(userId, concertId);
+
+        // handle error
+        if (!success)
+        {
+            return BadRequest("Konzert konnte nicht vorgemerkt werden.");
+        }
+
+        // handle success
+        return Ok("Konzert erfolgreich vorgemerkt.");
+    }
+    
 
     // API PUT (Update single user profile name or email): FromBody = coming from frontend, 
     // using UpdateProfileData Helperclass
