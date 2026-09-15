@@ -51,6 +51,38 @@ document.addEventListener("DOMContentLoaded", () => {
         `).join("");
     }
 
+    // Bookmark-Buttons: Event Delegation für dynamisch gerenderte Karten
+    grid?.addEventListener("click", async (e) => {
+        const button = e.target.closest(".btn-bookmark");
+        if (!button || !grid.contains(button) || button.disabled) return;
+
+        if (!localStorage.getItem("token")) return;
+
+        const concertId = button.dataset.id;
+        if (!concertId) return;
+
+        const isBookmarked = button.dataset.bookmarked === "true";
+        button.disabled = true;
+
+        try {
+            const response = await fetch(`/api/users/bookmarks/${encodeURIComponent(concertId)}`, {
+                method: isBookmarked ? "DELETE" : "POST"
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Merkliste konnte nicht aktualisiert werden.");
+            }
+
+            button.dataset.bookmarked = String(!isBookmarked);
+            button.textContent = isBookmarked ? "♡ Merken" : "♥ Gemerkt";
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren der Merkliste:", error);
+        } finally {
+            button.disabled = false;
+        }
+    });
+
     // 4. Filter-Events
     [filterLocation, filterGenre, filterDate, filterPrice].forEach(select => {
         select?.addEventListener("change", applyFilters);
@@ -145,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnProfile = document.getElementById("btn-open-profile");
     const navConcerts = document.getElementById("nav-concerts");
     const navCalendar = document.getElementById("nav-calendar");
-    const calendarView = document.getElementById("calendar-view");
     const calendarElement = document.getElementById("calendar");
     let calendar;
 
@@ -234,17 +265,19 @@ document.addEventListener("DOMContentLoaded", () => {
         formLogin.classList.add("hidden");
     });
 
+    function showView(viewId) {
+        ["concert-section", "calendar-view", "profile-section"].forEach(id => {
+            document.getElementById(id)?.classList.toggle("hidden", id !== viewId);
+        });
+        filterBar?.classList.toggle("hidden", viewId !== "concert-section");
+    }
+
     // Logout durchführen
     function logout() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
-        const concertSection = document.getElementById("concert-section");
-        const profileSection = document.getElementById("profile-section");
-
-        concertSection?.classList.remove("hidden");
-        profileSection?.classList.add("hidden");
-        filterBar?.classList.remove("hidden");
+        showView("concert-section");
 
         // Filter zurücksetzen
         filterLocation.value = "all";
@@ -260,33 +293,16 @@ document.addEventListener("DOMContentLoaded", () => {
     btnLogout?.addEventListener("click", logout);
 
     btnProfile?.addEventListener("click", () => {
-        const concertSection = document.getElementById("concert-section");
-        const profileSection = document.getElementById("profile-section");
-
-        concertSection?.classList.add("hidden");
-        profileSection?.classList.remove("hidden");
-        filterBar?.classList.add("hidden");
+        showView("profile-section");
         loadProfileData();
     });
 
     navConcerts?.addEventListener("click", () => {
-        const concertSection = document.getElementById("concert-section");
-        const profileSection = document.getElementById("profile-section");
-
-        concertSection?.classList.remove("hidden");
-        profileSection?.classList.add("hidden");
-        calendarView?.classList.add("hidden");
-        filterBar?.classList.remove("hidden");
+        showView("concert-section");
     });
 
     navCalendar?.addEventListener("click", () => {
-        const concertSection = document.getElementById("concert-section");
-        const profileSection = document.getElementById("profile-section");
-
-        concertSection?.classList.add("hidden");
-        profileSection?.classList.add("hidden");
-        filterBar?.classList.add("hidden");
-        calendarView?.classList.remove("hidden");
+        showView("calendar-view");
         initializeCalendar();
     });
 
