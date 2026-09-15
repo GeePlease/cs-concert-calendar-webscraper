@@ -86,9 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileEditArea = document.getElementById("profile-edit-area");
     const formChangeUsername = document.getElementById("form-change-username");
     const formChangeEmail = document.getElementById("form-change-email");
+    const formChangePassword = document.getElementById("form-change-password");
     const newUsername = document.getElementById("new-username");
     const newEmail = document.getElementById("new-email");
     const confirmEmailPass = document.getElementById("confirm-email-pass");
+    const currentPass = document.getElementById("current-pass");
+    const newPass = document.getElementById("new-pass");
+    const newPassConfirm = document.getElementById("new-pass-confirm");
     const profileMessage = document.getElementById("profile-message");
 
     // Steuerung der Header-Buttons (Login vs. User-Menü)
@@ -247,8 +251,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function hideProfileEditForms() {
         formChangeUsername?.reset();
         formChangeEmail?.reset();
+        formChangePassword?.reset();
         formChangeUsername?.classList.add("hidden");
         formChangeEmail?.classList.add("hidden");
+        formChangePassword?.classList.add("hidden");
         profileEditArea?.classList.add("hidden");
     }
 
@@ -271,7 +277,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    [formChangeUsername, formChangeEmail].forEach(form => {
+    document.querySelector('.btn-edit[data-target="password"]')?.addEventListener("click", () => {
+        hideProfileEditForms();
+        clearProfileMessage();
+        formChangePassword?.classList.remove("hidden");
+        profileEditArea?.classList.remove("hidden");
+        currentPass?.focus();
+    });
+
+    [formChangeUsername, formChangeEmail, formChangePassword].forEach(form => {
         form?.querySelector(".btn-cancel")?.addEventListener("click", () => {
             hideProfileEditForms();
             clearProfileMessage();
@@ -289,6 +303,42 @@ document.addEventListener("DOMContentLoaded", () => {
             email: newEmail.value.trim(),
             currentPassword: confirmEmailPass.value
         }, "E-Mail-Adresse erfolgreich aktualisiert.");
+    });
+
+    formChangePassword?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!currentPass.value || !newPass.value || !newPassConfirm.value) {
+            showProfileMessage("Bitte fülle alle Passwortfelder aus.", "error");
+            return;
+        }
+
+        if (newPass.value !== newPassConfirm.value) {
+            showProfileMessage("Die neuen Passwörter stimmen nicht überein.", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/users/updatePW", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    currentPassword: currentPass.value,
+                    newPassword: newPass.value
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Passwort konnte nicht aktualisiert werden.");
+            }
+
+            hideProfileEditForms();
+            showProfileMessage("Passwort erfolgreich aktualisiert.", "success");
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren des Passworts:", error);
+            showProfileMessage(error.message || "Passwort konnte nicht aktualisiert werden.", "error");
+        }
     });
 
     async function updateProfile(body, successMessage) {
