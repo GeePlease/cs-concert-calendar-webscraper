@@ -144,6 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnLogout = document.getElementById("btn-logout");
     const btnProfile = document.getElementById("btn-open-profile");
     const navConcerts = document.getElementById("nav-concerts");
+    const navCalendar = document.getElementById("nav-calendar");
+    const calendarView = document.getElementById("calendar-view");
+    const calendarElement = document.getElementById("calendar");
+    let calendar;
 
     const tabLogin = document.getElementById("tab-login");
     const tabRegister = document.getElementById("tab-register");
@@ -271,8 +275,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         concertSection?.classList.remove("hidden");
         profileSection?.classList.add("hidden");
+        calendarView?.classList.add("hidden");
         filterBar?.classList.remove("hidden");
     });
+
+    navCalendar?.addEventListener("click", () => {
+        const concertSection = document.getElementById("concert-section");
+        const profileSection = document.getElementById("profile-section");
+
+        concertSection?.classList.add("hidden");
+        profileSection?.classList.add("hidden");
+        filterBar?.classList.add("hidden");
+        calendarView?.classList.remove("hidden");
+        initializeCalendar();
+    });
+
+    function initializeCalendar() {
+        if (calendar || !calendarElement) return;
+
+        calendar = new FullCalendar.Calendar(calendarElement, {
+            initialView: "dayGridMonth",
+            initialDate: new Date()
+        });
+        calendar.render();
+    }
 
     async function loadProfileData() {
         const profileCurrentUser = document.getElementById("profile-current-user");

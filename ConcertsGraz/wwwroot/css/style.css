@@ -198,6 +198,11 @@ input {
   padding: 1rem 0;
 }
 
+.filter-bar.hidden {
+  display: block !important;
+  visibility: hidden;
+}
+
 .filter-container {
   max-width: 1200px;
   margin: 0 auto;
