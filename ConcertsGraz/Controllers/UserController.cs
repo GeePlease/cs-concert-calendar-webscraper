@@ -75,6 +75,29 @@ public class UserController : ControllerBase
         return Ok("Konzert erfolgreich vorgemerkt.");
     }
     
+    // API DELETE (unbookmark concert)
+    [HttpDelete("bookmarks/{concertId}")]
+    public async Task<IActionResult> UnbookmarkConcertAsync(string concertId)
+    {
+        // get user id from session
+        var userId = HttpContext.Session.GetString("UserId");
+
+        // null check
+        if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloggt."); }
+
+        // unbookmark concert
+        var success = await _userService.UnbookmarkConcertId(userId, concertId);
+
+        // handle error
+        if (!success)
+        {
+            return BadRequest("Konzert konnte nicht entfernt werden.");
+        }
+
+        // handle success
+        return Ok("Konzert erfolgreich entfernt.");
+    }
+    
 
     // API PUT (Update single user profile name or email): FromBody = coming from frontend, 
     // using UpdateProfileData Helperclass

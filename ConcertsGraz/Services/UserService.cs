@@ -169,6 +169,41 @@ public class UserService
         // successful
         return true;
     }
+    
+// UNBOOKMARK Concerts (get concert id from Api UserController and remove from bookmarked concert list in User DB Object)
+    public async Task<bool> UnbookmarkConcertId(string userId, string concertToUnbookmark)
+    {
+        // null check
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(concertToUnbookmark))
+        {
+            return false;
+        }
+
+        // get user from db
+        var wantedUser = await GetSingleUserByIdAsync(userId);
+        if (wantedUser == null) { return false; } // user not found null check
+
+        // check if concert is bookmarked
+        if (!wantedUser.BookmarkedConcertIds.Contains(concertToUnbookmark))
+        {
+            return true;
+        }
+
+        // remove concertId from list of bookmarked concerts in user object
+        wantedUser.BookmarkedConcertIds.Remove(concertToUnbookmark);
+
+        // update user data in db
+        var result = await _usersCollection.ReplaceOneAsync(u => u.Id == wantedUser.Id, wantedUser);
+
+        // manage error / success
+        if (!result.IsAcknowledged || result.ModifiedCount == 0)
+        {
+            return false;
+        }
+
+        // successful
+        return true;
+    }
 
 //END CLASS
 }
