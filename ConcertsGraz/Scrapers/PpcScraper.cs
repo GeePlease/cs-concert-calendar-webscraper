@@ -1,5 +1,4 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using ConcertsGraz.Interfaces;
 using ConcertsGraz.Models;
 using HtmlAgilityPack;
@@ -52,9 +51,9 @@ public class PpcScraper : IScraper
         }
         
         // 3 Filter relevant event (concert) elements via Loop through concerts
-        try
+        foreach (var concert in eventElementNodes)
         {
-            foreach (var concert in eventElementNodes)
+            try
             {
                 // 3.1 Get raw data 
                 string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
@@ -109,14 +108,13 @@ public class PpcScraper : IScraper
             
                 // 3.4 add new concert element to venue list
                 concertsPpc.Add(concertToAdd);
-            
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(
-                ex,
-                "Konzert von PPC konnte nicht verarbeitet werden und wurde übersprungen.");
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "Konzert von PPC konnte nicht verarbeitet werden und wurde übersprungen.");
+            }
         }
         
         // 4 return concerts list

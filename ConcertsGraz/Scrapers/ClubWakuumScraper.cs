@@ -52,9 +52,9 @@ public class ClubWakuumScraper : IScraper
         }
         
         // 3 Filter relevant event (concert) elements via Loop through concert elements and create concert objects
-        try // safer within try catch block
+        foreach (var concert in eventElementNodes)
         {
-            foreach (var concert in eventElementNodes)
+            try // safer within try catch block
             {
                 // 3.1 get raw data (and clean)
                 string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
@@ -98,16 +98,15 @@ public class ClubWakuumScraper : IScraper
                 
                 // 3.4 add new concert element to venue list
                 concertsClubWakuum.Add(concertToAdd);
-
+            }
+            catch (Exception ex) // catch, log warning, and continue
+            {
+                _logger.LogWarning( 
+                    ex,
+                    "Konzert von club wakuum konnte nicht verarbeitet werden und wurde übersprungen.");
             }
         }
-        catch (Exception ex) // catch, log warning, and continue
-        {
-            _logger.LogWarning(
-                ex,
-                "Konzert von club wakuum konnte nicht verarbeitet werden und wurde übersprungen.");
-            
-        }
+        
         // 4 return concert list
         return concertsClubWakuum;
     }
