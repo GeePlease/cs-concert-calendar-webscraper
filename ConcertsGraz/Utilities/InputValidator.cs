@@ -13,7 +13,7 @@ public class InputValidator
     // requ: null check, email format  regex at + global, trim!
     
     // method suitable for pw validation
-    // requ: null check, string len between 8-50, min 1 zahl (impliziert !null), trim!
+    // requ: null check, string len between 8-50, min 1 zahl (impliziert !null)
     
     
 
