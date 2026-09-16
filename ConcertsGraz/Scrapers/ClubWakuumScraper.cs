@@ -11,7 +11,18 @@ namespace ConcertsGraz.Scrapers;
 // ==================================================================================
 public class ClubWakuumScraper : IScraper
 {
-
+    // ATTRIBUTES
+    private readonly ILogger<ClubWakuumScraper> _logger;
+    
+    // CONSTRUCTOR - DI logger
+    public ClubWakuumScraper(ILogger<ClubWakuumScraper> logger)
+    {
+        _logger = logger;
+    }
+    
+    
+    
+    // METHODS
     public async Task<List<Concert>> RunAsync()
     {
         // 0 Variables
@@ -32,57 +43,71 @@ public class ClubWakuumScraper : IScraper
         var doc = web.Load(url);
         var eventElementNodes = doc.DocumentNode.SelectNodes("//article[contains(@class, 'mec-event-article')]"); // main node element
         
-        // 2 Filter relevant event (concert) elements via Loop through concert elements and create concert objects
-        foreach (var concert in eventElementNodes)
+        // 2 null check - exception caught in SraperService
+        if (eventElementNodes == null)
         {
-            // 2.1 get raw data (and clean)
-            string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
-            string rawLink = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
-            string? rawVenue = concert.SelectSingleNode(venueXPath)?.InnerText;
-            string? rawDate = concert.SelectSingleNode(dateXPath)?.InnerText;
-            string? rawTime = concert.SelectSingleNode(timeXPath)?.InnerText;
-            string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml;
-            string? rawPrice = concert.SelectSingleNode(priceXPath)?.InnerText;
-            
-            // 2.2 clean variables with ConcertDataSanitizer + EventBlacklister
-            // 2.2.1 all variables except description
-            string title = ConcertDataSanitizer.CleanText(rawTitle);
-            if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes (title is empty)
-            if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
-            string venue = ConcertDataSanitizer.CleanVenue(rawVenue);
-            string date = ConcertDataSanitizer.CleanText(rawDate);
-            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse date to DateTime Object
-            string time = ConcertDataSanitizer.CleanText(rawTime);
-            string price = ConcertDataSanitizer.CleanText(rawPrice);
-            
-            // 2.2.2 description
-            string description = ConcertDataSanitizer.CleanDescription(rawDescription);
-    
-            // 2.2.3 special local step: clean URLs (remove whitespace
-            string link = Regex.Replace(rawLink, @"\s+", "").Trim();
-         
-            // 2.3 create new ConcertEvent from scraped element data
-            var concertToAdd = new Concert()
-            {
-                Title = title,
-                Genre = "-",
-                Date = parsedDate,
-                Time = time,
-                Venue = venue,
-                InfoLink = link,
-                Description = description,
-                SourceUrl = url,
-                Price = price
-            };
-                
-            // 2.4 add new concert element to venue list
-            concertsClubWakuum.Add(concertToAdd);
-            
-            // print elements in console TODO: REMOVE LATER
-            //Console.WriteLine($"Title: {title}, Venue: {venue}, Date: {parsedDate}, Time: {time}, Price: {price}, Description: {description}, Link: {link}\n");
-
+            throw new InvalidOperationException(
+                "Event-Elemente im HTML nicht gefunden. Website hat sich möglicherweise verändert.");
         }
-        // 3 return concert list
+        
+        // 3 Filter relevant event (concert) elements via Loop through concert elements and create concert objects
+        try // safer within try catch block
+        {
+            foreach (var concert in eventElementNodes)
+            {
+                // 3.1 get raw data (and clean)
+                string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
+                string rawLink = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
+                string? rawVenue = concert.SelectSingleNode(venueXPath)?.InnerText;
+                string? rawDate = concert.SelectSingleNode(dateXPath)?.InnerText;
+                string? rawTime = concert.SelectSingleNode(timeXPath)?.InnerText;
+                string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml;
+                string? rawPrice = concert.SelectSingleNode(priceXPath)?.InnerText;
+            
+                // 3.2 clean variables with ConcertDataSanitizer + EventBlacklister
+                // 3.2.1 all variables except description
+                string title = ConcertDataSanitizer.CleanText(rawTitle);
+                if (string.IsNullOrWhiteSpace(title)) { continue; } // Skip empty nodes (title is empty)
+                if (EventBlacklister.isBlacklisted(title)) { continue; } // skip titles that contain non-concert keywoards
+                string venue = ConcertDataSanitizer.CleanVenue(rawVenue);
+                string date = ConcertDataSanitizer.CleanText(rawDate);
+                DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse date to DateTime Object
+                string time = ConcertDataSanitizer.CleanText(rawTime);
+                string price = ConcertDataSanitizer.CleanText(rawPrice);
+            
+                // 3.2.2 description
+                string description = ConcertDataSanitizer.CleanDescription(rawDescription);
+    
+                // 3.2.3 special local step: clean URLs (remove whitespace
+                string link = Regex.Replace(rawLink, @"\s+", "").Trim();
+         
+                // 3.3 create new ConcertEvent from scraped element data
+                var concertToAdd = new Concert()
+                {
+                    Title = title,
+                    Genre = "-",
+                    Date = parsedDate,
+                    Time = time,
+                    Venue = venue,
+                    InfoLink = link,
+                    Description = description,
+                    SourceUrl = url,
+                    Price = price
+                };
+                
+                // 3.4 add new concert element to venue list
+                concertsClubWakuum.Add(concertToAdd);
+
+            }
+        }
+        catch (Exception ex) // catch, log warning, and continue
+        {
+            _logger.LogWarning(
+                ex,
+                "Konzert von club wakuum konnte nicht verarbeitet werden und wurde übersprungen.");
+            
+        }
+        // 4 return concert list
         return concertsClubWakuum;
     }
     
