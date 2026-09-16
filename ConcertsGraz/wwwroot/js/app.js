@@ -150,19 +150,41 @@ document.addEventListener("DOMContentLoaded", () => {
     function applyFilters() {
         let filtered = [...allConcerts];
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Standardansicht: heute und zukünftige Konzerte
+        // Bei "Vergangene": nur Konzerte vor heute
+        filtered = filtered.filter(c => {
+            const concertDate = new Date(c.date);
+            concertDate.setHours(0, 0, 0, 0);
+
+            if (filterDate.value === "past") {
+                return concertDate < today;
+            }
+
+            return concertDate >= today;
+        });
+
         if (filterLocation.value !== "all") {
             const selectedVenue = normalizeFilterText(filterLocation.value);
-            filtered = filtered.filter(c => normalizeFilterText(c.venue).includes(selectedVenue));
+            filtered = filtered.filter(c =>
+                normalizeFilterText(c.venue).includes(selectedVenue)
+            );
         }
+
         if (filterGenre.value !== "all") {
-            filtered = filtered.filter(c => c.genre?.toLowerCase().includes(filterGenre.value.toLowerCase()));
+            filtered = filtered.filter(c =>
+                c.genre?.toLowerCase().includes(filterGenre.value.toLowerCase())
+            );
         }
+
         if (filterDate.value !== "all") {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
 
             if (filterDate.value === "today") {
-                filtered = filtered.filter(c => isSameDay(new Date(c.date), today));
+                filtered = filtered.filter(c =>
+                    isSameDay(new Date(c.date), today)
+                );
             }
 
             if (filterDate.value === "week") {
@@ -172,53 +194,74 @@ document.addEventListener("DOMContentLoaded", () => {
                 filtered = filtered.filter(c => {
                     const concertDate = new Date(c.date);
                     concertDate.setHours(0, 0, 0, 0);
+
                     return concertDate >= today && concertDate <= weekEnd;
                 });
             }
 
             if (filterDate.value === "weekend") {
                 const weekendStart = new Date(today);
-                const daysUntilSaturday = today.getDay() === 0 ? -1 : 6 - today.getDay();
+                const daysUntilSaturday =
+                    today.getDay() === 0 ? -1 : 6 - today.getDay();
+
                 weekendStart.setDate(today.getDate() + daysUntilSaturday);
+
                 const weekendEnd = new Date(weekendStart);
                 weekendEnd.setDate(weekendStart.getDate() + 1);
 
                 filtered = filtered.filter(c => {
                     const concertDate = new Date(c.date);
                     concertDate.setHours(0, 0, 0, 0);
-                    return concertDate >= weekendStart && concertDate <= weekendEnd;
+
+                    return concertDate >= weekendStart &&
+                        concertDate <= weekendEnd;
                 });
             }
 
             if (filterDate.value === "month") {
                 filtered = filtered.filter(c => {
                     const concertDate = new Date(c.date);
+
                     return concertDate.getMonth() === today.getMonth() &&
                         concertDate.getFullYear() === today.getFullYear();
                 });
             }
         }
+
         if (filterPrice.value !== "all") {
+
             if (filterPrice.value === "free") {
                 filtered = filtered.filter(c => {
                     const price = (c.price || "").toLowerCase();
-                    return price.includes("frei") || price.includes("gratis") || price.includes("pay as you wish");
+
+                    return price.includes("frei") ||
+                        price.includes("gratis") ||
+                        price.includes("pay as you wish");
                 });
             }
 
             if (filterPrice.value === "under15") {
                 filtered = filtered.filter(c => {
                     const priceText = String(c.price || "").toLowerCase();
-                    if (priceText.includes("frei") || priceText.includes("pay as you wish")) {
+
+                    if (
+                        priceText.includes("frei") ||
+                        priceText.includes("pay as you wish")
+                    ) {
                         return true;
                     }
 
                     const priceMatch = priceText.match(/\d+(?:[.,]\d+)?/);
-                    const price = priceMatch ? Number(priceMatch[0].replace(",", ".")) : NaN;
+                    const price = priceMatch
+                        ? Number(priceMatch[0].replace(",", "."))
+                        : NaN;
+
                     return price < 15;
                 });
             }
         }
+
+        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         renderConcerts(filtered);
     }
@@ -360,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
         filterDate.value = "all";
         filterPrice.value = "all";
 
-        renderConcerts(allConcerts);
+        applyFilters();
 
         updateAuthUI();
     }
