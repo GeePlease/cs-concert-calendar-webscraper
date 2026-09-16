@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("API antwortet nicht");
 
             allConcerts = await response.json();
-            renderConcerts(allConcerts);
+            applyFilters();
         } catch (error) {
             console.error("Fehler:", error);
             grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">Konzerte konnten nicht geladen werden.</p>`;
