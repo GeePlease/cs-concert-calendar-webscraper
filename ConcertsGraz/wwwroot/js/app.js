@@ -165,6 +165,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 filtered = filtered.filter(c => isSameDay(new Date(c.date), today));
             }
 
+            if (filterDate.value === "week") {
+                const weekEnd = new Date(today);
+                weekEnd.setDate(today.getDate() + (7 - today.getDay()) % 7);
+
+                filtered = filtered.filter(c => {
+                    const concertDate = new Date(c.date);
+                    concertDate.setHours(0, 0, 0, 0);
+                    return concertDate >= today && concertDate <= weekEnd;
+                });
+            }
+
             if (filterDate.value === "weekend") {
                 const weekendStart = new Date(today);
                 const daysUntilSaturday = today.getDay() === 0 ? -1 : 6 - today.getDay();
