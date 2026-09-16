@@ -85,8 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!Array.isArray(ids) || !ids.every(id => typeof id === "string")) {
                 throw new Error("Ungültige Merkliste erhalten.");
             }
+            
             if (generation !== bookmarkGeneration) return;
+            
             bookmarkedConcertIds = new Set(ids);
+            syncCalendarWithBookmarks(); // beim laden der bookmarks hier kalendersyncrhonisation
+            
         } catch (error) {
             console.error("Fehler beim Laden der Merkliste:", error);
         } finally {
@@ -381,6 +385,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 concert: concert
             }
         }));
+
+        if (!calendar) return; // kalender muss zuerst geladen sein
+
+        calendar.removeAllEvents(); // verhindet anzeige von doppelten events
+        calendar.addEventSource(calendarEvents); // fügt bookmared events neu hinzu
 
         console.log(calendarEvents);
     }
