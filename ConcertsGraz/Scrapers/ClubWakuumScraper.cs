@@ -9,6 +9,7 @@ namespace ConcertsGraz.Scrapers;
 // ==================================================================================
 // CLASS: HttpScraper: Scrapes Concert Details (club wakuum page)
 // ==================================================================================
+
 public class ClubWakuumScraper : IScraper
 {
     // ATTRIBUTES
