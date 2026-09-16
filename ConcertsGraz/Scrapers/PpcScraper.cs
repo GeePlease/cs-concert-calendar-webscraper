@@ -1,8 +1,10 @@
-﻿﻿using System.Text.RegularExpressions;
+﻿
+using System.Text.RegularExpressions;
 using ConcertsGraz.Interfaces;
 using ConcertsGraz.Models;
 using HtmlAgilityPack;
 using ConcertsGraz.Utilities;
+using System.Text.Json;
 namespace ConcertsGraz.Scrapers;
 
 // TODO: API FETCH PRICE ON DETAIL SIDE
@@ -10,7 +12,7 @@ namespace ConcertsGraz.Scrapers;
 
 public class PpcScraper : IScraper
 {
-    
+    // RUN PAGE SCRAPER
     public async Task<List<Concert>> RunAsync()
     {
         // 0 Variables
@@ -33,26 +35,14 @@ public class PpcScraper : IScraper
         // 2 Filter relevant event (concert) elements via Loop through concerts
         foreach (var concert in eventElementNodes)
         {
-            // 2.1.1 Get raw data (except price - on other site)
+            // 2.1 Get raw data 
             string? rawTitle = concert.SelectSingleNode(titleXPath)?.InnerText;
             string rawLink = concert.SelectSingleNode(linkXPath)?.GetAttributeValue("href", "") ?? "";
             string rawVenue = "PPC Graz";
             string? rawDate = concert.SelectSingleNode(dateXPath)?.InnerText;
             string? rawTime = concert.SelectSingleNode(timeXPath)?.InnerText;
             string? rawDescription = concert.SelectSingleNode(descriptionXPath)?.InnerHtml;
-            string? rawPrice = "-";
-            
-            // 2.1.2 load details page to fetch price 
-            if (!string.IsNullOrEmpty(rawLink))
-            {
-                var detailWeb = new HtmlWeb();
-                var detailDoc = detailWeb.Load(rawLink);
-                var priceNode = detailDoc.DocumentNode.SelectSingleNode(detailsXPath);
-                if (priceNode != null)
-                {
-                    rawPrice = priceNode.InnerText;
-                }
-            }
+            string? rawPrice = await GetPriceAsync(rawLink);
 
             // 2.2 clean variables with ConcertDataSanitizer
             // 2.2.1 all variables except description
@@ -107,5 +97,49 @@ public class PpcScraper : IScraper
         return concertsPpc;
     }
     
+    // FETCH PRICE
+    private async Task<string> GetPriceAsync(string detailUrl)
+    {
+        // load concert detail page
+        var detailWeb = new HtmlWeb();
+        var detailDoc = detailWeb.Load(detailUrl);
+
+        // extract ticket eventId from script
+        var eventIdMatch = Regex.Match(
+            detailDoc.DocumentNode.InnerHtml,
+            @"eventId:\s*[""']([^""']+)[""']"
+        );
+
+        // handle failure
+        if (!eventIdMatch.Success)
+        {
+            return "-";
+        }
+
+        // store eventId
+        string eventId = eventIdMatch.Groups[1].Value;
+
+        // build Bringticket API url
+        string priceApiUrl =
+            $"https://api.checkout.bringticket.com/api/v1/event?eventId={eventId}";
+
+        // fetch price data from API
+        using var httpClient = new HttpClient();
+        string json = await httpClient.GetStringAsync(priceApiUrl);
+
+        // parse JSON response
+        using var jsonDocument = JsonDocument.Parse(json);
+        JsonElement root = jsonDocument.RootElement;
+
+        // get price from first category and ticket class
+        decimal price = root
+            .GetProperty("categories")[0]
+            .GetProperty("classes")[0]
+            .GetProperty("price")
+            .GetDecimal();
+
+        return $"{price:0.00} €";
+    }
     
+// END CLASS
 }
