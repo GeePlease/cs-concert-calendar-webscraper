@@ -364,7 +364,17 @@ document.addEventListener("DOMContentLoaded", () => {
     navCalendar?.addEventListener("click", () => {
         showView("calendar-view");
         initializeCalendar();
+        syncCalendarWithBookmarks();
     });
+
+    // Synchronisiert vorgemerkte Konzerte mit der Kalenderansicht
+    function syncCalendarWithBookmarks() {
+        const bookmarkedConcerts = allConcerts.filter(concert =>
+            bookmarkedConcertIds.has(concert.id)
+        );
+
+        console.log(bookmarkedConcerts);
+    }
 
     function initializeCalendar() {
         if (calendar || !calendarElement) return;
