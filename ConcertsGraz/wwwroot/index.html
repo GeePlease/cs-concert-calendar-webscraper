@@ -103,11 +103,32 @@
             </div>
             <div class="card-footer">
                 <button class="btn-bookmark" type="button">♡ Merken</button>
+                
             </div>
         </article>
 
     </div>
 </main>
+
+<!-- Konzertdetails -->
+<div id="concert-detail-modal" class="modal-overlay hidden">
+    <div class="modal-card concert-detail-card" role="dialog" aria-modal="true" aria-labelledby="concert-detail-title">
+        <button id="btn-close-concert-detail" class="modal-close" type="button" aria-label="Konzertdetails schließen">&times;</button>
+
+        <p id="concert-detail-genre">—</p>
+        <h2 id="concert-detail-title">Konzertdetails</h2>
+        <p><strong>Location:</strong> <span id="concert-detail-venue">—</span></p>
+        <p><strong>Datum:</strong> <span id="concert-detail-date">—</span></p>
+        <p><strong>Uhrzeit:</strong> <span id="concert-detail-time">—</span></p>
+        <p><strong>Preis:</strong> <span id="concert-detail-price">—</span></p>
+        <div id="concert-detail-description"></div>
+
+        <div class="concert-detail-actions">
+            <button id="concert-detail-bookmark" class="btn-bookmark" type="button">♡ Merken</button>
+            <a id="concert-detail-source" href="#" target="_blank" rel="noopener noreferrer">Zur Veranstaltung</a>
+        </div>
+    </div>
+</div>
 
 <!-- Kalenderansicht -->
 <section id="calendar-view" class="hidden">
