@@ -6,6 +6,7 @@ using ConcertsGraz.Scrapers;
 using ConcertsGraz.Utilities;
 using Microsoft.Extensions.Options;
 using ConcertsGraz.ErrorHandling;
+using ConcertsGraz.Interfaces;
 
 // ==================================================================================
 // CLASS: Program.cs
@@ -36,6 +37,7 @@ builder.Services.AddControllers();
 
 // Global Exception Handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // HTTPS-Port explizit festlegen (löst die Redirection-Warnung)
 builder.Services.AddHttpsRedirection(options =>
@@ -54,10 +56,10 @@ builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TestDataSeeder>();
 
-// Scraper-Registrierung
-builder.Services.AddScoped<ClubWakuumScraper>();   
-builder.Services.AddScoped<PpcScraper>(); 
-builder.Services.AddScoped<CafeWolfScraper>();
+// Scraper-Registrierung uner Interface
+builder.Services.AddScoped<IScraper, ClubWakuumScraper>();
+builder.Services.AddScoped<IScraper, PpcScraper>();
+builder.Services.AddScoped<IScraper, CafeWolfScraper>();
 builder.Services.AddScoped<ScraperService>();
 
 // CORS Registrierung
@@ -68,7 +70,7 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromHours(2); // Session-Dauer
+    options.IdleTimeout = TimeSpan.FromHours(2);  // Session-Dauer
     options.Cookie.HttpOnly = true;               // Schutz gegen XSS
     options.Cookie.IsEssential = true;            // DSGVO-Notwendigkeit
 });

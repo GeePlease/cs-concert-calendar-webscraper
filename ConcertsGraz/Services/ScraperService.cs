@@ -1,4 +1,5 @@
-﻿using ConcertsGraz.Models;
+﻿using ConcertsGraz.Interfaces;
+using ConcertsGraz.Models;
 using ConcertsGraz.Scrapers;
 
 namespace ConcertsGraz.Services;
@@ -10,20 +11,14 @@ namespace ConcertsGraz.Services;
 public class ScraperService
 {
     // ATTRIBUTES
-    // scrapers per site
-    private readonly ClubWakuumScraper _clubWakuumScraper;
-    private readonly PpcScraper _ppcScraper;
-    private readonly CafeWolfScraper _cafeWolfScraper;
-    // private readonly CafeWolfScraper _cafeWolfScraper;
+    private readonly IEnumerable<IScraper> _scrapers;
     
     // CONSTRUCTOR - di 
-    public ScraperService(ClubWakuumScraper clubWakuumScraper, PpcScraper ppcScraper, CafeWolfScraper cafeWolfScraper)
+    public ScraperService(IEnumerable<IScraper> scrapers)
     {
-        // scraper instances
-        _clubWakuumScraper = clubWakuumScraper;
-        _ppcScraper = ppcScraper;
-        _cafeWolfScraper = cafeWolfScraper;
-        
+        // scraper instances (via interface to access all in enumerable)
+        _scrapers = scrapers;
+
     }
     
     // METHODS
@@ -33,15 +28,20 @@ public class ScraperService
         // List for all concerts (results from scraping)
         var allScrapedConcerts = new List<Concert>();
         
-        // Run all Scrapers
-        var concertsClubWakuum = await _clubWakuumScraper.RunAsync();
-        var concertsPpc  = await _ppcScraper.RunAsync();
-        var concertsWolf = await _cafeWolfScraper.RunAsync();
-        
-        // combine all list results (by adding single list results to new list)
-        allScrapedConcerts.AddRange(concertsClubWakuum);
-        allScrapedConcerts.AddRange(concertsPpc);
-        allScrapedConcerts.AddRange(concertsWolf);
+        // run all scrapers via IScrapers Loop
+        foreach (var scraper in _scrapers)
+        {
+
+            try
+            {
+                allScrapedConcerts = await scraper.RunAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Scraping-Fehler: {ex.Message}");
+            }
+            
+        }
         
         // return list of all concerts
         return allScrapedConcerts;
