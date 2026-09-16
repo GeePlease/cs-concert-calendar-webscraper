@@ -373,9 +373,19 @@ document.addEventListener("DOMContentLoaded", () => {
             bookmarkedConcertIds.has(concert.id)
         );
 
-        console.log(bookmarkedConcerts);
+        const calendarEvents = bookmarkedConcerts.map(concert => ({
+            id: concert.id,
+            title: concert.title,
+            start: `${concert.date.split("T")[0]}T${concert.time}`,
+            extendedProps: {
+                concert: concert
+            }
+        }));
+
+        console.log(calendarEvents);
     }
 
+    // initialisiert full calendar kalender
     function initializeCalendar() {
         if (calendar || !calendarElement) return;
 
