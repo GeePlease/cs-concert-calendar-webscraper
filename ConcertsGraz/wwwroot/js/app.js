@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         grid.innerHTML = concerts.map(c => `
-            <article class="concert-card">
+            <article class="concert-card" data-id="${c.id}">
                 <div class="card-badge">${formatDate(c.date)}</div>
                 <div class="card-content">
                     <span class="card-genre">${escapeHtml(c.genre || 'Sonstiges')}</span>
@@ -139,6 +139,55 @@ document.addEventListener("DOMContentLoaded", () => {
                 pendingBookmarks.delete(concertId);
                 updateBookmarkButtons();
             }
+        }
+    });
+
+    // Konzertdetails: Event Delegation für dynamisch gerenderte Karten
+    const concertDetailModal = document.getElementById("concert-detail-modal");
+
+    grid?.addEventListener("click", (e) => {
+        if (e.target.closest(".btn-bookmark")) return;
+
+        const card = e.target.closest(".concert-card");
+        if (!card || !grid.contains(card) || !concertDetailModal) return;
+
+        const concert = allConcerts.find(c => c.id === card.dataset.id);
+        if (!concert) return;
+
+        document.getElementById("concert-detail-genre").textContent = concert.genre || "Sonstiges";
+        document.getElementById("concert-detail-title").textContent = concert.title || concert.artist || "Konzertdetails";
+        document.getElementById("concert-detail-venue").textContent = concert.venue || "—";
+        document.getElementById("concert-detail-date").textContent = formatDate(concert.date);
+        document.getElementById("concert-detail-time").textContent = concert.time || "—";
+        document.getElementById("concert-detail-price").textContent = formatPrice(concert.price);
+        document.getElementById("concert-detail-description").textContent = concert.description || "Keine Beschreibung verfügbar.";
+
+        const sourceLink = document.getElementById("concert-detail-source");
+        const sourceUrl = concert.infoLink || concert.sourceUrl;
+        const hasSourceUrl = /^https?:\/\//i.test(sourceUrl || "");
+        sourceLink.classList.toggle("hidden", !hasSourceUrl);
+        if (hasSourceUrl) {
+            sourceLink.href = sourceUrl;
+        } else {
+            sourceLink.removeAttribute("href");
+        }
+
+        concertDetailModal.classList.remove("hidden");
+    });
+
+    document.getElementById("btn-close-concert-detail")?.addEventListener("click", () => {
+        concertDetailModal?.classList.add("hidden");
+    });
+
+    concertDetailModal?.addEventListener("click", (e) => {
+        if (e.target === concertDetailModal) {
+            concertDetailModal.classList.add("hidden");
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !concertDetailModal?.classList.contains("hidden")) {
+            concertDetailModal?.classList.add("hidden");
         }
     });
 
