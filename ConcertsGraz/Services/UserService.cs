@@ -46,7 +46,17 @@ public class UserService
     // UPDATE USER PROFILE - Username or Email (userId, newUsername, newEmail)
     public async Task<User> UpdateNameOrMail(string userId, string? newUsername, string? newEmail, string? currentPassword)
     {
-        // TODO: email validator!
+        if (newUsername != null)
+        {
+            newUsername = newUsername.Trim();
+            if (!InputValidator.ValidateUsername(newUsername)) { return null; }
+        }
+
+        if (newEmail != null)
+        {
+            newEmail = newEmail.Trim();
+            if (!InputValidator.ValidateEmail(newEmail)) { return null; }
+        }
         
         // get user from db
         var wantedUser = await GetSingleUserByIdAsync(userId);
@@ -62,7 +72,6 @@ public class UserService
         }
         
         // TODO: DUPLICATE CHECK!! (decide how to handle double mail + double username)
-        // TODO: IMPLEMENT VALIDATOR!!
         
         // update user properties in object (username & email at once possible, not mandatory)
         if (!string.IsNullOrEmpty(newUsername))
@@ -108,7 +117,7 @@ public class UserService
             string.IsNullOrWhiteSpace(newPassword))
         { return false; }
         
-        // TODO: validator
+        if (!InputValidator.ValidatePassword(newPassword)) { return false; }
         //  get user from db
         var wantedUser = await GetSingleUserByIdAsync(userId);
        if (wantedUser == null) { return false; }
@@ -121,7 +130,7 @@ public class UserService
         // check if new and old are the same
         if (currentPassword == newPassword) { return false;}
         
-        // hash (and validate) new password
+        // hash new password
         string newPasswordHash = _pwHasher.HashPassword(newPassword);
         
         // update user object

@@ -53,10 +53,10 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterData request)
     {
-        var newUser = await _authService.RegisterAsync(request.Username, request.Email, request.Password);
+        var (newUser, error) = await _authService.RegisterAsync(request.Username, request.Email, request.Password);
         if (newUser == null)
         {
-            return BadRequest(new{message = "Registrierung fehlgeschlagen. Benutzername bereits vergeben"});
+            return BadRequest(new { message = error });
         }
 
         return Ok(new { message = "Registrierung erfolgreich!", username = newUser.Username });

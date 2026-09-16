@@ -44,13 +44,30 @@ public class AuthService
     }
     
     // REGISTRATION logic
-    public async Task<User?> RegisterAsync(string username, string email, string password)
+    public async Task<(User? User, string? Error)> RegisterAsync(string username, string email, string password)
     {
+        username = username?.Trim() ?? string.Empty;
+        email = email?.Trim() ?? string.Empty;
+
+        if (!InputValidator.ValidateUsername(username))
+        {
+            return (null, "Der Benutzername muss 3–50 Zeichen lang sein.");
+        }
+
+        if (!InputValidator.ValidateEmail(email))
+        {
+            return (null, "Bitte gib eine gültige E-Mail-Adresse ein.");
+        }
+
+        if (!InputValidator.ValidatePassword(password))
+        {
+            return (null, "Das Passwort muss 8–50 Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten.");
+        }
+
         // check if user already exists
         bool userAlreadyExists = await UserAlreadyExists(username);
-        if (userAlreadyExists) { return null; }
+        if (userAlreadyExists) { return (null, "Dieser Benutzername ist bereits vergeben."); }
         
-        //validate //TODO: write Validator
         //hash password
         string passwordHash = _pwHasher.HashPassword(password);
         
@@ -59,14 +76,14 @@ public class AuthService
         {
             Username = username,
             Email = email,
-            PasswordHash = _pwHasher.HashPassword(password)
+            PasswordHash = passwordHash
         };
         
         // register new user in db
         await _usersCollection.InsertOneAsync(newUser);
         
         // return new user object
-        return newUser;
+        return (newUser, null);
 
     }
     
