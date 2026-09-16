@@ -98,7 +98,9 @@ public class PpcScraper : IScraper
     }
     
     // FETCH PRICE
-    private async Task<string> GetPriceAsync(string detailUrl)
+private async Task<string> GetPriceAsync(string detailUrl)
+{
+    try
     {
         // load concert detail page
         var detailWeb = new HtmlWeb();
@@ -110,24 +112,56 @@ public class PpcScraper : IScraper
             @"eventId:\s*[""']([^""']+)[""']"
         );
 
-        // handle failure
         if (!eventIdMatch.Success)
         {
             return "-";
         }
 
-        // store eventId
         string eventId = eventIdMatch.Groups[1].Value;
 
         // build Bringticket API url
         string priceApiUrl =
             $"https://api.checkout.bringticket.com/api/v1/event?eventId={eventId}";
 
-        // fetch price data from API
         using var httpClient = new HttpClient();
+
+        // Bringticket requires checkout origin
+        httpClient.DefaultRequestHeaders.Add(
+            "Origin",
+            "https://checkout.bringticket.com"
+        );
+
+        // initialize Bringticket and get CSRF token
+        using var initResponse = await httpClient.PostAsync(
+            "https://api.checkout.bringticket.com/api/v1/payment/init",
+            null
+        );
+
+        initResponse.EnsureSuccessStatusCode();
+
+        string initJson = await initResponse.Content.ReadAsStringAsync();
+
+        using var initDocument = JsonDocument.Parse(initJson);
+
+        string? csrfToken = initDocument.RootElement
+            .GetProperty("token")
+            .GetString();
+
+        if (string.IsNullOrWhiteSpace(csrfToken))
+        {
+            return "-";
+        }
+
+        // add CSRF token for event request
+        httpClient.DefaultRequestHeaders.Add(
+            "X-CSRF-Token",
+            csrfToken
+        );
+
+        // fetch event data from Bringticket API
         string json = await httpClient.GetStringAsync(priceApiUrl);
 
-        // parse JSON response
+        // parse event JSON
         using var jsonDocument = JsonDocument.Parse(json);
         JsonElement root = jsonDocument.RootElement;
 
@@ -140,6 +174,12 @@ public class PpcScraper : IScraper
 
         return $"{price:0.00} €";
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"PPC Preis konnte nicht geladen werden: {ex.Message}");
+        return "-";
+    }
+}
     
 // END CLASS
 }
