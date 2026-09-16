@@ -34,7 +34,8 @@ public class ScraperService
 
             try
             {
-                allScrapedConcerts = await scraper.RunAsync();
+                var scrapedConcerts = await scraper.RunAsync();
+                allScrapedConcerts.AddRange(scrapedConcerts);
             }
             catch (Exception ex)
             {
