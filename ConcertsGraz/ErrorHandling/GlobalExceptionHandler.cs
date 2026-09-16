@@ -6,16 +6,27 @@ namespace ConcertsGraz.ErrorHandling;
 public class GlobalExceptionHandler : IExceptionHandler
 {
     // ATTRIBUTES
-
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+    
     // CONSTRUCTOR
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
 
     // METHODS
-
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
         CancellationToken cancellationToken)
     {
+        // --- LOGGING
+        // Log technical exception details for development/debugging in console
+        // Exception details are NOT sent to the frontend
+        _logger.LogError(
+            exception,
+            "Unhandled exception occurred.");
+
         // --- DATABASE EXCEPTIONS
         if (exception is MongoException)
         {
@@ -37,7 +48,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             new { message = "Ein unerwarteter Serverfehler ist aufgetreten." },
             cancellationToken);
 
-        // Exception handled 
+        // Exception handled
         return true;
     }
     
