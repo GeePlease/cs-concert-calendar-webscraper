@@ -39,7 +39,7 @@ public class ScraperService
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Scraping-Fehler: {ex.Message}");
+                Console.WriteLine($"Scraping-Fehler in {scraper.GetType().Name}: {ex.Message}");
             }
             
         }
