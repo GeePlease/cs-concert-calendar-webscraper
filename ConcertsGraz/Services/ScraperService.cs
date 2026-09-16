@@ -1,6 +1,5 @@
 ﻿using ConcertsGraz.Interfaces;
 using ConcertsGraz.Models;
-using ConcertsGraz.Scrapers;
 
 namespace ConcertsGraz.Services;
 
@@ -12,12 +11,14 @@ public class ScraperService
 {
     // ATTRIBUTES
     private readonly IEnumerable<IScraper> _scrapers;
+    private readonly ILogger<ScraperService> _logger;
     
     // CONSTRUCTOR - di 
-    public ScraperService(IEnumerable<IScraper> scrapers)
+    public ScraperService(IEnumerable<IScraper> scrapers, ILogger<ScraperService> logger)
     {
         // scraper instances (via interface to access all in enumerable)
         _scrapers = scrapers;
+        _logger = logger;
 
     }
     
@@ -39,7 +40,10 @@ public class ScraperService
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Scraping-Fehler in {scraper.GetType().Name}: {ex.Message}");
+                _logger.LogError(  // use ILogger, integrated ASP.NET Core Logging System
+                    ex,
+                    "Scraping error in {ScraperName}",
+                    scraper.GetType().Name);
             }
             
         }
@@ -48,7 +52,5 @@ public class ScraperService
         return allScrapedConcerts;
     }
     
-    
 // END CLASS
-    
 }
