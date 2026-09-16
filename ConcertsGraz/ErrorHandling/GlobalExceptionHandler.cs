@@ -1,6 +1,9 @@
-﻿namespace ConcertsGraz.ErrorHandling;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using MongoDB.Driver;
 
-public class GlobalExceptionHandler
+namespace ConcertsGraz.ErrorHandling;
+
+public class GlobalExceptionHandler : IExceptionHandler
 {
     // ATTRIBUTES
 
@@ -8,12 +11,35 @@ public class GlobalExceptionHandler
 
     // METHODS
 
-    // --- API / HTTP EXCEPTIONS
-    // Exceptions related to HTTP requests / API processing
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext httpContext,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        // --- DATABASE EXCEPTIONS
+        if (exception is MongoException)
+        {
+            httpContext.Response.StatusCode =
+                StatusCodes.Status503ServiceUnavailable;
+        }
+    
+        // --- GENERAL / UNHANDLED EXCEPTIONS
+        else
+        {
+            httpContext.Response.StatusCode =
+                StatusCodes.Status500InternalServerError;
+        }
 
-    // --- DATABASE EXCEPTIONS
-    // Exceptions caused by MongoDB / database access
+        // --- RESPONSE
+        // Same general message for every unexpected server error.
+        // Technical exception details are not sent to the frontend.
+        await httpContext.Response.WriteAsJsonAsync(
+            new { message = "Ein unerwarteter Serverfehler ist aufgetreten." },
+            cancellationToken);
 
-    // --- GENERAL EXCEPTIONS
-    // Unexpected exceptions that don't fit a specific category
+        // Exception handled 
+        return true;
+    }
+    
+// END CLASS
 }
