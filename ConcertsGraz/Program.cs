@@ -5,6 +5,7 @@ using ConcertsGraz.Services;
 using ConcertsGraz.Scrapers;  
 using ConcertsGraz.Utilities;
 using Microsoft.Extensions.Options;
+using ConcertsGraz.ErrorHandling;
 
 // ==================================================================================
 // CLASS: Program.cs
@@ -32,6 +33,9 @@ builder.Services.AddScoped<IMongoDatabase>(sp =>
 // 2. DEPENDENCY INJECTION (DI) CONTAINER
 // ----------------------------------------------------------------------------------
 builder.Services.AddControllers();
+
+// Global Exception Handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // HTTPS-Port explizit festlegen (löst die Redirection-Warnung)
 builder.Services.AddHttpsRedirection(options =>
@@ -100,6 +104,9 @@ else
 {
     app.UseHsts();
 }
+
+// global exception handler
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
