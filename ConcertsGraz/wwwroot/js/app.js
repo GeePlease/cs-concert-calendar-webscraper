@@ -83,6 +83,18 @@ document.addEventListener("DOMContentLoaded", () => {
             button.textContent = isBookmarked ? "♥ Gemerkt" : "♡ Merken";
             button.disabled = bookmarksLoading || pendingBookmarks.has(button.dataset.id);
         });
+
+        updateDetailBookmarkButton();
+    }
+
+    function updateDetailBookmarkButton() {
+        const concertId = concertDetailBookmark?.dataset.id;
+        if (!concertId) return;
+
+        const isBookmarked = bookmarkedConcertIds.has(concertId);
+        concertDetailBookmark.dataset.bookmarked = String(isBookmarked);
+        concertDetailBookmark.textContent = isBookmarked ? "♥ Gemerkt" : "♡ Merken";
+        concertDetailBookmark.disabled = bookmarksLoading || pendingBookmarks.has(concertId);
     }
 
     // Gemerkte Konzerte laden
@@ -123,11 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Event Listener: Klicks in Konzerte Ansicht Grid 
-    grid?.addEventListener("click", async (e) => {
-        const button = e.target.closest(".btn-bookmark");
-        if (!button || !grid.contains(button) || button.disabled) return;
-
+    async function toggleBookmark(concertId) {
         if (!localStorage.getItem("token")) {
             clearAuthMessage();
             showAuthMessage("Bitte anmelden, zum Konzerte Vormerken.");
@@ -135,13 +143,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const concertId = button.dataset.id;
         if (!concertId || bookmarksLoading || pendingBookmarks.has(concertId)) return;
 
         const generation = bookmarkGeneration;
         const isBookmarked = bookmarkedConcertIds.has(concertId);
         pendingBookmarks.add(concertId);
-        button.disabled = true;
+        updateBookmarkButtons();
 
         try {
             const response = await fetch(`/api/users/bookmarks/${encodeURIComponent(concertId)}`, {
@@ -159,14 +166,26 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 bookmarkedConcertIds.add(concertId);
             }
+            updateBookmarkButtons();
+            syncCalendarWithBookmarks();
         } catch (error) {
             console.error("Fehler beim Aktualisieren der Merkliste:", error);
+            showAuthMessage(error.message || "Merkliste konnte nicht aktualisiert werden.");
+            modal?.classList.remove("hidden");
         } finally {
             if (generation === bookmarkGeneration) {
                 pendingBookmarks.delete(concertId);
                 updateBookmarkButtons();
             }
         }
+    }
+
+    // Event Listener: Klicks in Konzerte Ansicht Grid
+    grid?.addEventListener("click", async (e) => {
+        const button = e.target.closest(".btn-bookmark");
+        if (!button || !grid.contains(button) || button.disabled) return;
+
+        await toggleBookmark(button.dataset.id);
     });
 
 
@@ -176,6 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // DOM Element: Konzert-Detail-Ansicht-Modal
     const concertDetailModal = document.getElementById("concert-detail-modal");
+    const concertDetailBookmark = document.getElementById("concert-detail-bookmark");
 
     // Funktion: Konzert-Details anzeigen (für Detail Modal Ansicht nach Klick auf Konzerte in "Vorschau")
     function showConcertDetails(concert) {
@@ -188,6 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("concert-detail-time").textContent = concert.time || "—";
         document.getElementById("concert-detail-price").textContent = formatPrice(concert.price);
         document.getElementById("concert-detail-description").textContent = concert.description || "Keine Beschreibung verfügbar.";
+
+        concertDetailBookmark.dataset.id = concert.id || "";
+        updateDetailBookmarkButton();
 
         const sourceLink = document.getElementById("concert-detail-source");
         const sourceUrl = concert.infoLink || concert.sourceUrl;
@@ -203,6 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         concertDetailModal.classList.remove("hidden");
     }
+
+    concertDetailBookmark?.addEventListener("click", async () => {
+        if (concertDetailBookmark.disabled) return;
+        await toggleBookmark(concertDetailBookmark.dataset.id);
+    });
 
     // Event Listener: Klick auf Konzertgarte im Grid
     grid?.addEventListener("click", (e) => {
@@ -382,6 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navConcerts = document.getElementById("nav-concerts");
     const navCalendar = document.getElementById("nav-calendar");
     const calendarElement = document.getElementById("calendar");
+    const calendarViewSelect = document.getElementById("calendar-view-select");
     let calendar;
 
     const tabLogin = document.getElementById("tab-login");
@@ -532,15 +561,23 @@ document.addEventListener("DOMContentLoaded", () => {
             bookmarkedConcertIds.has(concert.id)
         );
 
-        // vorgemerkte Konzerte  mit map() in Objekte umgewandeln,, die FullCalendar als Events verwenden kann
-        const calendarEvents = bookmarkedConcerts.map(concert => ({
-            id: concert.id,
-            title: concert.title,
-            start: `${concert.date.split("T")[0]}T${concert.time}`,
-            extendedProps: {
-                concert: concert
-            }
-        }));
+        // vorgemerkte Konzerte mit gültigem Datum in FullCalendar-Events umwandeln
+        const calendarEvents = bookmarkedConcerts
+            .filter(concert => typeof concert.date === "string" && !isNaN(new Date(concert.date).getTime()))
+            .map(concert => {
+                const date = concert.date.split("T")[0];
+                const time = typeof concert.time === "string" ? concert.time.trim() : "";
+                const hasValidTime = /^\d{1,2}:\d{2}(?::\d{2})?$/.test(time);
+
+                return {
+                    id: concert.id,
+                    title: concert.title || concert.artist || "Konzert",
+                    start: hasValidTime ? `${date}T${time}` : date,
+                    extendedProps: {
+                        concert: concert
+                    }
+                };
+            });
 
         if (!calendar) return; // kalender muss zuerst geladen sein
 
@@ -563,6 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
             initialView: "dayGridMonth",
             initialDate: currentDate,
             headerToolbar: false,
+            
             eventClick: (info) => {
                 const concert = allConcerts.find(c => c.id === info.event.id) || info.event.extendedProps.concert;
                 showConcertDetails(concert);
@@ -571,6 +609,17 @@ document.addEventListener("DOMContentLoaded", () => {
         
         calendar.render();
     }
+
+    // Event Listener: Kalenderansicht Monat / Woche wechseln
+    calendarViewSelect?.addEventListener("change", () => {
+        if (!calendar) return;
+
+        if (calendarViewSelect.value === "week") {
+            calendar.changeView("timeGridWeek");
+        } else {
+            calendar.changeView("dayGridMonth");
+        }
+    });
 
 
     // ==================================================================================
