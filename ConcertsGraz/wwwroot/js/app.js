@@ -1,22 +1,31 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+﻿
+// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. DOM-Elemente greifen
+
+    // ==================================================================================
+    // DOM ELEMENTS & STATE
+    // ==================================================================================
+
     const grid = document.getElementById("concert-grid");
-        const filterLocation = document.getElementById("filter-venue");
+    const filterLocation = document.getElementById("filter-venue");
     const filterGenre = document.getElementById("filter-genre");
     const filterDate = document.getElementById("filter-date");
     const filterPrice = document.getElementById("filter-price");
     const filterBar = document.querySelector(".filter-bar");
 
     let allConcerts = []; // Hält die Daten im Speicher
-    let bookmarkedConcertIds = new Set();
+    let bookmarkedConcertIds = new Set(); //
     const pendingBookmarks = new Set();
     let bookmarksLoading = false;
     let bookmarkGeneration = 0; // Ignoriert alte Antworten nach einem Benutzerwechsel
 
-    // 2. Daten vom C# Backend holen
+
+    // ==================================================================================
+    // CONCERT DATA & RENDERING
+    // ==================================================================================
+
     fetchConcerts();
 
     async function fetchConcerts() {
@@ -24,41 +33,52 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch("/api/concerts");
             if (!response.ok) throw new Error("API antwortet nicht");
 
-            allConcerts = await response.json();
-            applyFilters();
+            allConcerts = await response.json(); //.json um HTTP Response Objekt in JSON umwandeln
+            applyFilters(); // filter anwenden nach dem laden
         } catch (error) {
-            console.error("Fehler:", error);
+            console.error("Fehler:", error); // ladefehler handlen
             grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">Konzerte konnten nicht geladen werden.</p>`;
         }
     }
 
-    // 3. JSON in HTML-Karten umwandeln & einfügen
+    // JSON in HTML-Karten umwandeln & einfügen (wenn Konzerte geladen und vorhanden)
     function renderConcerts(concerts) {
+        
+        // DOM element laden
         if (!concerts || concerts.length === 0) {
             grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">Keine Konzerte gefunden.</p>`;
             return;
         }
 
+        // HTML Inhalt verändern
         grid.innerHTML = concerts.map(c => `
             <article class="concert-card" data-id="${c.id}">
                 <div class="card-badge">${formatDate(c.date)}</div>
-                <div class="card-content">
-                    <span class="card-genre">${escapeHtml(c.genre || 'Sonstiges')}</span>
-                    <h3 class="card-title">${escapeHtml(c.title || c.artist)}</h3>
-                    <p class="card-location">📍 ${escapeHtml(c.venue)}</p>
-                    <p class="card-price">🎟️ ${formatPrice(c.price)}</p>
-                </div>
-                <div class="card-footer">
-                    <button class="btn-bookmark" type="button" data-id="${c.id}" data-bookmarked="${bookmarkedConcertIds.has(c.id)}" ${bookmarksLoading || pendingBookmarks.has(c.id) ? "disabled" : ""}>${bookmarkedConcertIds.has(c.id) ? "♥ Gemerkt" : "♡ Merken"}</button>
-                </div>
+            <div class="card-content">
+                <span class="card-genre">${escapeHtml(c.genre || 'Sonstiges')}</span>
+                <h3 class="card-title">${escapeHtml(c.title || c.artist)}</h3>
+                <p class="card-location">📍 ${escapeHtml(c.venue)}</p>
+                <p class="card-price">🎟️ ${formatPrice(c.price)}</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn-bookmark" type="button" data-id="${c.id}" data-bookmarked="${bookmarkedConcertIds.has(c.id)}" ${bookmarksLoading || pendingBookmarks.has(c.id) ? "disabled" : ""}>${bookmarkedConcertIds.has(c.id) ? "♥ Gemerkt" : "♡ Merken"}</button>
+            </div>
             </article>
-        `).join("");
+            `).join("");
     }
 
-    // Aktualisiert auch Buttons, die während einer Anfrage neu gerendert wurden.
+
+    // ==================================================================================
+    // BOOKMARKS
+    // ==================================================================================
+
+    // Aktualisiert Merk Buttons, die während einer Anfrage neu gerendert wurden.
     function updateBookmarkButtons() {
+        
+        // querySelectorAll -> Element-Auswahl-Suche
+        // loop Merk Buttons in Konzert-Grid-Karten
         grid?.querySelectorAll(".btn-bookmark").forEach(button => {
-            const isBookmarked = bookmarkedConcertIds.has(button.dataset.id);
+            const isBookmarked = bookmarkedConcertIds.has(button.dataset.id); //bookmarked bool abhängig davon ob Konzertkarten Id im bookmarked Set ist
             button.dataset.bookmarked = String(isBookmarked);
             button.textContent = isBookmarked ? "♥ Gemerkt" : "♡ Merken";
             button.disabled = bookmarksLoading || pendingBookmarks.has(button.dataset.id);
@@ -142,6 +162,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+
+    // ==================================================================================
+    // CONCERT DETAIL MODAL
+    // ==================================================================================
+
     // Konzertdetails: Event Delegation für dynamisch gerenderte Karten
     const concertDetailModal = document.getElementById("concert-detail-modal");
 
@@ -195,7 +220,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 4. Filter-Events
+
+    // ==================================================================================
+    // CONCERT FILTERS
+    // ==================================================================================
+
     [filterLocation, filterGenre, filterDate, filterPrice].forEach(select => {
         select?.addEventListener("change", applyFilters);
     });
@@ -334,7 +363,11 @@ document.addEventListener("DOMContentLoaded", () => {
             firstDate.getDate() === secondDate.getDate();
     }
 
-    // 5. Modal & Tab Steuerung & Auth-UI Elemente
+
+    // ==================================================================================
+    // AUTH UI & NAVIGATION
+    // ==================================================================================
+
     const modal = document.getElementById("auth-modal");
     const btnOpenLogin = document.querySelector(".btn-login") || document.getElementById("btn-open-login");
     const btnCloseModal = document.getElementById("btn-close-modal");
@@ -478,6 +511,11 @@ document.addEventListener("DOMContentLoaded", () => {
         syncCalendarWithBookmarks();
     });
 
+
+    // ==================================================================================
+    // CALENDAR
+    // ==================================================================================
+
     // Synchronisiert vorgemerkte Konzerte mit der Kalenderansicht
     function syncCalendarWithBookmarks() {
         const bookmarkedConcerts = allConcerts.filter(concert =>
@@ -520,6 +558,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         calendar.render();
     }
+
+
+    // ==================================================================================
+    // USER PROFILE
+    // ==================================================================================
 
     async function loadProfileData() {
         const profileCurrentUser = document.getElementById("profile-current-user");
@@ -714,7 +757,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     
 
-    // 6. Authentifizierung: API Absenden
+    // ==================================================================================
+    // REGISTRATION & LOGIN
+    // ==================================================================================
 
     // Registrierung absenden
     formRegister?.addEventListener("submit", async (e) => {
@@ -796,7 +841,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Hilfsfunktionen
+
+    // ==================================================================================
+    // HELPER FUNCTIONS
+    // ==================================================================================
+
     function formatDate(dateStr) {
         if (!dateStr) return "TBA";
         const d = new Date(dateStr);

@@ -15,6 +15,7 @@ public class EventBlacklister
         "geschlossene gesellschaft",
         "jam session",
         "jamsession",
+        "jam night",
         "karaoke",
         "lesung",
         "messe",
