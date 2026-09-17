@@ -93,16 +93,23 @@ public class UserService
     }
     
     // DELETE USER 
-    public async Task<bool> DeleteUserAsync(string userId)
+    public async Task<bool> DeleteUserAsync(string userId, string? currentPassword)
     {
-        // search by id (no extra db anfrage!! less db anfragen = better)
-        if (string.IsNullOrWhiteSpace(userId)) { return false; }
+        // basic input check
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(currentPassword)) { return false; }
+
+        // get user from db
+        var wantedUser = await GetSingleUserByIdAsync(userId);
+        if (wantedUser == null) { return false; }
+
+        // verify current password
+        if (!_pwHasher.VerifyPassword(wantedUser.PasswordHash, currentPassword)) { return false; }
         
         // access db and delete user object
-        var success = await _usersCollection.DeleteOneAsync(u => u.Id == userId);
+        var success = await _usersCollection.DeleteOneAsync(u => u.Id == wantedUser.Id);
         
         // mange error/ success
-        if (success.DeletedCount == 0) { return false; } // delete unsuccessfull
+        if (!success.IsAcknowledged || success.DeletedCount == 0) { return false; } // delete unsuccessfull
         return true; // delete sucessfull
 
     }

@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch("/api/concerts");
             if (!response.ok) throw new Error("API antwortet nicht");
 
-            allConcerts = await response.json(); //.json um HTTP Response Objekt in JSON umwandeln
+            allConcerts = await response.json(); // JSON Body des Response-Objekts lesen und in JS parsen
             applyFilters(); // filter anwenden nach dem laden
         } catch (error) {
             console.error("Fehler:", error); // ladefehler handlen
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // JSON in HTML-Karten umwandeln & einfügen (wenn Konzerte geladen und vorhanden)
     function renderConcerts(concerts) {
         
-        // DOM element laden
+        // Konzertdaten vorhanden?
         if (!concerts || concerts.length === 0) {
             grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">Keine Konzerte gefunden.</p>`;
             return;
@@ -730,7 +730,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const response = await fetch("/api/users/delete", {
-                method: "DELETE"
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    currentPassword: deleteConfirmPass.value
+                })
             });
 
             if (!response.ok) {
@@ -871,7 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return typeof price === "number" ? `${price.toFixed(2).replace('.', ',')} €` : price;
     }
 
-    // HTML-Bereinigung
+    // HTML-Bereinigung (HTML-Sonderzeichen escapen)
     function escapeHtml(str) {
         return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }

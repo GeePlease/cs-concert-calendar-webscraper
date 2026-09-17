@@ -181,7 +181,7 @@ public class UserController : ControllerBase
     
     // API DELETE (delete user by id)
     [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteUserAsync() 
+    public async Task<IActionResult> DeleteUserAsync([FromBody] DeleteUserData? deleteUserData) //BOdy = response body
     {
         // user Id from Session
         var userId = HttpContext.Session.GetString("UserId");
@@ -190,7 +190,7 @@ public class UserController : ControllerBase
         if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloggt.");}
         
         // delete user from db
-        var success = await _userService.DeleteUserAsync(userId);
+        var success = await _userService.DeleteUserAsync(userId, deleteUserData?.CurrentPassword);
         
         // handle error
         if (!success)
@@ -223,6 +223,12 @@ public class UserController : ControllerBase
     {
         public string? CurrentPassword { get; set; }
         public string? NewPassword { get; set; }
+    }
+
+    // HELPER CLASS FOR DELETING USER ACCOUNT
+    public class DeleteUserData
+    {
+        public string? CurrentPassword { get; set; }
     }
     
     
