@@ -128,7 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const button = e.target.closest(".btn-bookmark");
         if (!button || !grid.contains(button) || button.disabled) return;
 
-        if (!localStorage.getItem("token")) return;
+        if (!localStorage.getItem("token")) {
+            clearAuthMessage();
+            showAuthMessage("Bitte anmelden, zum Konzerte Vormerken.");
+            modal?.classList.remove("hidden");
+            return;
+        }
 
         const concertId = button.dataset.id;
         if (!concertId || bookmarksLoading || pendingBookmarks.has(concertId)) return;
