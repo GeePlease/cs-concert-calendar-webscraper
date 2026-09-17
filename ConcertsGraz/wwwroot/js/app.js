@@ -85,7 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Gemerkte Konzerte laden
     async function loadBookmarks() {
+        
         if (!localStorage.getItem("token")) return;
 
         const generation = ++bookmarkGeneration;
@@ -121,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Bookmark-Buttons: Event Delegation für dynamisch gerenderte Karten
+    // Event Listener: Klicks in Konzerte Ansicht Grid 
     grid?.addEventListener("click", async (e) => {
         const button = e.target.closest(".btn-bookmark");
         if (!button || !grid.contains(button) || button.disabled) return;
@@ -167,9 +169,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // CONCERT DETAIL MODAL
     // ==================================================================================
 
-    // Konzertdetails: Event Delegation für dynamisch gerenderte Karten
+    // DOM Element: Konzert-Detail-Ansicht-Modal
     const concertDetailModal = document.getElementById("concert-detail-modal");
 
+    // Funktion: Konzert-Details anzeigen (für Detail Modal Ansicht nach Klick auf Konzerte in "Vorschau")
     function showConcertDetails(concert) {
         if (!concert || !concertDetailModal) return;
 
@@ -185,6 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const sourceUrl = concert.infoLink || concert.sourceUrl;
         const hasSourceUrl = /^https?:\/\//i.test(sourceUrl || "");
         sourceLink.classList.toggle("hidden", !hasSourceUrl);
+        
+        // Info Link Weiterleitung anzeigen, falls Link vorhanden
         if (hasSourceUrl) {
             sourceLink.href = sourceUrl;
         } else {
@@ -194,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         concertDetailModal.classList.remove("hidden");
     }
 
+    // Event Listener: Klick auf Konzertgarte im Grid
     grid?.addEventListener("click", (e) => {
         if (e.target.closest(".btn-bookmark")) return;
 
@@ -204,19 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
         showConcertDetails(concert);
     });
 
+    // Event Listener: Klick auf schließen in Konzert Detail Modal (Detailansicht schließen)
     document.getElementById("btn-close-concert-detail")?.addEventListener("click", () => {
         concertDetailModal?.classList.add("hidden");
     });
 
+    // Event Listener: Klick bei offenem Konzert Detail Modal (Detailansicht schließen)
     concertDetailModal?.addEventListener("click", (e) => {
         if (e.target === concertDetailModal) {
             concertDetailModal.classList.add("hidden");
-        }
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !concertDetailModal?.classList.contains("hidden")) {
-            concertDetailModal?.classList.add("hidden");
         }
     });
 
