@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterDate = document.getElementById("filter-date");
     const filterPrice = document.getElementById("filter-price");
     const filterBar = document.querySelector(".filter-bar");
+    const navHome = document.getElementById("nav-home"); // Logo Text
 
     let allConcerts = []; // Hält die Daten im Speicher
     let bookmarkedConcertIds = new Set(); //
@@ -463,6 +464,12 @@ document.addEventListener("DOMContentLoaded", () => {
         authMessage.textContent = "";
         authMessage.className = "auth-message hidden";
     }
+    
+    // Event Listener Logo/Schriftzug -> nav zu "Startseite"
+    navHome?.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("concert-section");
+    });
 
     // Modal öffnen & schließen
     btnOpenLogin?.addEventListener("click", () => {
