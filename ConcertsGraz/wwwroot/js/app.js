@@ -227,13 +227,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // CONCERT FILTERS
     // ==================================================================================
 
+    // Bei Änderung neu filtern
     [filterLocation, filterGenre, filterDate, filterPrice].forEach(select => {
         select?.addEventListener("change", applyFilters);
     });
-
+    
+    // Funktion: Filtern
     function applyFilters() {
-        let filtered = [...allConcerts];
+        let filtered = [...allConcerts]; // gesamte Konzertliste
 
+        // heutiges Datum
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -249,7 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return concertDate >= today;
         });
-
+        
+        // Filter Venue Veranstaltungsort
         if (filterLocation.value !== "all") {
             const selectedVenue = normalizeFilterText(filterLocation.value);
             filtered = filtered.filter(c =>
@@ -257,20 +261,24 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+        // Filter Genre
         if (filterGenre.value !== "all") {
             filtered = filtered.filter(c =>
                 c.genre?.toLowerCase().includes(filterGenre.value.toLowerCase())
             );
         }
 
+        // Filter Zeitraum
         if (filterDate.value !== "all") {
 
+            // Heute
             if (filterDate.value === "today") {
                 filtered = filtered.filter(c =>
                     isSameDay(new Date(c.date), today)
                 );
             }
 
+            // Woche
             if (filterDate.value === "week") {
                 const weekEnd = new Date(today);
                 weekEnd.setDate(today.getDate() + (7 - today.getDay()) % 7);
@@ -282,26 +290,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     return concertDate >= today && concertDate <= weekEnd;
                 });
             }
-
-            if (filterDate.value === "weekend") {
-                const weekendStart = new Date(today);
-                const daysUntilSaturday =
-                    today.getDay() === 0 ? -1 : 6 - today.getDay();
-
-                weekendStart.setDate(today.getDate() + daysUntilSaturday);
-
-                const weekendEnd = new Date(weekendStart);
-                weekendEnd.setDate(weekendStart.getDate() + 1);
-
-                filtered = filtered.filter(c => {
-                    const concertDate = new Date(c.date);
-                    concertDate.setHours(0, 0, 0, 0);
-
-                    return concertDate >= weekendStart &&
-                        concertDate <= weekendEnd;
-                });
-            }
-
+            
+            // Monat
             if (filterDate.value === "month") {
                 filtered = filtered.filter(c => {
                     const concertDate = new Date(c.date);
@@ -312,8 +302,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // Preis
         if (filterPrice.value !== "all") {
 
+            // Stufe 1: gratis
             if (filterPrice.value === "free") {
                 filtered = filtered.filter(c => {
                     const price = (c.price || "").toLowerCase();
@@ -323,18 +315,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         price.includes("pay as you wish");
                 });
             }
-
+            
+            // Stufe 2: (aktuell) unter 15€
             if (filterPrice.value === "under15") {
                 filtered = filtered.filter(c => {
                     const priceText = String(c.price || "").toLowerCase();
 
                     if (
                         priceText.includes("frei") ||
+                        priceText.includes("gratis") ||
                         priceText.includes("pay as you wish")
                     ) {
                         return true;
                     }
 
+                    // 1. numerischen Preis aus Preistext auslesen
                     const priceMatch = priceText.match(/\d+(?:[.,]\d+)?/);
                     const price = priceMatch
                         ? Number(priceMatch[0].replace(",", "."))
@@ -345,11 +340,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // chronologisch sortieren
         filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         renderConcerts(filtered);
     }
 
+    // Funktion: texte für Filter vereinheitlichen
     function normalizeFilterText(value) {
         return (value || "")
             .toLowerCase()
@@ -358,6 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/[^a-z0-9]/g, "");
     }
 
+    // Prüfen ob Datum heutiger Kalendertag (für heute FilteR)
     function isSameDay(firstDate, secondDate) {
         return !isNaN(firstDate.getTime()) &&
             firstDate.getFullYear() === secondDate.getFullYear() &&
@@ -365,11 +363,11 @@ document.addEventListener("DOMContentLoaded", () => {
             firstDate.getDate() === secondDate.getDate();
     }
 
-
     // ==================================================================================
     // AUTH UI & NAVIGATION
     // ==================================================================================
 
+    // get DOM HTML Elements in JS Variables
     const modal = document.getElementById("auth-modal");
     const btnOpenLogin = document.querySelector(".btn-login") || document.getElementById("btn-open-login");
     const btnCloseModal = document.getElementById("btn-close-modal");
@@ -401,10 +399,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteConfirmPass = document.getElementById("delete-confirm-pass");
     const profileMessage = document.getElementById("profile-message");
 
-    // Steuerung der Header-Buttons (Login vs. User-Menü)
+    // Steuerung der Header-Buttons (Login vs. User-Menü Sichtbarkeit Buttons)
     function updateAuthUI() {
         const token = localStorage.getItem("token");
-        const isLoggedIn = !!token;
+        const isLoggedIn = !!token; // !! explizit in true oder false umwandeln
 
         if (isLoggedIn) {
             btnOpenLogin?.classList.add("hidden");
@@ -415,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Beim Laden der Seite direkt ausführen
+    // Beim Laden der Seite direkt ausführen: Menü Button Sichtbarkeit, gemerkte Konzerte laden
     updateAuthUI();
     loadBookmarks();
 
@@ -450,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Tab-Umschaltung
+    // Tab-Umschaltung Login: Registrieren
     tabLogin?.addEventListener("click", () => {
         clearAuthMessage();
         tabLogin.classList.add("active");
@@ -467,6 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formLogin.classList.add("hidden");
     });
 
+    // Funktion: Menü-Navigation Home-Übersicht, Kalender-Ansicht, Profil-Ansicht
     function showView(viewId) {
         ["concert-section", "calendar-view", "profile-section"].forEach(id => {
             document.getElementById(id)?.classList.toggle("hidden", id !== viewId);
@@ -474,11 +473,12 @@ document.addEventListener("DOMContentLoaded", () => {
         filterBar?.classList.toggle("hidden", viewId !== "concert-section");
     }
 
-    // Logout durchführen
+    // Funktion: Logout durchführen
     function logout() {
+        
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        bookmarkGeneration++;
+        bookmarkGeneration++; // neue bookmark Generation Version, JS + FE spezifisch
         bookmarkedConcertIds.clear();
         pendingBookmarks.clear();
         bookmarksLoading = false;
@@ -492,21 +492,24 @@ document.addEventListener("DOMContentLoaded", () => {
         filterPrice.value = "all";
 
         applyFilters();
-
         updateAuthUI();
     }
 
+    // Event Listener logout button klick 
     btnLogout?.addEventListener("click", logout);
 
+    // event listener Profil button klick
     btnProfile?.addEventListener("click", () => {
         showView("profile-section");
         loadProfileData();
     });
 
+    // Event Listener Konzerte Button Klick
     navConcerts?.addEventListener("click", () => {
         showView("concert-section");
     });
 
+    // Event Listener Kalender Button Klick
     navCalendar?.addEventListener("click", () => {
         showView("calendar-view");
         initializeCalendar();
@@ -518,12 +521,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // CALENDAR
     // ==================================================================================
 
-    // Synchronisiert vorgemerkte Konzerte mit der Kalenderansicht
+    // Funktion: Synchronisiert vorgemerkte Konzerte mit der Kalenderansicht
     function syncCalendarWithBookmarks() {
         const bookmarkedConcerts = allConcerts.filter(concert =>
             bookmarkedConcertIds.has(concert.id)
         );
 
+        // vorgemerkte Konzerte  mit map() in Objekte umgewandeln,, die FullCalendar als Events verwenden kann
         const calendarEvents = bookmarkedConcerts.map(concert => ({
             id: concert.id,
             title: concert.title,
@@ -536,12 +540,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!calendar) return; // kalender muss zuerst geladen sein
 
         calendar.removeAllEvents(); // verhindet anzeige von doppelten events
-        calendar.addEventSource(calendarEvents); // fügt bookmared events neu hinzu
+        calendar.addEventSource(calendarEvents); // fügt bookmarked events neu hinzu
 
+        // inhalt der im kalender befindlichen events in den dev tools
         console.log(calendarEvents);
     }
 
-    // initialisiert full calendar kalender
+    //Funktion:  initialisiert full calendar kalender
     function initializeCalendar() {
         if (calendar || !calendarElement) return;
 
@@ -558,6 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 showConcertDetails(concert);
             }
         });
+        
         calendar.render();
     }
 
@@ -566,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // USER PROFILE
     // ==================================================================================
 
+    // Funktion: Profil (Ansicht) laden
     async function loadProfileData() {
         const profileCurrentUser = document.getElementById("profile-current-user");
         const displayUsername = document.getElementById("display-username");
@@ -590,7 +597,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (profileCurrentUser) profileCurrentUser.textContent = profile.username;
             if (displayUsername) displayUsername.textContent = profile.username;
             if (displayEmail) displayEmail.textContent = profile.email;
+            
         } catch (error) {
+            
             console.error("Fehler beim Laden des Profils:", error);
 
             if (profileMessage) {
@@ -612,6 +621,7 @@ document.addEventListener("DOMContentLoaded", () => {
         profileMessage.className = "auth-message hidden";
     }
 
+    // Funktion: für einklappen der Bearbeiten ansicht
     function hideProfileEditForms() {
         formChangeUsername?.reset();
         formChangeEmail?.reset();
@@ -763,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // REGISTRATION & LOGIN
     // ==================================================================================
 
-    // Registrierung absenden
+    // Event Listener für Registrierung absenden in Registrieren Form
     formRegister?.addEventListener("submit", async (e) => {
         e.preventDefault();
         clearAuthMessage();
@@ -771,7 +781,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("reg-pass").value;
         const passwordConfirm = document.getElementById("reg-pass-confirm").value;
 
-        // Frontend-Check: Passwörter vergleichen
+        // Frontend-Check: Passwörter vergleichen (passiert nur im FE!)
         if (password !== passwordConfirm) {
             showAuthMessage("Die eingegebenen Passwörter stimmen nicht überein!", "error");
             return;
@@ -848,17 +858,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // HELPER FUNCTIONS
     // ==================================================================================
 
+    // Datums-Formatierung
     function formatDate(dateStr) {
         if (!dateStr) return "TBA";
         const d = new Date(dateStr);
         return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString("de-AT", { day: "2-digit", month: "short" }).toUpperCase();
     }
 
+    // Preis-Formatierung
     function formatPrice(price) {
         if (!price || price === 0) return "Gratis / Pay As You Wish";
         return typeof price === "number" ? `${price.toFixed(2).replace('.', ',')} €` : price;
     }
 
+    // HTML-Bereinigung
     function escapeHtml(str) {
         return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
