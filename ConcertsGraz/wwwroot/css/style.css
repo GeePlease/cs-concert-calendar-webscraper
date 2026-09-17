@@ -3,7 +3,8 @@
      Theme Palette
      ============================================================ */
 
-  /* Background */;
+  /* Background */
+  --bg-main: #12101D;
   --bg-surface: #1D1930;
   --bg-surface-hover: #2A2343;
 

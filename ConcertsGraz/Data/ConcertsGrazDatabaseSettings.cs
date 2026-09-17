@@ -2,8 +2,7 @@
 
 
 // ==================================================================================
-// CLASS: ConcertsGrazdatabaseSettings - Eigenschaftswerte appsettings.json
-// der Datei ConcertsGrazDatabase gespeichert
+// CLASS: ConcertsGrazdatabaseSettings - config from  appsettings.json
 // ==================================================================================
 
 public class ConcertsGrazDatabaseSettings

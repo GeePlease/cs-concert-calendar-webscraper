@@ -14,7 +14,7 @@ public class Concert
     public string? Id { get; set; } 
     
     public string Title { get; set; } = "";
-    public string Genre { get; set; } = "-"; // TODO: extraction method in venue scrapers
+    public string Genre { get; set; } = "-"; // TODO: Write GenreDetector
     public DateTime? Date { get; set; }
     public string Time { get; set; } = "";
     public string Venue { get; set; } = "";
