@@ -4,9 +4,10 @@
      ============================================================ */
 
   /* Background */
-  --bg-main: #0B0914;
-  --bg-surface: #161226;
-  --bg-surface-hover: #241D3D;
+  /* Background */
+  --bg-main: #12101D;
+  --bg-surface: #1D1930;
+  --bg-surface-hover: #2A2343;
 
   /* Primary */
   --primary: #FB2576;
@@ -15,11 +16,11 @@
 
   /* Text */
   --text-main: #F4F3F8;
-  --text-muted: #A39DB5;
+  --text-muted: #BBB5CA;
 
   /* Borders & Shadows */
-  --border-subtle: #2D254B;
-  --shadow-color: rgba(0, 0, 0, 0.4);
+  --border-subtle: #393052;
+  --shadow-color: rgba(0, 0, 0, 0.3);
 
   /* Transparent Theme Colors */
   --bg-overlay: rgba(0, 0, 0, 0.75);
@@ -100,7 +101,7 @@ input {
 
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 7px;
 }
 
 .logo-image {
@@ -443,7 +444,7 @@ input {
    ============================================================ */
 
 .concert-detail-card {
-  max-width: 760px;
+  max-width: 680px;
   max-height: calc(100vh - 2rem);
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
