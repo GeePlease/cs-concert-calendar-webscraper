@@ -145,14 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Konzertdetails: Event Delegation für dynamisch gerenderte Karten
     const concertDetailModal = document.getElementById("concert-detail-modal");
 
-    grid?.addEventListener("click", (e) => {
-        if (e.target.closest(".btn-bookmark")) return;
-
-        const card = e.target.closest(".concert-card");
-        if (!card || !grid.contains(card) || !concertDetailModal) return;
-
-        const concert = allConcerts.find(c => c.id === card.dataset.id);
-        if (!concert) return;
+    function showConcertDetails(concert) {
+        if (!concert || !concertDetailModal) return;
 
         document.getElementById("concert-detail-genre").textContent = concert.genre || "Sonstiges";
         document.getElementById("concert-detail-title").textContent = concert.title || concert.artist || "Konzertdetails";
@@ -173,6 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         concertDetailModal.classList.remove("hidden");
+    }
+
+    grid?.addEventListener("click", (e) => {
+        if (e.target.closest(".btn-bookmark")) return;
+
+        const card = e.target.closest(".concert-card");
+        if (!card || !grid.contains(card)) return;
+
+        const concert = allConcerts.find(c => c.id === card.dataset.id);
+        showConcertDetails(concert);
     });
 
     document.getElementById("btn-close-concert-detail")?.addEventListener("click", () => {
@@ -508,7 +512,11 @@ document.addEventListener("DOMContentLoaded", () => {
         calendar = new FullCalendar.Calendar(calendarElement, {
             initialView: "dayGridMonth",
             initialDate: currentDate,
-            headerToolbar: false
+            headerToolbar: false,
+            eventClick: (info) => {
+                const concert = allConcerts.find(c => c.id === info.event.id) || info.event.extendedProps.concert;
+                showConcertDetails(concert);
+            }
         });
         calendar.render();
     }
