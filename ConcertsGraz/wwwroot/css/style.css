@@ -97,6 +97,16 @@ input {
   color: var(--text-main);
   text-decoration: none;
   letter-spacing: -0.5px;
+
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.logo-image {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
 }
 
 .header-nav {
