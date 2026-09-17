@@ -4,7 +4,7 @@ namespace ConcertsGraz.Controllers;
 
 // ==================================================================================
 // CLASS: ScraperController - API endpoint for scraping processes
-// and save new concert data to MongoDB.
+// and saving new concert data to MongoDB.
 // ==================================================================================
 
 [ApiController]
@@ -23,15 +23,16 @@ public class ScraperController : ControllerBase
     }
     
     // METHODS
-    
-    // Scrape and Save result in DB
+    // POST - Scrape and Save result in DB
     [HttpPost("run")]
     public async Task<IActionResult> ScrapeAndStoreAsync()
     {
         // scrape and get all individual concert result lists from scraper service
         var scrapedConcerts = await _scraperService.RunAllAsync();
+        
         // create combined results list, from concert service
         await _concertService.SaveScrapedConcertsAsync(scrapedConcerts);
+        
         // feedback
         return Ok($"Erfolg. {scrapedConcerts.Count} Konzerte gescraped und gespeichert.");
     }

@@ -1,5 +1,4 @@
 ﻿using ConcertsGraz.Services;
-using ConcertsGraz.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConcertsGraz.Controllers;
@@ -38,13 +37,13 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Benutzername oder Passwort ungültig." });
         }
 
+        // save id from logged-in user in session
         HttpContext.Session.SetString("UserId", user.Id);
 
         // send response to frontend
-        //TODO: implement token/ session management
         return Ok(new 
         { 
-            token = user.Id, // USER ID NUR PLATZHALTER!!!!!
+            token = user.Id, // use to manage login state in frontend
             username = user.Username 
         });
     }
@@ -64,7 +63,7 @@ public class AuthController : ControllerBase
     
     
     
-    // HELPER CLASS
+    // HELPER CLASS (Data FromBody)
     public class LoginData
     {
         public string Username { get; set; } = string.Empty;

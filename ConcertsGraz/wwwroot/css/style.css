@@ -3,9 +3,7 @@
      Theme Palette
      ============================================================ */
 
-  /* Background */
-  /* Background */
-  --bg-main: #12101D;
+  /* Background */;
   --bg-surface: #1D1930;
   --bg-surface-hover: #2A2343;
 
@@ -252,7 +250,6 @@ input {
   background-color: var(--bg-surface-hover);
 }
 
-
 .calendar-control-bar .filter-container {
   align-items: flex-end;
 }
@@ -297,7 +294,7 @@ input {
 
 
 /* ============================================================
-   Konzert-Karten
+   Concert Cards
    ============================================================ */
 
 .concert-card {
@@ -622,7 +619,7 @@ input {
 
 
 /* ============================================================
-   Feedback-Meldungen
+   Feedback-Messages
    ============================================================ */
 
 .auth-message {
@@ -651,7 +648,7 @@ input {
 
 
 /* ============================================================
-   Universelles Ausblenden
+  Universal Fade Out
    ============================================================ */
 
 .hidden {
@@ -660,7 +657,7 @@ input {
 
 
 /* ============================================================
-   Profil
+   Profile
    ============================================================ */
 
 .profile-container {
@@ -669,7 +666,7 @@ input {
 }
 
 
-/* Profil-Header */
+/* Profile Header */
 
 .profile-header {
   margin-bottom: 1.5rem;
@@ -697,7 +694,7 @@ input {
 }
 
 
-/* Benutzerdaten */
+/* User/ Profile Data */
 
 .profile-data {
   display: flex;
@@ -728,7 +725,7 @@ input {
 }
 
 
-/* Profilfelder */
+/* Profile Fields */
 
 .profile-field {
   display: flex;
@@ -753,7 +750,7 @@ input {
 }
 
 
-/* Bearbeiten-Button */
+/* Edit Button */
 
 .btn-edit {
   flex-shrink: 0;
@@ -776,7 +773,7 @@ input {
 
 
 /* ============================================================
-   Profil-Bearbeitung
+   Edit Profile
    ============================================================ */
 
 .profile-edit-area {
@@ -807,7 +804,7 @@ input {
 }
 
 
-/* Formularfelder */
+/* Forms */
 
 .profile-form .form-group {
   margin-bottom: 1rem;
@@ -828,7 +825,7 @@ input {
 }
 
 
-/* Formular-Buttons */
+/* Form Buttons */
 
 .profile-form-actions {
   display: flex;
@@ -862,7 +859,7 @@ input {
 
 
 /* ============================================================
-   Lösch-Warnung
+   Delete Warning
    ============================================================ */
 
 .delete-warning {
@@ -905,7 +902,7 @@ input {
 
 
 /* ============================================================
-   Löschen
+   Delete
    ============================================================ */
 
 .btn-danger {

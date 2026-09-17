@@ -23,7 +23,7 @@ public class ConcertController : ControllerBase
     }
     
     // METHODS
-    // GET: api/all concerts
+    // API - GET: api/all concerts
     [HttpGet]
     public async Task<ActionResult<List<Concert>>> GetAll()
     {
@@ -31,7 +31,7 @@ public class ConcertController : ControllerBase
         return Ok(concerts);
     }
     
-    //GET: api/ single concert
+    //API - GET: single concert
     [HttpGet("{id}")]
     public async Task<ActionResult<Concert>> GetOneById(string id)
     {

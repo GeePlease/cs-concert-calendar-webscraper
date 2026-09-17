@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Concerts Graz</title>
 
-    <!-- 1. CSS-Datei einbinden -->
+    <!-- CSS STYLES -->
     <link rel="stylesheet" href="css/style.css">
 
     <!-- FullCalendar -->
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<!-- Header (scrollt mit) -->
+<!-- Header  -->
 <header class="main-header">
 
     <div class="header-container">
@@ -35,10 +35,10 @@
             <a href="#concerts" class="nav-link" id="nav-concerts">Konzerte</a>
             <a href="#calendar" class="nav-link" id="nav-calendar">Kalender</a>
 
-            <!-- Zustand 1: Nicht angemeldet -->
+            <!-- State 1: NOT logged in -->
             <button id="btn-open-login" class="btn-login" type="button">Login</button>
 
-            <!-- Zustand 2: Angemeldet (wird per JS eingeblendet) -->
+            <!-- State 2: Logged in (wird per JS eingeblendet) -->
             <div id="user-menu" class="user-menu hidden">
                 <button id="btn-open-profile" class="btn-profile" type="button">Profil</button>
                 <button id="btn-logout" class="btn-logout" type="button">Logout</button>
@@ -47,7 +47,7 @@
     </div>
 </header>
 
-<!-- Filterleiste (Fixiert / Sticky beim Scrollen) -->
+<!-- Filter Bar ) -->
 <section class="filter-bar">
     <div class="filter-container">
         <div class="filter-group">
@@ -95,29 +95,14 @@
     </div>
 </section>
 
-<!-- Hauptbereich: Konzert-Grid -->
+<!-- Main Section: Concert-Grid -->
 <main id="concert-section" class="content-wrapper">
     <div id="concert-grid" class="concert-grid">
-
-        <!-- Beispiel-Karte (wird später per app.js dynamisch aus der API geladen) -->
-        <article class="concert-card">
-            <div class="card-badge">12. SEP</div>
-            <div class="card-content">
-                <span class="card-genre">Rock, Punk & Indie</span>
-                <h3 class="card-title">The Burning Flags - Fast Love</h3>
-                <p class="card-location">📍 club wakuum Graz</p>
-                <p class="card-price">🎟️ Pay As You Wish</p>
-            </div>
-            <div class="card-footer">
-                <button class="btn-bookmark" type="button">♡ Merken</button>
-                
-            </div>
-        </article>
 
     </div>
 </main>
 
-<!-- Konzertdetails -->
+<!-- Concert Details -->
 <div id="concert-detail-modal" class="modal-overlay hidden">
     <div class="modal-card concert-detail-card" role="dialog" aria-modal="true" aria-labelledby="concert-detail-title">
         <button id="btn-close-concert-detail" class="modal-close" type="button" aria-label="Konzertdetails schließen">&times;</button>
@@ -137,7 +122,7 @@
     </div>
 </div>
 
-<!-- Kalenderansicht -->
+<!-- Calendar -->
 <section id="calendar-view" class="hidden">
     <div class="filter-bar calendar-control-bar">
         <div class="filter-container">
@@ -160,13 +145,12 @@
 </section>
 
 
-
-<!-- Authentifizierung: Login/ Registrieren Overlay -->
+<!-- Login/ Register -->
 <div id="auth-modal" class="modal-overlay hidden">
     <div class="modal-card">
         <button id="btn-close-modal" class="modal-close" type="button" aria-label="Schließen">&times;</button>
 
-        <!-- Platzhalter für Fehler- und Erfolgsmeldungen -->
+        <!-- space for error messages -->
         <div id="auth-message" class="auth-message hidden"></div>
 
         <div class="auth-tabs">
@@ -175,7 +159,7 @@
         </div>
         
                 
-        <!-- Login-Formular -->
+        <!-- Login Form -->
         <form id="form-login" class="auth-form">
             <div class="form-group">
                 <label for="login-user">E-Mail oder Benutzername</label>
@@ -188,7 +172,7 @@
             <button type="submit" class="btn-submit">Login</button>
         </form>
 
-        <!-- Registrierungs-Formular -->
+        <!-- Register Form -->
         <form id="form-register" class="auth-form hidden">
             <div class="form-group">
                 <label for="reg-user">Benutzername</label>
@@ -202,7 +186,7 @@
                 <label for="reg-pass">Passwort</label>
                 <input type="password" id="reg-pass" required placeholder="••••••••">
             </div>
-            <!-- Passwort wiederholen -->
+            <!-- Repeat Passowrd -->
             <div class="form-group">
                 <label for="reg-pass-confirm">Passwort bestätigen</label>
                 <input type="password" id="reg-pass-confirm" required placeholder="••••••••">
@@ -213,12 +197,12 @@
 </div>
 
 
-<!-- Profil-Section -->
+<!-- Profile Section -->
 <section id="profile-section" class="content-wrapper hidden">
 
     <div class="profile-container">
 
-        <!-- Profil-Header -->
+        <!-- Profile Header -->
         <div class="profile-header">
             <h2>Mein Profil</h2>
             <p class="profile-subtitle">
@@ -226,10 +210,10 @@
             </p>
         </div>
 
-        <!-- Feedback-Meldungen -->
+        <!-- Feedback Messages -->
         <div id="profile-message" class="auth-message hidden"></div>
 
-        <!-- Benutzerdaten -->
+        <!-- Profile Data/ Details -->
         <div class="profile-data">
 
             <div class="profile-data-row">
@@ -267,7 +251,7 @@
 
         </div>
 
-        <!-- Konto löschen -->
+        <!-- Delete Profile/User -->
         <div class="profile-data profile-account-section">
             <div class="profile-data-row">
                 <div class="profile-field">
@@ -281,10 +265,10 @@
             </div>
         </div>
 
-        <!-- Bearbeitungsbereich -->
+        <!-- Edit Profile section -->
         <div id="profile-edit-area" class="profile-edit-area hidden">
 
-            <!-- Benutzername ändern -->
+            <!-- Change Username -->
             <form id="form-change-username" class="profile-form hidden">
 
                 <div class="profile-form-header">
@@ -312,7 +296,7 @@
             </form>
 
 
-            <!-- E-Mail ändern -->
+            <!-- Change E-Mail -->
             <form id="form-change-email" class="profile-form hidden">
 
                 <div class="profile-form-header">
@@ -348,7 +332,7 @@
             </form>
 
 
-            <!-- Passwort ändern -->
+            <!-- Change Password -->
             <form id="form-change-password" class="profile-form hidden">
 
                 <div class="profile-form-header">
@@ -394,7 +378,7 @@
             </form>
 
 
-            <!-- Konto löschen -->
+            <!-- Delete profile -->
             <form id="form-delete-account" class="profile-form hidden">
 
                 <div class="profile-form-header">
