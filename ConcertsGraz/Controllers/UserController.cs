@@ -1,5 +1,6 @@
 ﻿using ConcertsGraz.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 namespace ConcertsGraz.Controllers;
 
 // ==================================================================================
@@ -14,11 +15,13 @@ public class UserController : ControllerBase
     
     // ATTRIBUTES
     private readonly UserService _userService;
+    private readonly ConcertService _concertService;
     
     // CONSTRUCTOR: di - user service
-    public UserController(UserService userService)
+    public UserController(UserService userService, ConcertService concertService)
     {
         _userService = userService;
+        _concertService = concertService;
     }
     
     // API GET (Single user by name or email) api/users/profile
@@ -87,6 +90,12 @@ public class UserController : ControllerBase
 
         // null check
         if (string.IsNullOrEmpty(userId)) { return Unauthorized("Nicht eingeloggt."); }
+        
+        // check if valid MongoDB ObjectId
+        if (!ObjectId.TryParse(concertId, out _)) { return BadRequest("Ungültige Konzert-ID."); }
+
+        var concert = await _concertService.GetOneAsync(concertId);
+        if (concert == null) { return NotFound("Konzert konnte nicht gefunden werden."); }
 
         // bookmark concert
         var success = await _userService.BookmarkConcertId(userId, concertId);

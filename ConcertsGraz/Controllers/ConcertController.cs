@@ -1,6 +1,7 @@
 ﻿using ConcertsGraz.Models;
 using ConcertsGraz.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 namespace ConcertsGraz.Controllers;
 
 // ==================================================================================
@@ -34,8 +35,11 @@ public class ConcertController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Concert>> GetOneById(string id)
     {
+        // check if valid MongoDB ObjectId
+        if (!ObjectId.TryParse(id, out _)) { return BadRequest("Ungültige Konzert-ID."); }
+
         var concert = await _concertService.GetOneAsync(id);
-        if (concert == null) { return NotFound(); }
+        if (concert == null) { return NotFound(); } //null check
         
         return Ok(concert);
     }
