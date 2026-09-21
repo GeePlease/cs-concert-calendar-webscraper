@@ -57,7 +57,7 @@ builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TestDataSeeder>();
 
-// Scraper-Registrierung uner Interface
+// Scraper-Registrierung als Interface
 builder.Services.AddScoped<IScraper, ClubWakuumScraper>();
 builder.Services.AddScoped<IScraper, PpcScraper>();
 builder.Services.AddScoped<IScraper, CafeWolfScraper>();

@@ -37,7 +37,7 @@ public class UserController : ControllerBase
             return Unauthorized("Nicht eingeloggt.");
         }
 
-        // load from db witz id from UserService.cs
+        // load from db with id from UserService.cs
         var userToLoad = await _userService.GetSingleUserByIdAsync(userId);
 
         // handle error
