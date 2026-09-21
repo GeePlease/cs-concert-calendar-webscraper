@@ -13,6 +13,20 @@ The project was developed as my final project during my **Application Developmen
 * Filtering and displaying upcoming events
 * ASP.NET Core web interface
 
+* ## Screenshots
+
+### Concert Overview
+
+![Concert Overview](docs/screenshots/concert-view.png)
+
+### Calendar View
+
+![Calendar View](docs/screenshots/calendar-view.png)
+
+### Profile View
+
+![Profile View](docs/screenshots/profile-view.png)
+
 ## Technologies
 
 * **C#**
