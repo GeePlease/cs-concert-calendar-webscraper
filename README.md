@@ -31,7 +31,7 @@ The project was developed as my final project during my **Application Developmen
 
 * **C#**
 * **ASP.NET Core**
-* **HTML / CSS / JavaScript**
+* **HTML / CSS / JavaScript / FullCalendar**
 * **MongoDB**
 * **Web Scraping (HTML Agility Pack)**
 * **Git / GitHub**
