@@ -1,6 +1,6 @@
 # CS Concert Calendar Webscraper
 
-A web application that collects concert data from selected websites through web scraping and displays upcoming events in a structured concert calendar.
+A web application prototype that collects concert data from selected websites through web scraping and displays upcoming events in a structured concert calendar.
 
 The project was developed as my final project during my **Application Development – Coding** training at Schulungszentrum Fohnsdorf.
 
@@ -17,10 +17,9 @@ The project was developed as my final project during my **Application Developmen
 
 * **C#**
 * **ASP.NET Core**
-* **Razor Pages**
 * **HTML / CSS / JavaScript**
 * **MongoDB**
-* **Web Scraping**
+* **Web Scraping (HTML Agility Pack)**
 * **Git / GitHub**
 
 ## How it works
@@ -42,17 +41,27 @@ The application separates the main responsibilities into different components:
 
 ## Purpose
 
-The main goal of this project was to combine several topics covered during my training in one practical application, including:
+The main goal of this project was to combine several topics covered during my training in one practical project, including:
 
 * object-oriented programming with C#
-* web development with ASP.NET Core
 * working with databases
 * processing external data
-* web scraping
 * structuring a larger software project
+* web development with ASP.NET Core
+* web scraping
 
-## Status
+The current version demonstrates the core workflow:
 
-This project was created as a final training project and may be further developed in the future.
+Web Scraping → Data Processing → MongoDB → ASP.NET Core Web Application
 
-Possible future improvements include replacing the current database solution, expanding the available data sources and improving the automation of the scraping process.
+The project is not yet production-ready.
+
+### Possible Future Improvements
+
+- Replace the current persistence solution
+- Add additional scraping sources
+- Improve error handling and validation
+- Improve the user interface
+- Add media previews for concerts and artists
+- Add genre extractor
+- Deployment
