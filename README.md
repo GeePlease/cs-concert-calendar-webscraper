@@ -15,15 +15,15 @@ The project was developed as my final project during my **Application Developmen
 
 * ## Screenshots
 
-### Concert Overview
+#### Concert Overview
 
 ![Concert Overview](docs/screenshots/concert-view.png)
 
-### Calendar View
+#### Calendar View
 
 ![Calendar View](docs/screenshots/calendar-view.png)
 
-### Profile View
+#### Profile View
 
 ![Profile View](docs/screenshots/profile-view.png)
 
