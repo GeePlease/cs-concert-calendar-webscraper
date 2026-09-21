@@ -55,7 +55,11 @@ builder.Services.AddScoped<ConcertService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<TestDataSeeder>();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddScoped<TestDataSeeder>();
+}
 
 // Scraper-Registrierung als Interface
 builder.Services.AddScoped<IScraper, ClubWakuumScraper>();
@@ -81,12 +85,14 @@ builder.Services.AddSession(options =>
 // ----------------------------------------------------------------------------------
 var app = builder.Build();
 
-// TestDataSeeder & Scraper - run at start
+// Scrapers run at startup. Development data is seeded only in Development.
 using (var scope = app.Services.CreateScope())
 {
-    // seed test data
-    var seeder = scope.ServiceProvider.GetRequiredService<TestDataSeeder>();
-    await seeder.SeedAllAsync();
+    if (app.Environment.IsDevelopment())
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<TestDataSeeder>();
+        await seeder.SeedAllAsync();
+    }
     
     // run scrapers
     var scraperService = scope.ServiceProvider.GetRequiredService<ScraperService>();
