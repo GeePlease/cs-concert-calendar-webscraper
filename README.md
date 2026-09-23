@@ -2,7 +2,7 @@
 
 A web application prototype that collects concert data from selected websites through web scraping and displays upcoming events in a structured concert calendar.
 
-The project was developed as my final project during my **Application Development – Coding** training at Schulungszentrum Fohnsdorf.
+The project was developed as final project for my **Application Development – Coding** training.
 
 ## Features
 
