@@ -2,7 +2,7 @@
 
 A web application prototype that collects concert data from selected websites through web scraping and displays upcoming events in a structured concert calendar.
 
-The project was developed as my final project during my **Application Development – Coding** training at Schulungszentrum Fohnsdorf.
+The project was developed as final project for my **Application Development – Coding** training.
 
 ## Features
 
@@ -13,11 +13,25 @@ The project was developed as my final project during my **Application Developmen
 * Filtering and displaying upcoming events
 * ASP.NET Core web interface
 
+* ## Screenshots
+
+#### Concert Overview
+
+![Concert Overview](docs/screenshots/concert-view.png)
+
+#### Calendar View
+
+![Calendar View](docs/screenshots/calendar-view.png)
+
+#### Profile View
+
+![Profile View](docs/screenshots/profile-view.png)
+
 ## Technologies
 
 * **C#**
 * **ASP.NET Core**
-* **HTML / CSS / JavaScript**
+* **HTML / CSS / JavaScript / FullCalendar**
 * **MongoDB**
 * **Web Scraping (HTML Agility Pack)**
 * **Git / GitHub**
