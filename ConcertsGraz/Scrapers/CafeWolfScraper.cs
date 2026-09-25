@@ -99,7 +99,8 @@ public class CafeWolfScraper : IScraper
             {
                 _logger.LogWarning(
                     ex,
-                    "Konzert von Café Wolf konnte nicht verarbeitet werden und wurde übersprungen.");
+                    $"Konzert von Café Wolf konnte nicht verarbeitet werden und wurde übersprungen. " +
+                    $"Element betroffen: {concert.OuterHtml}" + " Error Message: " + ex.Message);
             }
             
         }

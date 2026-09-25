@@ -113,7 +113,8 @@ public class PpcScraper : IScraper
             {
                 _logger.LogWarning(
                     ex,
-                    "Konzert von PPC konnte nicht verarbeitet werden und wurde übersprungen.");
+                    $"Konzert von PPC konnte nicht verarbeitet werden und wurde übersprungen. " +
+                    $"Element betroffen: {concert.OuterHtml}" + " Error Message: " + ex.Message);
             }
         }
         
