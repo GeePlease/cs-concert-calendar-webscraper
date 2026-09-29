@@ -21,8 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pendingBookmarks = new Set();
     let bookmarksLoading = false;
     let bookmarkGeneration = 0; // Ignoriert alte Antworten nach einem Benutzerwechsel
-
-
+    
     // ==================================================================================
     // CONCERT DATA & RENDERING
     // ==================================================================================
@@ -67,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
             </article>
             `).join("");
     }
-
 
     // ==================================================================================
     // BOOKMARKS
@@ -255,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
             concertDetailModal.classList.add("hidden");
         }
     });
-
 
     // ==================================================================================
     // CONCERT FILTERS
@@ -557,7 +554,6 @@ document.addEventListener("DOMContentLoaded", () => {
         syncCalendarWithBookmarks();
     });
 
-
     // ==================================================================================
     // CALENDAR
     // ==================================================================================
@@ -627,7 +623,6 @@ document.addEventListener("DOMContentLoaded", () => {
             calendar.changeView("dayGridMonth");
         }
     });
-
 
     // ==================================================================================
     // USER PROFILE
@@ -831,8 +826,6 @@ document.addEventListener("DOMContentLoaded", () => {
             showProfileMessage(error.message || "Profil konnte nicht aktualisiert werden.", "error");
         }
     }
-    
-    
 
     // ==================================================================================
     // REGISTRATION & LOGIN
@@ -917,7 +910,6 @@ document.addEventListener("DOMContentLoaded", () => {
             showAuthMessage(err.message, "error");
         }
     });
-
 
     // ==================================================================================
     // HELPER FUNCTIONS

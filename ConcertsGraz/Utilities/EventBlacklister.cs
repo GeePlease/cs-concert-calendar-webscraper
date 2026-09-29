@@ -4,6 +4,7 @@ public class EventBlacklister
     // ATTRIBUTES
     private static readonly string[] _ignoredKeywords =
     {
+        "abgesagt",
         "afterparty",
         "after party",
         "ausstellung",
