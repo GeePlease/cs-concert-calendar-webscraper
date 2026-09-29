@@ -9,6 +9,7 @@ public class CafeWolfScraper : IScraper
 {
     //ATTRIBUTES
     private readonly ILogger<CafeWolfScraper> _logger;
+    private const string Url = "https://cafewolf.at/programm";
     
     // CONSTRUCTOR
     public CafeWolfScraper(ILogger<CafeWolfScraper> logger)
@@ -22,7 +23,6 @@ public class CafeWolfScraper : IScraper
     {
         // 0 Variables
         List<Concert> concertsCafeWolf= new List<Concert>();
-        string url = "https://cafewolf.at/programm";
         
         // xpaths relative to main node element
         string titleXPath = ".//h3"; 
@@ -32,7 +32,7 @@ public class CafeWolfScraper : IScraper
         
         // 1 Load HTML from target url
         var web = new HtmlWeb();
-        var doc = web.Load(url);
+        var doc = web.Load(Url);
         var eventElementNodes = doc.DocumentNode.SelectNodes("//*[@id=\"eventlist\"]//article"); // concert elements to loop through
         
         // 2 Null check
@@ -88,7 +88,7 @@ public class CafeWolfScraper : IScraper
                     Venue = venue,
                     InfoLink = link,
                     Description = description,
-                    SourceUrl = url,
+                    SourceUrl = Url,
                     Price = price
                 };
             

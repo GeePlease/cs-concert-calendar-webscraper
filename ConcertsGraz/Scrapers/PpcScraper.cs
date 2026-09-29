@@ -15,6 +15,7 @@ public class PpcScraper : IScraper
 {
     // ATTRIBUTES
     private readonly ILogger<PpcScraper> _logger;
+    private const string Url = "https://popculture.at/events/kategorie/konzert/"; 
     
     // CONSTRUCTOR - DI logger
     public PpcScraper(ILogger<PpcScraper> logger)
@@ -28,7 +29,6 @@ public class PpcScraper : IScraper
     {
         // 0 Variables
         List<Concert> concertsPpc = new List<Concert>();
-        string url = "https://popculture.at/events/kategorie/konzert/"; 
         
         string titleXPath = ".//h3[contains(@class, 'tribe-events-calendar-list__event-title')]//a";
         string linkXPath = ".//h3[contains(@class, 'tribe-events-calendar-list__event-title')]//a";
@@ -40,7 +40,7 @@ public class PpcScraper : IScraper
 
         // 1 Load HTML from target url
         var web = new HtmlWeb();
-        var doc = web.Load(url);
+        var doc = web.Load(Url);
         var eventElementNodes = doc.DocumentNode.SelectNodes("//div[contains(@class, 'tribe-events-calendar-list__event-row')]"); 
         
         // 2 null check - exception caught in SraperService
@@ -102,7 +102,7 @@ public class PpcScraper : IScraper
                     Venue = venue,
                     InfoLink = link,
                     Description = description,
-                    SourceUrl = url,
+                    SourceUrl = Url,
                     Price = price, 
                 };
             

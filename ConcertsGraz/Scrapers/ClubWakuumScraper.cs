@@ -14,6 +14,7 @@ public class ClubWakuumScraper : IScraper
 {
     // ATTRIBUTES
     private readonly ILogger<ClubWakuumScraper> _logger;
+    private const string Url = "https://wakmusic.at/events-konzerte/";
 
     // CONSTRUCTOR - DI logger
     public ClubWakuumScraper(ILogger<ClubWakuumScraper> logger)
@@ -21,14 +22,12 @@ public class ClubWakuumScraper : IScraper
         _logger = logger;
     }
 
-
-
+    
     // METHODS
     public async Task<List<Concert>> RunAsync()
     {
         // 0 Variables
         List<Concert> concertsClubWakuum = new List<Concert>();
-        string url = "https://wakmusic.at/events-konzerte/";
 
         // xpaths relative to main node element
         string titleXPath = ".//h3[@class='mec-event-title']/a";
@@ -41,7 +40,7 @@ public class ClubWakuumScraper : IScraper
 
         // 1 Load HTML from target url
         var web = new HtmlWeb();
-        var doc = web.Load(url);
+        var doc = web.Load(Url);
         var eventElementNodes =
             doc.DocumentNode.SelectNodes("//article[contains(@class, 'mec-event-article')]"); // main node element
 
@@ -101,7 +100,7 @@ public class ClubWakuumScraper : IScraper
                     Venue = venue,
                     InfoLink = link,
                     Description = description,
-                    SourceUrl = url,
+                    SourceUrl = Url,
                     Price = price
                 };
 
