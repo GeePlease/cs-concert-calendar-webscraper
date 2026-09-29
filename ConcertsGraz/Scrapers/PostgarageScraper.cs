@@ -1,7 +1,9 @@
-﻿using Microsoft.Playwright;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Playwright;
 using System.Threading.Tasks;
 using ConcertsGraz.Interfaces;
 using ConcertsGraz.Models;
+using ConcertsGraz.Utilities;
 
 namespace ConcertsGraz.Scrapers;
 
@@ -45,6 +47,7 @@ public class PostgarageScraper : IScraper
         string genreElement = "p.event-genre";
         string priceElement = "div.admission p";
         string infoLinkElement = "section.links a";
+        string venue = "Postgarage";
         
         // navigate to url
         var response1 = await page.GotoAsync(Url);
@@ -79,6 +82,7 @@ public class PostgarageScraper : IScraper
         // 2 find month urls and save in month url list: .#month-selector > ul > li:nth-child(5) > a
         List<string> monthUrls = new List<string>(); // list for month urls
         
+        // loop through event element list per month
         for (int i = activeIndex; i < monthCount; i++)
         {
             // get current month element by index
@@ -93,7 +97,7 @@ public class PostgarageScraper : IScraper
             // add url to month url list if available
             if (!string.IsNullOrWhiteSpace(monthUrl))
             {
-                monthUrls.Add(monthUrl);
+                monthUrls.Add(monthUrl.Trim());
             }
         }
         
@@ -131,24 +135,69 @@ public class PostgarageScraper : IScraper
             }
         }
         
-        // 4 loop thorough contact event detail link list (concertDetailUrls) to get concert details
+        // 4 loop through contact event detail link list (concertDetailUrls) to get concert details
         foreach (var detailUrl in concertDetailUrls)
         {
             // 4.1 load concert event detail link
             var response3 = await page.GotoAsync(detailUrl);
-            // 4.2 standard exatraction procedure (compare to Wakuum e.g.)
-            // Datum: #maincontent > section.basic-data > div:nth-child(1) > time
-            // Titel: #maincontent > section.basic-data > h2
-            // Uhrzeit: #maincontent > section.basic-data > div.admission > div
-            // Description: #maincontent > section.info
-            // Genre: #maincontent > section.basic-data > p
-            // Preis: als rndm textblock unregelmäßig eingefügt...problematisch, vorerst - als falllback
-            // InfoLink: in element: #maincontent > section.links   unterelement: #maincontent > section.links > ul > li > a
-            // 5 create concert object and add to PostgarageConcerts link
-        }
-        
+            
+            // 4.2 standard extraction procedure (compare to Wakuum e.g.) 
+            
+            // 4.2.0 null check, skip broken or invalid detail links
+            if (response3 != null) {continue;} 
+            
+            // 4.2.1 get raw data as strings 
+            string? rawTitle = await page.Locator(titleElement).TextContentAsync();
+            string? rawDate = await page.Locator(dateElement).TextContentAsync();
+            string? rawTime = await page.Locator(timeElement).TextContentAsync();
+            string? rawGenre = await page.Locator(genreElement).TextContentAsync();
+            string? rawDescription = await page.Locator(descriptionElement).TextContentAsync();
+            string? rawPrice = await page.Locator(priceElement).TextContentAsync();
+            string? rawInfoLink = await page.Locator(infoLinkElement).TextContentAsync();
+            
+            // 4.2.2 clean variables with ConcertDataSanitizer + EventBlacklister
+            // all variables except description
+            string title = ConcertDataSanitizer.CleanText(rawTitle);
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                continue;
+            } // Skip empty nodes (title is empty)
 
-        
+            if (EventBlacklister.isBlacklisted(title))
+            {
+                continue; // skip titles that contain non-concert keywoards
+            } 
+            
+            string date = ConcertDataSanitizer.CleanText(rawDate);
+            DateTime? parsedDate = DateTimeParser.ParseToDateTime(date); // parse date to DateTime Object
+            string time = ConcertDataSanitizer.CleanText(rawTime);
+            string price = ConcertDataSanitizer.CleanText(rawPrice);
+            string link = Regex.Replace(rawInfoLink, @"\s+", "").Trim();
+
+            // description
+            string description = ConcertDataSanitizer.CleanDescription(rawDescription);
+
+            // add special local step here if necessary
+            
+            // 4.3 create new ConcertEvent from scraped element data 
+            var concertToAdd = new Concert()
+            {
+                Title = title,
+                Genre = "-",
+                Date = parsedDate,
+                Time = time,
+                Venue = venue,
+                InfoLink = link,
+                Description = description,
+                SourceUrl = Url,
+                Price = price
+            };
+            
+            // 4.4 add new concert to postgarage concertlist
+            PostgarageConcerts.Add(concertToAdd);
+
+        }
+        // return concert list
         return PostgarageConcerts;
     }
     
