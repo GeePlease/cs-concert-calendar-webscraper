@@ -16,7 +16,7 @@ namespace ConcertsGraz.Scrapers;
 
 public class PostgarageScraper : IScraper
 {
-    // ATTRIBUTES
+    //ATTRIBUTES
     private readonly ILogger<PostgarageScraper> _logger;
     private const string Url = "https://www.postgarage.at/program/";
     
@@ -47,7 +47,7 @@ public class PostgarageScraper : IScraper
         string infoLinkElement = "section.links a";
         
         // navigate to url
-        var response = await page.GotoAsync(Url);
+        var response1 = await page.GotoAsync(Url);
         
         // TODO: rest schreiben
         // 1.0 select month navigation and find current month: from:  .#month-selector 
@@ -97,19 +97,57 @@ public class PostgarageScraper : IScraper
             }
         }
         
+        // 3 loop through month nav url list and collect concert event detail links into list:
+        // #maincontent > section:nth-child(1) > div:nth-child(1) > time > a
         
-        // 3 loop through month nav url list and collect concert event detail links into list: #maincontent > section:nth-child(1) > div:nth-child(1) > time > a
-        // 4 loop thorough conct event detail link list
-        // 4.1 load concert event detail link
-        // 4.2 standard exatraction procedure (compare to Wakuum e.g.)
-        // Datum: #maincontent > section.basic-data > div:nth-child(1) > time
-        // Titel: #maincontent > section.basic-data > h2
-        // Uhrzeit: #maincontent > section.basic-data > div.admission > div
-        // Description: #maincontent > section.info
-        // Genre: #maincontent > section.basic-data > p
-        // Preis: als rndm textblock unregelmäßig eingefügt...problematisch, vorerst - als falllback
-        // InfoLink: in element: #maincontent > section.links   unterelement: #maincontent > section.links > ul > li > a
-        // 5 create concert object and add to PostgarageConcerts link
+        List<string> concertDetailUrls = new List<string>(); // list for concert detail urls
+        
+        // lo through monthly event views
+        foreach (string monthUrl in monthUrls)
+        {
+            // navigate to current month url
+            var response2 = await page.GotoAsync(monthUrl);
+
+            // find concert event link elements on current month page
+            var concertLinks = page.Locator("#maincontent > section > div > time > a");
+
+            // count concert event link elements
+            int concertCount = await concertLinks.CountAsync();
+
+            // loop through concert event links
+            for (int i = 0; i < concertCount; i++)
+            {
+                // get current concert link element by index
+                var concertLink = concertLinks.Nth(i);
+
+                // get href attribute from concert link
+                string? concertUrl = await concertLink.GetAttributeAsync("href");
+
+                // add url to concert url list if available
+                if (!string.IsNullOrWhiteSpace(concertUrl))
+                {
+                    concertDetailUrls.Add(concertUrl);
+                }
+            }
+        }
+        
+        // 4 loop thorough contact event detail link list (concertDetailUrls) to get concert details
+        foreach (var detailUrl in concertDetailUrls)
+        {
+            // 4.1 load concert event detail link
+            var response3 = await page.GotoAsync(detailUrl);
+            // 4.2 standard exatraction procedure (compare to Wakuum e.g.)
+            // Datum: #maincontent > section.basic-data > div:nth-child(1) > time
+            // Titel: #maincontent > section.basic-data > h2
+            // Uhrzeit: #maincontent > section.basic-data > div.admission > div
+            // Description: #maincontent > section.info
+            // Genre: #maincontent > section.basic-data > p
+            // Preis: als rndm textblock unregelmäßig eingefügt...problematisch, vorerst - als falllback
+            // InfoLink: in element: #maincontent > section.links   unterelement: #maincontent > section.links > ul > li > a
+            // 5 create concert object and add to PostgarageConcerts link
+        }
+        
+
         
         return PostgarageConcerts;
     }

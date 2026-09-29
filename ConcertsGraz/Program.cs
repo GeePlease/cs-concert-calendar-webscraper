@@ -65,6 +65,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddScoped<IScraper, ClubWakuumScraper>();
 builder.Services.AddScoped<IScraper, PpcScraper>();
 builder.Services.AddScoped<IScraper, CafeWolfScraper>();
+builder.Services.AddScoped<IScraper, PostgarageScraper>();
 builder.Services.AddScoped<ScraperService>();
 
 // CORS Registrierung
